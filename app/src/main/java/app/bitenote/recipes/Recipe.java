@@ -1,33 +1,45 @@
 package app.bitenote.recipes;
 
 import androidx.annotation.NonNull;
-
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.HashMap;
 
 /**
- * Represents an instance of a recipe. It stores the text contents of the recipe, its ingredients,
- * and its
+ * Represents an instance of a recipe. It stores the text contents of the recipe, and relevant
+ * information that help discriminate recipes when querying them.
+ * @author Daniel N.
  */
 public class Recipe {
     /**
      * Name of the recipe.
      */
-    public String title;
+    public String name;
 
     /** Body text of the recipe. */
     public String body;
 
     /**
-     * List of ingredients needed to prepare the recipe.
+     * Ingredient HashMap. The key is the ingredient id, and the value stores the amount of that
+     * ingredient.
      */
-    public List<Ingredient> ingredients;
+    public HashMap<Integer, Float> ingredients;
+
+    /* fixme: this implementation of saving the recipe's utensils may not be the most ideal, but
+     it will do for now */
+    /**
+     * Utensil flags.
+     */
+    public short utensilFlags;
 
     /**
-     * Utensil tags.
+     * Necessary budget for the recipe.
      */
-    public EnumSet<Utensil> utensils;
+    public short budget;
+
+    /**
+     * The amount of diners the recipe is designed for.
+     */
+    public short diners;
 
     /**
      * Date when the recipe was created.
@@ -36,21 +48,30 @@ public class Recipe {
 
     /**
      * Creates a new Recipe instance, with its creation date set to the system time.
-     * @param title Title of the recipe.
+     *
+     * @param name Title of the recipe.
      * @param body Body text of the recipe.
-     * @param ingredients Recipe ingredients enum set.
-     * @param utensils Recipe utensils enum set.
+     * @param ingredients Recipe ingredients.
+     * @param utensilFlags Recipe utensil flags.
+     * @param budget Necessary budget for the recipe.
+     * @param diners Amount of diners the recipe is designed for.
      */
     public Recipe(
-            @NonNull String title,
+            @NonNull String name,
             @NonNull String body,
-            @NonNull List<Ingredient> ingredients,
-            @NonNull EnumSet<Utensil> utensils
+            @NonNull HashMap<Integer, Float> ingredients,
+            short utensilFlags,
+            short budget,
+            short diners
     ) {
-        this.title = title;
+        this.name = name;
         this.body = body;
         this.ingredients = ingredients;
-        this.utensils = utensils;
+        this.utensilFlags = utensilFlags;
+        this.budget = budget;
+        this.diners = diners;
         this.creationDate = new Date(System.currentTimeMillis());
     }
+
+    // todo: implement functions to add or remove ingredients or utensils
 }
