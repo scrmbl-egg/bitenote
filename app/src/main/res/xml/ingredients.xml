@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ingredients>
+    <type name="meat">
+        <subtype name="red">
+            <ingredient name="beef" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="lamb" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="venison" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="white">
+            <ingredient name="chicken" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="turkey" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="pork" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="game">
+            <ingredient name="duck" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="goose" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="quail" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+    </type>
+
+    <type name="dairy">
+        <subtype name="cheese">
+            <ingredient name="cheddar" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="mozzarella" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="parmesan" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="brie" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="gouda" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="milk">
+            <ingredient name="whole" measurement="volume"/>
+            <ingredient name="skim" measurement="volume"/>
+            <ingredient name="almond" measurement="volume"/>
+            <ingredient name="soy" measurement="volume"/>
+        </subtype>
+    </type>
+
+    <type name="vegetable">
+        <subtype name="leafyGreen">
+            <ingredient name="spinach" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="kale" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="lettuce" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="arugula" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="root">
+            <ingredient name="carrot" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="potato" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="beetroot" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="radish" measurement="weight" can_be_measured_in_units="true"/>
+        </subtype>
+        <subtype name="cruciferous">
+            <ingredient name="broccoli" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="cauliflower" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="cabbage" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="brusselsSprouts" measurement="weight" can_be_measured_in_units="true"/>
+        </subtype>
+    </type>
+
+    <type name="seafood">
+        <subtype name="fish">
+            <ingredient name="salmon" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="tuna" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="cod" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="trout" measurement="weight" can_be_measured_in_units="true"/>
+        </subtype>
+        <subtype name="shellfish">
+            <ingredient name="shrimp" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="crab" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="lobster" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="mussels" measurement="weight" can_be_measured_in_units="true"/>
+        </subtype>
+        <subtype name="cephalopod">
+            <ingredient name="squid" measurement="weight" can_be_measured_in_units="true"/>
+            <ingredient name="octopus" measurement="weight" can_be_measured_in_units="true"/>
+        </subtype>
+    </type>
+
+    <type name="grain">
+        <subtype name="whole">
+            <ingredient name="brownRice" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="quinoa" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="barley" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="oats" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="refined">
+            <ingredient name="whiteRice" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="pasta" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="bread" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+    </type>
+
+    <type name="spice">
+        <ingredient name="basil" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="thyme" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="rosemary" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="oregano" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="cumin" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="paprika" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="turmeric" measurement="weight" can_be_measured_in_units="false"/>
+        <ingredient name="cinnamon" measurement="weight" can_be_measured_in_units="false"/>
+    </type>
+
+    <type name="pantryStaple">
+        <subtype name="baking">
+            <ingredient name="flour" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="bakingPowder" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="bakingSoda" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="yeast" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="cocoa" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="sweetener">
+            <ingredient name="sugar" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="honey" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="mapleSyrup" measurement="weight" can_be_measured_in_units="false"/>
+            <ingredient name="chocolate" measurement="weight" can_be_measured_in_units="false"/>
+        </subtype>
+        <subtype name="oilsAndFats">
+            <ingredient name="oliveOil" measurement="volume"/>
+            <ingredient name="butter" measurement="volume"/>
+            <ingredient name="coconut" measurement="volume"/>
+            <ingredient name="vegetableOil" measurement="volume"/>
+        </subtype>
+        <subtype name="liquids">
+            <ingredient name="water" measurement="volume"/>
+            <ingredient name="vinegar" measurement="volume"/>
+            <ingredient name="soySauce" measurement="volume"/>
+            <ingredient name="broth" measurement="volume"/>
+        </subtype>
+    </type>
+</ingredients>
