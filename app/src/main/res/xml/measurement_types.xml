@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<measurement_types>
+    <type name="weight"/>
+    <type name="volume"/>
+</measurement_types>
