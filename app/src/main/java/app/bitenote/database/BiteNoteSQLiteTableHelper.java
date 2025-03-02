@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -15,6 +14,7 @@ import app.bitenote.R;
 
 /**
  * Helper package class to handle immutable table initialisation and XML parsing.
+ * @author Daniel N.
  */
 class BiteNoteSQLiteTableHelper {
     /**
