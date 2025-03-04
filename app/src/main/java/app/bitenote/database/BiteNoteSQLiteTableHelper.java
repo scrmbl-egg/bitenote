@@ -2,6 +2,7 @@ package app.bitenote.database;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -229,6 +230,69 @@ class BiteNoteSQLiteTableHelper {
             @NonNull SQLiteDatabase database,
             @NonNull Context context
     ) {
-        // todo: populate ingredients table.
+        final String sql = "INSERT INTO ingredients" +
+                "(name, measurement_id, can_be_measured_in_units) " +
+                "VALUES (?, ?, ?);";
+        final XmlResourceParser parser = context.getResources().getXml(R.xml.ingredients);
+
+        try {
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    parser.next();
+                    continue;
+                }
+
+                String tag = parser.getName();
+
+                if (!tag.equals(INGREDIENT_TAG)) {
+                    parser.next();
+                    continue;
+                }
+
+                Object[] args = {
+                        parser.getAttributeValue(null, INGREDIENT_NAME_ATTRIBUTE),
+                        getMeasurementTypeIdFromName(
+                                database,
+                                parser.getAttributeValue(null, INGREDIENT_MEASUREMENT_ATTRIBUTE)
+                        ),
+                        parser.getAttributeBooleanValue(
+                                null,
+                                INGREDIENT_CAN_BE_MEASURED_IN_UNITS_ATTRIBUTE,
+                                false
+                        )
+                };
+
+                database.execSQL(sql, args);
+            }
+        } catch (XmlPullParserException | IOException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        }
+
+        database.execSQL(sql);
+    }
+
+    /**
+     * Gets the measurement type ID from its name.
+     * @param database SQLiteDatabase instance.
+     * @param measurementTypeName Name of the measurement type. This should be obtained from an XML.
+     * @return Optional that may contain the ID of the measurement type.
+     */
+    private static Optional<Integer> getMeasurementTypeIdFromName(
+            @NonNull SQLiteDatabase database,
+            String measurementTypeName
+    ) {
+        final String sql = "SELECT id FROM measurementTypes WHERE name = ?;";
+        final String[] args = {
+            measurementTypeName
+        };
+        Integer result = null;
+
+        final Cursor cursor = database.rawQuery(sql, args);
+        if (cursor.moveToFirst()) {
+            result = cursor.getColumnIndexOrThrow("id");
+        }
+
+        cursor.close();
+        return Optional.ofNullable(result);
     }
 }
