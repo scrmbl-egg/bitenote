@@ -176,7 +176,7 @@ class BiteNoteSQLiteTableHelper {
                 database.execSQL(sql, args);
             }
         } catch (XmlPullParserException | IOException e) {
-            throw new RuntimeException(e);
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         }
     }
 
