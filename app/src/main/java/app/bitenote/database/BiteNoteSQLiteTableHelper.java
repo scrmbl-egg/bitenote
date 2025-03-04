@@ -113,6 +113,26 @@ class BiteNoteSQLiteTableHelper {
     }
 
     /**
+     * Drops all tables in the database.
+     * @param database SQLiteDatabase instance.
+     */
+    static void dropTables(@NonNull SQLiteDatabase database) {
+        String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
+        String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurementTypes;";
+        String dropRecipesTable = "DROP TABLE IF EXISTS recipes;";
+        String dropIngredientsTable = "DROP TABLE IF EXISTS ingredients;";
+        String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipeIngredients;";
+        String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipeUtensils;";
+
+        database.execSQL(dropUtensilsTable);
+        database.execSQL(dropMeasurementTypesTable);
+        database.execSQL(dropRecipesTable);
+        database.execSQL(dropIngredientsTable);
+        database.execSQL(dropRecipeIngredientsTable);
+        database.execSQL(dropRecipeUtensilsTable);
+    }
+
+    /**
      * Populates the immutable tables of the database with XML resource data.
      * @param database SQLite database instance.
      * @param context Context.

@@ -36,6 +36,10 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(@NonNull SQLiteDatabase database, int oldVersion, int newVersion) {
+        BiteNoteSQLiteTableHelper.dropTables(database);
+
+        // init tables again
+        onCreate(database);
     }
 
     /**
