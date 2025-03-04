@@ -166,7 +166,10 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 String tag = parser.getName();
-                if (!tag.equals(UTENSIL_TAG)) continue;
+                if (!tag.equals(UTENSIL_TAG)) {
+                    parser.next();
+                    continue;
+                }
 
                 // alloc array for sql args
                 Object[] args = {
@@ -200,7 +203,10 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 String tag = parser.getName();
-                if (!tag.equals(MEASUREMENT_TYPE_TAG)) continue;
+                if (!tag.equals(MEASUREMENT_TYPE_TAG)) {
+                    parser.next();
+                    continue;
+                }
 
                 // alloc array for sql args
                 Object[] args = {
