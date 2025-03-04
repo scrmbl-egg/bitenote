@@ -89,7 +89,7 @@ class BiteNoteSQLiteTableHelper {
                 "FOREIGN KEY (measurement_id) REFERENCES measurementTypes(id)" +
                 ");";
 
-        final String createRecipeIngrsTable = "CREATE TABLE recipeIngrs (" +
+        final String createRecipeIngredientsTable = "CREATE TABLE recipeIngredients (" +
                 "recipe_id INTEGER PRIMARY KEY," +
                 "ingredient_id INTEGER PRIMARY KEY," +
                 "amount FLOAT," +
@@ -108,7 +108,7 @@ class BiteNoteSQLiteTableHelper {
         database.execSQL(createMeasurementTypesTable);
         database.execSQL(createRecipesTable);
         database.execSQL(createIngredientsTable);
-        database.execSQL(createRecipeIngrsTable);
+        database.execSQL(createRecipeIngredientsTable);
         database.execSQL(createRecipeUtensilsTable);
     }
 
