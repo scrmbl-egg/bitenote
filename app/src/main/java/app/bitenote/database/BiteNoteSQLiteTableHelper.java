@@ -289,7 +289,7 @@ class BiteNoteSQLiteTableHelper {
 
         final Cursor cursor = database.rawQuery(sql, args);
         if (cursor.moveToFirst()) {
-            result = cursor.getColumnIndexOrThrow("id");
+            result = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
         }
 
         cursor.close();
