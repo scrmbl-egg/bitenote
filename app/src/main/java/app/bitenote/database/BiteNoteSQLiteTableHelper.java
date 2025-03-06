@@ -69,7 +69,7 @@ class BiteNoteSQLiteTableHelper {
                 "name VARCHAR(64) NOT NULL" +
                 ");";
 
-        final String createMeasurementTypesTable = "CREATE TABLE measurementTypes (" +
+        final String createMeasurementTypesTable = "CREATE TABLE measurement_types (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
@@ -87,10 +87,10 @@ class BiteNoteSQLiteTableHelper {
                 "name VARCHAR(64) NOT NULL," +
                 "measurement_id INTEGER NOT NULL," +
                 "can_be_measured_in_units BOOLEAN NOT NULL," +
-                "FOREIGN KEY (measurement_id) REFERENCES measurementTypes(id)" +
+                "FOREIGN KEY (measurement_id) REFERENCES measurement_types(id)" +
                 ");";
 
-        final String createRecipeIngredientsTable = "CREATE TABLE recipeIngredients (" +
+        final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients (" +
                 "recipe_id INTEGER PRIMARY KEY," +
                 "ingredient_id INTEGER PRIMARY KEY," +
                 "amount FLOAT," +
@@ -98,7 +98,7 @@ class BiteNoteSQLiteTableHelper {
                 "FOREIGN KEY (ingredient_id) REFERENCES ingrs(id)" +
                 ");";
 
-        final String createRecipeUtensilsTable = "CREATE TABLE recipeUtensils (" +
+        final String createRecipeUtensilsTable = "CREATE TABLE recipe_utensils (" +
                 "recipe_id INTEGER PRIMARY KEY," +
                 "utensil_id INTEGER PRIMARY KEY," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
@@ -119,11 +119,11 @@ class BiteNoteSQLiteTableHelper {
      */
     static void dropTables(@NonNull SQLiteDatabase database) {
         String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
-        String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurementTypes;";
+        String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurement_types;";
         String dropRecipesTable = "DROP TABLE IF EXISTS recipes;";
         String dropIngredientsTable = "DROP TABLE IF EXISTS ingredients;";
-        String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipeIngredients;";
-        String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipeUtensils;";
+        String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipe_ingredients;";
+        String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipe_utensils;";
 
         database.execSQL(dropUtensilsTable);
         database.execSQL(dropMeasurementTypesTable);
@@ -185,7 +185,7 @@ class BiteNoteSQLiteTableHelper {
     }
 
     /**
-     * Populates the 'measurementTypes' SQLite table with the XML data.
+     * Populates the 'measurement_types' SQLite table with the XML data.
      * @param database SQLite database instance.
      * @param context Context.
      */
@@ -193,7 +193,7 @@ class BiteNoteSQLiteTableHelper {
             @NonNull SQLiteDatabase database,
             @NonNull Context context
     ) {
-        final String sql = "INSERT INTO measurementTypes(name) VALUES (?);";
+        final String sql = "INSERT INTO measurement_types(name) VALUES (?);";
         final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils);
 
         try {
@@ -281,7 +281,7 @@ class BiteNoteSQLiteTableHelper {
             @NonNull SQLiteDatabase database,
             String measurementTypeName
     ) {
-        final String sql = "SELECT id FROM measurementTypes WHERE name = ?;";
+        final String sql = "SELECT id FROM measurement_types WHERE name = ?;";
         final String[] args = {
             measurementTypeName
         };
