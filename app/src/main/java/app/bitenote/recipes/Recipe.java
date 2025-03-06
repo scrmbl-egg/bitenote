@@ -1,8 +1,10 @@
 package app.bitenote.recipes;
 
 import androidx.annotation.NonNull;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Represents an instance of a recipe. It stores the text contents of the recipe, and relevant
@@ -31,7 +33,7 @@ public class Recipe {
     /**
      * Date when the recipe was created.
      */
-    public final Date creationDate;
+    public final Calendar creationDate;
 
     /**
      * Ingredient HashMap. The key is the ingredient id, and the value stores the amount of that
@@ -55,7 +57,7 @@ public class Recipe {
         this.utensilFlags = 0;
         this.budget = 0;
         this.diners = 0;
-        this.creationDate = new Date(System.currentTimeMillis());
+        this.creationDate = Calendar.getInstance();
     }
 
     /**
@@ -73,7 +75,7 @@ public class Recipe {
             @NonNull String name,
             @NonNull String body,
             @NonNull HashMap<Integer, Float> ingredients,
-            @NonNull Date creationDate,
+            @NonNull Calendar creationDate,
             int utensilFlags,
             int budget,
             int diners
@@ -85,6 +87,19 @@ public class Recipe {
         this.utensilFlags = utensilFlags;
         this.budget = budget;
         this.diners = diners;
+    }
+
+    /**
+     * Gets the creation date in a format which can be passed as an SQL argument.
+     * @return A string representation of the creation date in the "yyyy-MM-dd" format.
+     */
+    public String getCreationDateAsSQLDateString() {
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+        );
+
+        return simpleDateFormat.format(creationDate.getTime());
     }
 
     /**
