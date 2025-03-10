@@ -254,7 +254,7 @@ class BiteNoteSQLiteTableHelper {
                         getMeasurementTypeIdFromName(
                                 database,
                                 parser.getAttributeValue(null, INGREDIENT_MEASUREMENT_ATTRIBUTE)
-                        ),
+                        ).orElse(0),
                         parser.getAttributeBooleanValue(
                                 null,
                                 INGREDIENT_CAN_BE_MEASURED_IN_UNITS_ATTRIBUTE,
