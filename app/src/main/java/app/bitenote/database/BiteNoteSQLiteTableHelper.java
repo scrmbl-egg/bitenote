@@ -80,6 +80,7 @@ class BiteNoteSQLiteTableHelper {
                 "body MEDIUMTEXT NOT NULL DEFAULT ''," +
                 "budget INTEGER," +
                 "diners INTEGER" +
+                "creation_date DATE NOT NULL" +
                 ");";
 
         final String createIngredientsTable = "CREATE TABLE ingredients (" +
