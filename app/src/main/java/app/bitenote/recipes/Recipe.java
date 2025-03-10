@@ -3,8 +3,10 @@ package app.bitenote.recipes;
 import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Represents an instance of a recipe. It stores the text contents of the recipe, and relevant
@@ -103,6 +105,14 @@ public class Recipe {
     }
 
     /**
+     * Gets the utensil flags of the recipe.
+     * @return An integer where the recipe's utensil bit flags are stored.
+     */
+    public int getUtensilFlags() {
+        return utensilFlags;
+    }
+
+    /**
      * Adds an utensil to the recipe.
      * @param utensilId ID of the utensil to be added.
      */
@@ -132,6 +142,15 @@ public class Recipe {
      */
     public boolean containsUtensil(int utensilId) {
         return (utensilFlags & 1 << utensilId) != 0;
+    }
+
+    /**
+     * Gets the ingredients of the recipe.
+     * @return The HashMap instance of the ingredients. The key representing the ingredient ID, and
+     * the value representing the amount of that ingredient.
+     */
+    public Map<Integer, Float> getIngredients() {
+        return Collections.unmodifiableMap(ingredients);
     }
 
     /**
