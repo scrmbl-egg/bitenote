@@ -78,8 +78,8 @@ class BiteNoteSQLiteTableHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "body MEDIUMTEXT NOT NULL DEFAULT ''," +
-                "budget INTEGER," +
-                "diners INTEGER" +
+                "budget INTEGER NOT NULL," +
+                "diners INTEGER NOT NULL," +
                 "creation_date DATE NOT NULL" +
                 ");";
 
