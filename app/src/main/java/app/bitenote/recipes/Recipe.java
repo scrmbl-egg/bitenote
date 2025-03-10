@@ -131,7 +131,7 @@ public class Recipe {
      * @return True if the utensil is present.
      */
     public boolean containsUtensil(int utensilId) {
-        return (utensilFlags & utensilId) != 0;
+        return (utensilFlags & 1 << utensilId) != 0;
     }
 
     /**
