@@ -146,8 +146,8 @@ public class Recipe {
 
     /**
      * Gets the ingredients of the recipe.
-     * @return The HashMap instance of the ingredients. The key representing the ingredient ID, and
-     * the value representing the amount of that ingredient.
+     * @return An unmodifiable map view of the ingredients. The key represents the ingredient ID,
+     * and the value represents the amount of that ingredient.
      */
     public Map<Integer, Float> getIngredients() {
         return Collections.unmodifiableMap(ingredients);
