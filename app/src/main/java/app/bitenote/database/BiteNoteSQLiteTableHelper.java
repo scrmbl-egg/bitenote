@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Stack;
 
 import app.bitenote.R;
 
@@ -19,10 +20,22 @@ import app.bitenote.R;
  * @author Daniel N.
  */
 class BiteNoteSQLiteTableHelper {
+    static final String INGREDIENT_NAME_DELIMITER = ".";
+
     /**
      * Ingredient tag name.
      */
     static final String INGREDIENT_TAG = "ingredient";
+
+    /**
+     * Ingredient type tag name.
+     */
+    static final String INGREDIENT_TYPE_TAG = "type";
+
+    /**
+     * Ingredient subtype tag name.
+     */
+    static final String INGREDIENT_SUBTYPE_TAG = "subtype";
 
     /**
      * Name of the ingredient tag 'name' attribute.
@@ -264,6 +277,15 @@ class BiteNoteSQLiteTableHelper {
             @NonNull SQLiteDatabase database,
             @NonNull Context context
     ) {
+        /*
+        Ingredients are a special case when it comes to parsing their names. The name of an
+        ingredient should be prefixed with its type and/or subtype. For example:
+        for salmon, the name should be: "seafood.fish.salmon".
+        That is why, in this function we use a  stack to store the type, subtype and
+        ingredient name, so they can be joined.
+        */
+
+        final Stack<String> strStack = new Stack<>();
         final String sql = "INSERT INTO ingredients" +
                 "(name, measurement_id, can_be_measured_in_units) VALUES (?, ?, ?);";
 
@@ -275,15 +297,21 @@ class BiteNoteSQLiteTableHelper {
                     continue;
                 }
 
-                String tag = parser.getName();
-
-                if (!tag.equals(INGREDIENT_TAG)) {
-                    parser.next();
-                    continue;
+                switch (parser.getName()) {
+                    case INGREDIENT_TAG:
+                        strStack.push(parser.getAttributeValue(null, INGREDIENT_NAME_ATTRIBUTE));
+                        break;
+                    case INGREDIENT_TYPE_TAG:
+                        strStack.clear();
+                    case INGREDIENT_SUBTYPE_TAG:
+                        strStack.push(parser.getAttributeValue(null, INGREDIENT_NAME_ATTRIBUTE));
+                    default:
+                        parser.next();
+                        continue;
                 }
 
                 Object[] args = {
-                        parser.getAttributeValue(null, INGREDIENT_NAME_ATTRIBUTE),
+                        String.join(INGREDIENT_NAME_DELIMITER, strStack),
                         getMeasurementTypeIdFromName(
                                 database,
                                 parser.getAttributeValue(null, INGREDIENT_MEASUREMENT_ATTRIBUTE)
@@ -295,6 +323,7 @@ class BiteNoteSQLiteTableHelper {
                         )
                 };
 
+                strStack.pop();
                 database.execSQL(sql, args);
                 parser.next();
             }
