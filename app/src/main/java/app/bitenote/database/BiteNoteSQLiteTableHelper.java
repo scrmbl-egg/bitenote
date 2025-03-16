@@ -64,6 +64,8 @@ class BiteNoteSQLiteTableHelper {
      * @param database SQLiteDatabase instance.
      */
     static void createTables(@NonNull SQLiteDatabase database) {
+        Log.d(null, "Creating database tables...");
+
         final String createUtensilsTable = "CREATE TABLE utensils (" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
@@ -143,6 +145,8 @@ class BiteNoteSQLiteTableHelper {
             @NonNull SQLiteDatabase database,
             @NonNull Context context
     ) {
+        Log.d(null, "Populating immutable tables...");
+
         populateUtensilsTable(database, context);
         populateMeasurementTypesTable(database, context);
         populateIngredientsTable(database, context);
