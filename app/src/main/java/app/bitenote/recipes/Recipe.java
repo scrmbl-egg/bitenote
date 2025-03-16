@@ -38,7 +38,7 @@ public class Recipe {
     public final Calendar creationDate;
 
     /**
-     * Ingredient HashMap. The key is the ingredient id, and the value stores the amount of that
+     * Ingredient HashMap. The key is the ingredient ID, and the value stores the amount of that
      * ingredient.
      */
     private final HashMap<Integer, Float> ingredients;
@@ -67,7 +67,7 @@ public class Recipe {
      *
      * @param name Title of the recipe.
      * @param body Body text of the recipe.
-     * @param ingredients Recipe ingredients.
+     * @param ingredients Recipe ingredients HashMap.
      * @param creationDate Date when the recipe was created.
      * @param utensilFlags Recipe utensil flags.
      * @param budget Necessary budget for the recipe.
@@ -173,7 +173,16 @@ public class Recipe {
     /**
      * Removes all ingredients from the recipe.
      */
-    public void removeAllIngredients() {
+    public void clearIngredients() {
         ingredients.clear();
+    }
+
+    /**
+     * Checks if an ingredient is present in the recipe.
+     * @param ingredientId ID of the ingredient.
+     * @return True if the recipe contains the ingredient.
+     */
+    public boolean containsIngredient(int ingredientId) {
+        return ingredients.containsKey(ingredientId);
     }
 }
