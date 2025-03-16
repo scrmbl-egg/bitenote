@@ -3,6 +3,7 @@ package app.bitenote.database;
 import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -108,12 +109,21 @@ class BiteNoteSQLiteTableHelper {
                 "FOREIGN KEY (utensil_id) REFERENCES utensils(id)" +
                 ");";
 
-        database.execSQL(createUtensilsTable);
-        database.execSQL(createMeasurementTypesTable);
-        database.execSQL(createRecipesTable);
-        database.execSQL(createIngredientsTable);
-        database.execSQL(createRecipeIngredientsTable);
-        database.execSQL(createRecipeUtensilsTable);
+        database.beginTransaction();
+        try {
+            database.execSQL(createUtensilsTable);
+            database.execSQL(createMeasurementTypesTable);
+            database.execSQL(createRecipesTable);
+            database.execSQL(createIngredientsTable);
+            database.execSQL(createRecipeIngredientsTable);
+            database.execSQL(createRecipeUtensilsTable);
+
+            database.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
+        }
     }
 
     /**
@@ -128,12 +138,21 @@ class BiteNoteSQLiteTableHelper {
         String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipe_ingredients;";
         String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipe_utensils;";
 
-        database.execSQL(dropUtensilsTable);
-        database.execSQL(dropMeasurementTypesTable);
-        database.execSQL(dropRecipesTable);
-        database.execSQL(dropIngredientsTable);
-        database.execSQL(dropRecipeIngredientsTable);
-        database.execSQL(dropRecipeUtensilsTable);
+        database.beginTransaction();
+        try {
+            database.execSQL(dropUtensilsTable);
+            database.execSQL(dropMeasurementTypesTable);
+            database.execSQL(dropRecipesTable);
+            database.execSQL(dropIngredientsTable);
+            database.execSQL(dropRecipeIngredientsTable);
+            database.execSQL(dropRecipeUtensilsTable);
+
+            database.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
+        }
     }
 
     /**
@@ -163,6 +182,7 @@ class BiteNoteSQLiteTableHelper {
     ) {
         final String sql = "INSERT INTO utensils(name) VALUES (?);";
 
+        database.beginTransaction();
         try (final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -183,8 +203,12 @@ class BiteNoteSQLiteTableHelper {
 
                 database.execSQL(sql, args);
             }
+
+            database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
         }
     }
 
@@ -199,6 +223,7 @@ class BiteNoteSQLiteTableHelper {
     ) {
         final String sql = "INSERT INTO measurement_types(name) VALUES (?);";
 
+        database.beginTransaction();
         try (final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -219,8 +244,12 @@ class BiteNoteSQLiteTableHelper {
 
                 database.execSQL(sql, args);
             }
+
+            database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
         }
     }
 
@@ -234,9 +263,9 @@ class BiteNoteSQLiteTableHelper {
             @NonNull Context context
     ) {
         final String sql = "INSERT INTO ingredients" +
-                "(name, measurement_id, can_be_measured_in_units) " +
-                "VALUES (?, ?, ?);";
+                "(name, measurement_id, can_be_measured_in_units) VALUES (?, ?, ?);";
 
+        database.beginTransaction();
         try (final XmlResourceParser parser = context.getResources().getXml(R.xml.ingredients)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -266,11 +295,14 @@ class BiteNoteSQLiteTableHelper {
 
                 database.execSQL(sql, args);
             }
+
+            database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
         }
 
-        database.execSQL(sql);
     }
 
     /**
