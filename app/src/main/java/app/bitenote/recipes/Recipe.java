@@ -1,12 +1,16 @@
 package app.bitenote.recipes;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents an instance of a recipe. It stores the text contents of the recipe, and relevant
@@ -44,9 +48,9 @@ public class Recipe {
     private final HashMap<Integer, Float> ingredients;
 
     /**
-     * Utensil flags.
+     * Utensil HashSet. Each element is an utensil ID.
      */
-    private int utensilFlags;
+    private final HashSet<Integer> utensils;
 
     /**
      * Basic Recipe constructor. Creates a new Recipe instance, with its creation date set to the
@@ -56,7 +60,7 @@ public class Recipe {
         this.name = "";
         this.body = "";
         this.ingredients = new HashMap<>();
-        this.utensilFlags = 0;
+        this.utensils = new HashSet<>();
         this.budget = 0;
         this.diners = 0;
         this.creationDate = Calendar.getInstance();
@@ -69,7 +73,7 @@ public class Recipe {
      * @param body Body text of the recipe.
      * @param ingredients Recipe ingredients HashMap.
      * @param creationDate Date when the recipe was created.
-     * @param utensilFlags Recipe utensil flags.
+     * @param utensils Recipe utensil HashSet.
      * @param budget Necessary budget for the recipe.
      * @param diners Amount of diners the recipe is designed for.
      */
@@ -78,7 +82,7 @@ public class Recipe {
             @NonNull String body,
             @NonNull HashMap<Integer, Float> ingredients,
             @NonNull Calendar creationDate,
-            int utensilFlags,
+            @NonNull HashSet<Integer> utensils,
             int budget,
             int diners
     ) {
@@ -86,7 +90,7 @@ public class Recipe {
         this.body = body;
         this.ingredients = ingredients;
         this.creationDate = creationDate;
-        this.utensilFlags = utensilFlags;
+        this.utensils = utensils;
         this.budget = budget;
         this.diners = diners;
     }
@@ -105,34 +109,41 @@ public class Recipe {
     }
 
     /**
-     * Gets the utensil flags of the recipe.
-     * @return An integer where the recipe's utensil bit flags are stored.
+     * Gets the utensils of the recipe.
+     * @return An unmodifiable set view of the utensils. Each element represents an ID of an
+     * utensil.
      */
-    public int getUtensilFlags() {
-        return utensilFlags;
+    public Set<Integer> getUtensils() {
+        return Collections.unmodifiableSet(utensils);
     }
 
     /**
      * Adds an utensil to the recipe.
-     * @param utensilId ID of the utensil to be added.
+     * @param utensilId ID of the utensil.
      */
     public void addUtensil(int utensilId) {
-        utensilFlags |= 1 << utensilId;
+        final boolean addedId = utensils.add(utensilId);
+        if (!addedId) {
+            Log.w(null, "Attempted to add an utensil that was already present.");
+        }
     }
 
     /**
      * Removes an utensil from the recipe.
-     * @param utensilId ID of the utensil to be removed.
+     * @param utensilId ID of the utensil.
      */
     public void removeUtensil(int utensilId) {
-        utensilFlags &= ~(1 << utensilId);
+        final boolean containedId = utensils.remove(utensilId);
+        if (!containedId) {
+            Log.w(null, "Attempted to remove an utensil that wasn't present.");
+        }
     }
 
     /**
      * Removes all utensils from the recipe.
      */
     public void clearUtensils() {
-        utensilFlags = 0;
+        utensils.clear();
     }
 
     /**
@@ -141,7 +152,7 @@ public class Recipe {
      * @return True if the utensil is present.
      */
     public boolean containsUtensil(int utensilId) {
-        return (utensilFlags & 1 << utensilId) != 0;
+        return utensils.contains(utensilId);
     }
 
     /**
