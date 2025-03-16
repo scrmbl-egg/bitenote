@@ -158,9 +158,8 @@ class BiteNoteSQLiteTableHelper {
             @NonNull Context context
     ) {
         final String sql = "INSERT INTO utensils(name) VALUES (?);";
-        final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils);
 
-        try {
+        try (final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     parser.next();
@@ -195,9 +194,8 @@ class BiteNoteSQLiteTableHelper {
             @NonNull Context context
     ) {
         final String sql = "INSERT INTO measurement_types(name) VALUES (?);";
-        final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils);
 
-        try {
+        try (final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     parser.next();
@@ -234,9 +232,8 @@ class BiteNoteSQLiteTableHelper {
         final String sql = "INSERT INTO ingredients" +
                 "(name, measurement_id, can_be_measured_in_units) " +
                 "VALUES (?, ?, ?);";
-        final XmlResourceParser parser = context.getResources().getXml(R.xml.ingredients);
 
-        try {
+        try (final XmlResourceParser parser = context.getResources().getXml(R.xml.ingredients)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     parser.next();
@@ -288,12 +285,16 @@ class BiteNoteSQLiteTableHelper {
         };
         Integer result = null;
 
-        final Cursor cursor = database.rawQuery(sql, args);
-        if (cursor.moveToFirst()) {
+        try (final Cursor cursor = database.rawQuery(sql, args)) {
+            if (!cursor.moveToFirst()) {
+                return Optional.empty();
+            }
+
             result = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         }
 
-        cursor.close();
         return Optional.ofNullable(result);
     }
 }
