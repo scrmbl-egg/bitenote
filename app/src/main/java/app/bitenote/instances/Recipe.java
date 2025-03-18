@@ -1,4 +1,4 @@
-package app.bitenote.recipes;
+package app.bitenote.instances;
 
 import android.util.Log;
 

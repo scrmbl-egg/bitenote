@@ -9,7 +9,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.Optional;
 
-import app.bitenote.recipes.Recipe;
+import app.bitenote.instances.Recipe;
 
 /**
  * Instance of an SQLite interface for creating, reading, updating and deleting tables in the
