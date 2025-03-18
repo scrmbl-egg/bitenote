@@ -49,6 +49,12 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
+    @Override
+    public void onConfigure(@NonNull SQLiteDatabase database) {
+        super.onConfigure(database);
+        database.enableWriteAheadLogging();
+    }
+
     /**
      * Constructor for the SQLite recipes interface.
      * @param context Context.
