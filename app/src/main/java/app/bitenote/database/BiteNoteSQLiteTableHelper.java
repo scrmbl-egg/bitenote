@@ -245,19 +245,14 @@ class BiteNoteSQLiteTableHelper {
                     continue;
                 }
 
-                switch (parser.getName()) {
-                    case INGREDIENT_TAG:
-                        strStack.push(parser.getAttributeValue(null, INGREDIENT_NAME_ATTRIBUTE));
-                        break;
-                    case INGREDIENT_TYPE_TAG:
-                        strStack.clear();
-                    case INGREDIENT_SUBTYPE_TAG:
-                        strStack.push(parser.getAttributeValue(null, INGREDIENT_NAME_ATTRIBUTE));
-                    default:
-                        parser.next();
-                        continue;
+                // handle type, subtype, or ingredient tags
+                final boolean isIngredientTag = handleIngredientStringStack(parser, strStack);
+                if (!isIngredientTag) {
+                    parser.next();
+                    continue;
                 }
 
+                // when its an ingredient, get all its attributes
                 Object[] args = {
                         String.join(Ingredient.NAME_DELIMITER, strStack),
                         getMeasurementTypeIdFromName(
@@ -274,7 +269,7 @@ class BiteNoteSQLiteTableHelper {
                         )
                 };
 
-                strStack.pop();
+                strStack.pop(); // pop last stack string for next ingredient
                 database.execSQL(sql, args);
                 parser.next();
             }
@@ -284,6 +279,45 @@ class BiteNoteSQLiteTableHelper {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         } finally {
             database.endTransaction();
+        }
+    }
+
+    /**
+     *
+     * @param parser {@link XmlResourceParser} instance.
+     * @param strStack {@link Stack} instance where the
+     * @return {@code true} if the last tag was an 'ingredient' tag.
+     */
+    private static boolean handleIngredientStringStack(
+            @NonNull XmlResourceParser parser,
+            @NonNull Stack<String> strStack
+    ) {
+        switch (parser.getName()) {
+            case Ingredient.XML_TYPE_TAG:
+                /// in case of type tag, clear stack and push type name
+                strStack.clear();
+                strStack.push(parser.getAttributeValue(
+                        null,
+                        Ingredient.XML_TYPE_NAME_ATTRIBUTE
+                ));
+                return false;
+            case Ingredient.XML_SUBTYPE_TAG:
+                /// in case of subtype tag, pop stack and push subtype name
+                strStack.pop();
+                strStack.push(parser.getAttributeValue(
+                        null,
+                        Ingredient.XML_SUBTYPE_NAME_ATTRIBUTE
+                ));
+                return false;
+            case Ingredient.XML_TAG:
+                /// in case of ingredient tag, push name
+                strStack.push(parser.getAttributeValue(
+                        null,
+                        Ingredient.XML_NAME_ATTRIBUTE
+                ));
+                return true;
+            default:
+                return false;
         }
     }
 
