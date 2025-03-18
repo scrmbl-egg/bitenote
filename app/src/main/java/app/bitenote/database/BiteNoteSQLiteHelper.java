@@ -89,8 +89,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
         final SQLiteDatabase database = getWritableDatabase();
         final String delRecipeSql = "DELETE FROM recipes WHERE id = ?;";
-        final String delRecipeIngredientsSql = "DELETE FROM recipeIngredients where recipe_id = ?;";
-        final String delRecipeUtensilsSql = "DELETE FROM recipeUtensils where recipe_id = ?;";
+        final String delRecipeIngredientsSql = "DELETE FROM recipe_ingredients where recipe_id = ?;";
+        final String delRecipeUtensilsSql = "DELETE FROM recipe_utensils where recipe_id = ?;";
         final Object[] args = {recipeId};
 
         database.beginTransaction();
