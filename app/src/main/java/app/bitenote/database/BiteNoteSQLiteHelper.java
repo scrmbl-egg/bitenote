@@ -53,7 +53,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     public BiteNoteSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        // SQLiteHelper doesn't expose its context, so it must be referenced again.
+        // SQLiteOpenHelper doesn't expose its context, so it must be referenced again.
         this.context = context;
     }
 
