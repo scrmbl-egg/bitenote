@@ -87,17 +87,24 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     public void deleteRecipe(int recipeId) {
         assert recipeId != 0 : "Recipe ID can't be 0.";
 
+        final SQLiteDatabase database = getWritableDatabase();
         final String delRecipeSql = "DELETE FROM recipes WHERE id = ?;";
         final String delRecipeIngredientsSql = "DELETE FROM recipeIngredients where recipe_id = ?;";
         final String delRecipeUtensilsSql = "DELETE FROM recipeUtensils where recipe_id = ?;";
         final Object[] args = {recipeId};
 
-        try (final SQLiteDatabase database = getWritableDatabase()) {
+        database.beginTransaction();
+        try {
             database.execSQL(delRecipeSql, args);
             database.execSQL(delRecipeIngredientsSql, args);
             database.execSQL(delRecipeUtensilsSql, args);
+
+            database.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
+            database.close();
         }
     }
 
@@ -221,7 +228,15 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         final String[] queryArgs = {};
 
         // insert row
-        writeableDatabase.execSQL(insertionSql, insertionArgs);
+        writeableDatabase.beginTransaction();
+        try {
+            writeableDatabase.execSQL(insertionSql, insertionArgs);
+            writeableDatabase.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        } finally {
+            writeableDatabase.endTransaction();
+        }
 
         // get (nullable) id
         try (final Cursor cursor = writeableDatabase.rawQuery(querySql, queryArgs)) {
