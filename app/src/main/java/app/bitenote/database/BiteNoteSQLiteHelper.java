@@ -9,7 +9,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.Optional;
 
+import app.bitenote.instances.Ingredient;
+import app.bitenote.instances.MeasurementType;
 import app.bitenote.instances.Recipe;
+import app.bitenote.instances.Utensil;
 
 /**
  * Instance of an SQLite interface for creating, reading, updating and deleting tables in the
@@ -96,6 +99,102 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         } catch (SQLException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         }
+    }
+
+    /**
+     * Gets an {@link Ingredient} instance from its table row ID.
+     * @param ingredientId ID of the ingredient.
+     * @return An {@link Ingredient} instance that represents the queried row.
+     */
+    public Optional<Ingredient> getIngredientFromId(int ingredientId) {
+        assert ingredientId != 0 : "Ingredient ID can't be 0.";
+
+        final String sql = "SELECT * FROM ingredients WHERE id = ? ORDER BY id ASC LIMIT 1;";
+        final String[] args = {String.valueOf(ingredientId)};
+        Ingredient ingredient = null;
+
+        /// transaction isn't necessary here
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) {
+                return Optional.empty();
+            }
+
+            String fullName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            int measurementId = cursor.getInt(cursor.getColumnIndexOrThrow("measurement_id"));
+            boolean canBeMeasuredInUnits =
+                    cursor.getInt(cursor.getColumnIndexOrThrow("can_be_measured_in_units")) != 0;
+
+            ingredient = new Ingredient(fullName, measurementId, canBeMeasuredInUnits);
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        }
+
+        return Optional.ofNullable(ingredient);
+    }
+
+    /**
+     * Gets a {@link MeasurementType} instance from its table row ID.
+     * @param measurementTypeId ID of the ingredient.
+     * @return An {@link MeasurementType} instance that represents the queried row.
+     */
+    public Optional<MeasurementType> getMeasurementTypeFromId(int measurementTypeId) {
+        assert measurementTypeId != 0 : "Measurement type ID can't be 0.";
+
+        final String sql = "SELECT * FROM measurement_types WHERE id = ? ORDER BY id ASC LIMIT 1;";
+        final String[] args = {String.valueOf(measurementTypeId)};
+        MeasurementType measurementType = null;
+
+        /// transaction isn't necessary here
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) {
+                return Optional.empty();
+            }
+
+            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+
+            measurementType = new MeasurementType(name);
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        }
+
+        return Optional.ofNullable(measurementType);
+    }
+
+    /**
+     * Gets an {@link Utensil} instance from its table row ID.
+     * @param utensilId ID of the ingredient.
+     * @return An {@link Utensil} instance that represents the queried row.
+     */
+    public Optional<Utensil> getUtensilFromId(int utensilId) {
+        assert utensilId != 0 : "Measurement type ID can't be 0.";
+
+        final String sql = "SELECT * FROM utensils WHERE id = ? ORDER BY id ASC LIMIT 1;";
+        final String[] args = {String.valueOf(utensilId)};
+        Utensil utensil = null;
+
+        /// transaction isn't necessary here
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) {
+                return Optional.empty();
+            }
+
+            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+
+            utensil = new Utensil(name);
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        }
+
+        return Optional.ofNullable(utensil);
     }
 
     /**
