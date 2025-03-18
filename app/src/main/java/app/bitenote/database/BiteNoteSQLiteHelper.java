@@ -81,7 +81,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Deletes a recipe from the database.
+     * Deletes a row from the 'recipes' table in the database, along with rows in other tables that
+     * reference it.
      * @param recipeId Recipe ID.
      */
     public void deleteRecipe(int recipeId) {
