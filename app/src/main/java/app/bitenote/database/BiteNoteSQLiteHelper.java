@@ -63,7 +63,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Inserts a new recipe into the database and returns its ID.
      * @param recipe Recipe instance.
-     * @return An Optional instance that wraps the nullable ID.
+     * @return An {@link Optional} instance that wraps the nullable ID.
      */
     public Optional<Integer> insertRecipe(@NonNull Recipe recipe) {
         try (final SQLiteDatabase database = getWritableDatabase()) {
