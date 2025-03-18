@@ -14,65 +14,15 @@ import java.util.Optional;
 import java.util.Stack;
 
 import app.bitenote.R;
+import app.bitenote.instances.Ingredient;
+import app.bitenote.instances.MeasurementType;
+import app.bitenote.instances.Utensil;
 
 /**
  * Helper package class to handle immutable table initialisation and XML parsing.
  * @author Daniel N.
  */
 class BiteNoteSQLiteTableHelper {
-    static final String INGREDIENT_NAME_DELIMITER = ".";
-
-    /**
-     * Ingredient tag name.
-     */
-    static final String INGREDIENT_TAG = "ingredient";
-
-    /**
-     * Ingredient type tag name.
-     */
-    static final String INGREDIENT_TYPE_TAG = "type";
-
-    /**
-     * Ingredient subtype tag name.
-     */
-    static final String INGREDIENT_SUBTYPE_TAG = "subtype";
-
-    /**
-     * Name of the ingredient tag 'name' attribute.
-     */
-    static final String INGREDIENT_NAME_ATTRIBUTE = "name";
-
-    /**
-     * Name of the ingredient tag 'measurement' attribute.
-     */
-    static final String INGREDIENT_MEASUREMENT_ATTRIBUTE = "measurement";
-
-    /**
-     * Name of the ingredient tag 'can_be_measured_in_units' attribute.
-     */
-    static final String INGREDIENT_CAN_BE_MEASURED_IN_UNITS_ATTRIBUTE =
-            "can_be_measured_in_units";
-
-    /**
-     * Utensil tag name.
-     */
-    static final String UTENSIL_TAG = "utensil";
-
-    /**
-     * Name of the utensil tag 'name' attribute.
-     */
-    static final String UTENSIL_NAME_ATTRIBUTE = "name";
-
-    /**
-     * Measurement type tag name.
-     */
-    static final String MEASUREMENT_TYPE_TAG = "type";
-
-    /**
-     * Name of the measurement type tag 'name' attribute.
-     */
-    static final String MEASUREMENT_TYPE_NAME_ATTRIBUTE = "name";
-
     /**
      * Creates all tables in the database.
      * @param database SQLiteDatabase instance.
@@ -204,15 +154,13 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 String tag = parser.getName();
-                if (!tag.equals(UTENSIL_TAG)) {
+                if (!tag.equals(Utensil.XML_TAG)) {
                     parser.next();
                     continue;
                 }
 
                 // alloc array for sql args
-                Object[] args = {
-                        parser.getAttributeValue(null, UTENSIL_NAME_ATTRIBUTE)
-                };
+                Object[] args = {parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)};
 
                 database.execSQL(sql, args);
             }
@@ -246,14 +194,14 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 String tag = parser.getName();
-                if (!tag.equals(MEASUREMENT_TYPE_TAG)) {
+                if (!tag.equals(MeasurementType.XML_TAG)) {
                     parser.next();
                     continue;
                 }
 
                 // alloc array for sql args
                 Object[] args = {
-                        parser.getAttributeValue(null, MEASUREMENT_TYPE_NAME_ATTRIBUTE)
+                        parser.getAttributeValue(null, MeasurementType.XML_NAME_ATTRIBUTE)
                 };
 
                 database.execSQL(sql, args);
@@ -311,14 +259,17 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 Object[] args = {
-                        String.join(INGREDIENT_NAME_DELIMITER, strStack),
+                        String.join(Ingredient.NAME_DELIMITER, strStack),
                         getMeasurementTypeIdFromName(
                                 database,
-                                parser.getAttributeValue(null, INGREDIENT_MEASUREMENT_ATTRIBUTE)
+                                parser.getAttributeValue(
+                                        null,
+                                        Ingredient.XML_MEASUREMENT_TYPE_ATTRIBUTE
+                                )
                         ).orElse(0),
                         parser.getAttributeBooleanValue(
                                 null,
-                                INGREDIENT_CAN_BE_MEASURED_IN_UNITS_ATTRIBUTE,
+                                Ingredient.XML_CAN_BE_MEASURED_IN_UNITS_ATTRIBUTE,
                                 false
                         )
                 };
