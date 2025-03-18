@@ -273,15 +273,24 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         final String sql = "INSERT INTO recipe_ingredients(recipe_id, ingredient_id, amount)" +
                 "VALUES (?, ?, ?);";
 
-        recipeInstance.getIngredients().forEach((ingredientId, amount) -> {
-            final Object[] args = {
-                    recipeId,
-                    ingredientId,
-                    amount
-            };
+        writeableDatabase.beginTransaction();
+        try {
+            recipeInstance.getIngredients().forEach((ingredientId, amount) -> {
+                final Object[] args = {
+                        recipeId,
+                        ingredientId,
+                        amount
+                };
 
-            writeableDatabase.execSQL(sql, args);
-        });
+                writeableDatabase.execSQL(sql, args);
+            });
+
+            writeableDatabase.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        } finally {
+            writeableDatabase.endTransaction();
+        }
     }
 
     /**
@@ -297,13 +306,22 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     ) {
         final String sql = "INSERT INTO recipe_utensils(recipe_id, utensil_id) VALUES (?, ?);";
 
-        recipeInstance.getUtensils().forEach((utensilId) -> {
-            final Object[] args = {
-                    recipeId,
-                    utensilId
-            };
+        writeableDatabase.beginTransaction();
+        try {
+            recipeInstance.getUtensils().forEach((utensilId) -> {
+                final Object[] args = {
+                        recipeId,
+                        utensilId
+                };
 
-            writeableDatabase.execSQL(sql, args);
-        });
+                writeableDatabase.execSQL(sql, args);
+            });
+
+            writeableDatabase.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        } finally {
+            writeableDatabase.endTransaction();
+        }
     }
 }
