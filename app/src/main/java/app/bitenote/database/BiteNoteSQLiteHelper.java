@@ -90,7 +90,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
         final SQLiteDatabase database = getWritableDatabase();
         final String delRecipeSql = "DELETE FROM recipes WHERE id = ?;";
-        final String delRecipeIngredientsSql = "DELETE FROM recipe_ingredients where recipe_id = ?;";
+        final String delRecipeIngredientsSql =
+                "DELETE FROM recipe_ingredients where recipe_id = ?;";
         final String delRecipeUtensilsSql = "DELETE FROM recipe_utensils where recipe_id = ?;";
         final Object[] args = {recipeId};
 
@@ -180,7 +181,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @return An {@link Utensil} instance that represents the queried row.
      */
     public Optional<Utensil> getUtensilFromId(int utensilId) {
-        assert utensilId != 0 : "Measurement type ID can't be 0.";
+        assert utensilId != 0 : "Utensil ID can't be 0.";
 
         final String sql = "SELECT * FROM utensils WHERE id = ? ORDER BY id ASC LIMIT 1;";
         final String[] args = {String.valueOf(utensilId)};
@@ -263,7 +264,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             @NonNull Recipe recipeInstance,
             int recipeId
     ) {
-        final String sql = "INSERT INTO recipeIngredients(recipe_id, ingredient_id, amount)" +
+        final String sql = "INSERT INTO recipe_ingredients(recipe_id, ingredient_id, amount)" +
                 "VALUES (?, ?, ?);";
 
         recipeInstance.getIngredients().forEach((ingredientId, amount) -> {
@@ -288,7 +289,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             @NonNull Recipe recipeInstance,
             int recipeId
     ) {
-        final String sql = "INSERT INTO recipeUtensils(recipe_id, utensil_id) VALUES (?, ?);";
+        final String sql = "INSERT INTO recipe_utensils(recipe_id, utensil_id) VALUES (?, ?);";
 
         recipeInstance.getUtensils().forEach((utensilId) -> {
             final Object[] args = {
