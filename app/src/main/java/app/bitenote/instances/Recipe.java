@@ -1,14 +1,11 @@
 package app.bitenote.instances;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.sql.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +36,7 @@ public class Recipe {
     /**
      * Date when the recipe was created.
      */
-    public final Calendar creationDate;
+    public final Date creationDate;
 
     /**
      * Ingredient HashMap. The key is the ingredient ID, and the value stores the amount of that
@@ -63,7 +60,7 @@ public class Recipe {
         this.utensils = new HashSet<>();
         this.budget = 0;
         this.diners = 0;
-        this.creationDate = Calendar.getInstance();
+        this.creationDate = new Date(System.currentTimeMillis());
     }
 
     /**
@@ -81,31 +78,18 @@ public class Recipe {
             @NonNull String name,
             @NonNull String body,
             @NonNull HashMap<Integer, Float> ingredients,
-            @NonNull Calendar creationDate,
             @NonNull HashSet<Integer> utensils,
+            @NonNull Date creationDate,
             int budget,
             int diners
     ) {
         this.name = name;
         this.body = body;
         this.ingredients = ingredients;
-        this.creationDate = creationDate;
         this.utensils = utensils;
+        this.creationDate = creationDate;
         this.budget = budget;
         this.diners = diners;
-    }
-
-    /**
-     * Gets the creation date in a format which can be passed as an SQL argument.
-     * @return A string representation of the creation date in the "yyyy-MM-dd" format.
-     */
-    public String getCreationDateAsSQLDateString() {
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd",
-                Locale.getDefault()
-        );
-
-        return simpleDateFormat.format(creationDate.getTime());
     }
 
     /**

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import java.sql.Date;
 import java.util.Optional;
 
 import app.bitenote.instances.Ingredient;
@@ -229,7 +230,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 recipe.body,
                 recipe.budget,
                 recipe.diners,
-                recipe.getCreationDateAsSQLDateString()
+                recipe.creationDate.toString()
         };
         // this query string should get the last inserted recipe id
         final String querySql = "SELECT id FROM recipes ORDER BY id DESC LIMIT 1;";
