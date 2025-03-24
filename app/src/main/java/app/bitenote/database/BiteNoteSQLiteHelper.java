@@ -59,7 +59,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Constructor for the SQLite recipes interface.
      * @param context Context.
      */
-    public BiteNoteSQLiteHelper(Context context) {
+    public BiteNoteSQLiteHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
         // SQLiteOpenHelper doesn't expose its context, so it must be referenced again.
