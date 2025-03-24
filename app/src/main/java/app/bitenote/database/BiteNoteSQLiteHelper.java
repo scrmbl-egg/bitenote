@@ -100,6 +100,34 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Updates a recipe row from the database and all other rows that reference it.
+     * @param recipeId Recipe ID.
+     * @param recipeInstance {@link Recipe} instance which holds the new data for the row.
+     */
+    public void updateRecipe(int recipeId, @NonNull Recipe recipeInstance) {
+        assert recipeId != 0 : "Recipe ID can't be 0";
+
+        /*
+         * For this function, we update the 'recipes' table row, however, we delete and reinsert
+         * other table rows that reference the recipe ID.
+         *
+         * No transaction is necessary here, since all operations in the called functions are
+         * wrapped by transactions themselves.
+         */
+        try (final SQLiteDatabase database = getWritableDatabase()) {
+            updateRecipeRow(database, recipeInstance, recipeId);
+
+            /// delete and reinsert ingredients
+            deleteRecipeIngredientRows(database, recipeId);
+            insertRecipeInstanceIngredients(database, recipeInstance, recipeId);
+
+            /// delete and reinsert utensils
+            deleteRecipeUtensilRows(database, recipeId);
+            insertRecipeInstanceUtensils(database, recipeInstance, recipeId);
+        }
+    }
+
+    /**
      * Deletes a row from the 'recipes' table in the database, along with rows in other tables that
      * reference it.
      * @param recipeId Recipe ID.
@@ -291,6 +319,42 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Updates a row in the 'recipes' table.
+     * @param writeableDatabase {@link SQLiteDatabase} instance.
+     * @param recipeInstance {@link Recipe} instance which holds the new data for the row.
+     * @param recipeId ID of the recipe.
+     */
+    private static void updateRecipeRow(
+            @NonNull SQLiteDatabase writeableDatabase,
+            @NonNull Recipe recipeInstance,
+            int recipeId
+    ) {
+        final String[] updateRecipeStatements = {
+                "UPDATE recipes SET name = ? WHERE id = ?;",
+                "UPDATE recipes SET body = ? WHERE id = ?;",
+                "UPDATE recipes SET budget = ? WHERE id = ?",
+                "UPDATE recipes SET diners = ? WHERE id = ?"
+        };
+        final Object[][] updateRecipeArgs = {
+                {recipeInstance.name, recipeId},
+                {recipeInstance.body, recipeId},
+                {recipeInstance.budget, recipeId},
+                {recipeInstance.diners, recipeId},
+        };
+        writeableDatabase.beginTransaction();
+        try {
+            for (int i = 0; i < updateRecipeStatements.length; i++) {
+                writeableDatabase.execSQL(updateRecipeStatements[i], updateRecipeArgs[i]);
+            }
+            writeableDatabase.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            writeableDatabase.endTransaction();
+        }
+    }
+
+    /**
      * Inserts a row in the 'recipeIngredients' SQLite table.
      * @param writeableDatabase Writeable SQLiteDatabase instance.
      * @param recipeInstance Instance of the recipe.
@@ -390,5 +454,98 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         }
 
         return Optional.ofNullable(recipe);
+    }
+
+    /**
+     * Inserts rows in the 'recipe_ingredients' table with the data from the
+     * {@link Recipe#ingredients} map.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param recipeInstance {@link Recipe} instance.
+     * @param recipeId ID of the recipe.
+     */
+    private static void insertRecipeInstanceIngredients(
+            @NonNull SQLiteDatabase database,
+            @NonNull Recipe recipeInstance,
+            int recipeId
+    ) {
+        final String sql = "SELECT * FROM recipe_ingredients WHERE recipe_id = ? " +
+                "ORDER BY recipe_id ASC;";
+        final String[] args = {String.valueOf(recipeId)};
+
+        try (final Cursor cursor = database.rawQuery(sql, args)) {
+            if (!cursor.moveToFirst()) return;
+
+            do {
+                int ingredientId = cursor.getInt(cursor.getColumnIndexOrThrow("ingredient_id"));
+                float amount = cursor.getFloat(cursor.getColumnIndexOrThrow("amount"));
+
+                recipeInstance.putIngredient(ingredientId, amount);
+            } while (cursor.moveToNext());
+        }
+    }
+
+    private static void deleteRecipeIngredientRows(
+            @NonNull SQLiteDatabase database,
+            int recipeId
+    ) {
+        final String sql = "DELETE FROM recipe_ingredients WHERE recipe_id = ?;";
+        final Object[] args = {recipeId};
+
+        database.beginTransaction();
+        try {
+            database.execSQL(sql, args);
+
+            database.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * Inserts rows in the 'recipe_utensils' table with the data from the {@link Recipe#utensils}
+     * set.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param recipeInstance {@link Recipe} instance.
+     * @param recipeId ID of the recipe.
+     */
+    private static void insertRecipeInstanceUtensils(
+            @NonNull SQLiteDatabase database,
+            @NonNull Recipe recipeInstance,
+            int recipeId
+    ) {
+        final String sql =
+                "SELECT * FROM recipe_utensils WHERE recipe_id = ? ORDER BY recipe_id ASC;";
+        final String[] args = {String.valueOf(recipeId)};
+
+        try (final Cursor cursor = database.rawQuery(sql, args)) {
+            if (!cursor.moveToFirst()) return;
+
+            do {
+                int utensilId = cursor.getInt(cursor.getColumnIndexOrThrow("utensil_id"));
+
+                recipeInstance.addUtensil(utensilId);
+            } while (cursor.moveToNext());
+        }
+    }
+
+    private static void deleteRecipeUtensilRows(
+            @NonNull SQLiteDatabase database,
+            int recipeId
+    ) {
+        final String sql = "DELETE FROM recipe_utensils WHERE recipe_id = ?;";
+        final Object[] args = {recipeId};
+
+        database.beginTransaction();
+        try {
+            database.execSQL(sql, args);
+
+            database.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        } finally {
+            database.endTransaction();
+        }
     }
 }
