@@ -226,12 +226,12 @@ class BiteNoteSQLiteTableHelper {
             @NonNull Context context
     ) {
         /*
-        Ingredients are a special case when it comes to parsing their names. The name of an
-        ingredient should be prefixed with its type and/or subtype. For example:
-        for salmon, the name should be: "seafood.fish.salmon".
-        That is why, in this function we use a  stack to store the type, subtype and
-        ingredient name, so they can be joined.
-        */
+         * Ingredients are a special case when it comes to parsing their names. The name of an
+         * ingredient should be prefixed with its type and/or subtype. For example:
+         * for salmon, the name should be: "seafood.fish.salmon".
+         * That is why, in this function we use a stack to store the type, subtype and
+         * ingredient name, so they can be joined.
+         */
 
         final Stack<String> strStack = new Stack<>();
         final String sql = "INSERT INTO ingredients" +
