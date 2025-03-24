@@ -130,7 +130,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets an {@link Ingredient} instance from its table row ID.
      * @param ingredientId ID of the ingredient.
-     * @return An {@link Ingredient} instance that represents the queried row.
+     * @return An {@link Optional} instance that wraps the obtained data.
      */
     public Optional<Ingredient> getIngredientFromId(int ingredientId) {
         assert ingredientId != 0 : "Ingredient ID can't be 0.";
@@ -164,7 +164,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets a {@link MeasurementType} instance from its table row ID.
      * @param measurementTypeId ID of the ingredient.
-     * @return An {@link MeasurementType} instance that represents the queried row.
+     * @return An {@link Optional} instance that wraps the obtained data.
      */
     public Optional<MeasurementType> getMeasurementTypeFromId(int measurementTypeId) {
         assert measurementTypeId != 0 : "Measurement type ID can't be 0.";
@@ -195,7 +195,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets an {@link Utensil} instance from its table row ID.
      * @param utensilId ID of the ingredient.
-     * @return An {@link Utensil} instance that represents the queried row.
+     * @return An {@link Optional} instance that wraps the obtained data.
      */
     public Optional<Utensil> getUtensilFromId(int utensilId) {
         assert utensilId != 0 : "Utensil ID can't be 0.";
