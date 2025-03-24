@@ -72,7 +72,13 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     public BiteNoteSQLiteHelper(@NonNull String databaseName, @NonNull Context context) {
         super(context, databaseName, null, DATABASE_VERSION);
 
-        // SQLiteOpenHelper doesn't expose its context, so it must be referenced again.
+        /*
+         * SQLiteOpenHelper doesn't expose its context, so it must be referenced again.
+         * We do this to call the BiteNoteSQLiteTableHelper functions, which need the application
+         * context because it needs a path to the XML's that hold the immutable tables' data.
+         * This SHOULD be safe because onCreate() isn't called until the getWriteableDatabase() or
+         * getReadableDatabase() functions are called for the first time.
+         */
         this.context = context;
     }
 
