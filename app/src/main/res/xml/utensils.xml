@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<utensils>
+    <utensil name="airFryer"/>
+    <utensil name="blender"/>
+    <utensil name="deepFryer"/>
+    <utensil name="grill"/>
+    <utensil name="microwave"/>
+    <utensil name="oven"/>
+    <utensil name="pan"/>
+    <utensil name="pot"/>
+    <utensil name="toaster"/>
+    <utensil name="barbecue"/>
+</utensils>
