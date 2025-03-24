@@ -82,20 +82,15 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Inserts a new recipe into the database and returns its ID.
      * @param recipe Recipe instance.
-     * @return An {@link Optional} instance that wraps the nullable ID.
+     * @return The ID of the inserted recipe.
      */
-    public Optional<Integer> insertRecipe(@NonNull Recipe recipe) {
+    public int insertRecipe(@NonNull Recipe recipe) {
         try (final SQLiteDatabase database = getWritableDatabase()) {
-            Optional<Integer> idOption = insertInRecipesTable(database, recipe);
+            int id = insertInRecipesTable(database, recipe);
+            insertInRecipeIngredientsTable(database, recipe, id);
+            insertInRecipeUtensilsTable(database, recipe, id);
 
-            if (idOption.isEmpty()) {
-                return Optional.empty();
-            }
-
-            insertInRecipeIngredientsTable(database, recipe, idOption.get());
-            insertInRecipeUtensilsTable(database, recipe, idOption.get());
-
-            return idOption;
+            return id;
         }
     }
 
@@ -229,9 +224,9 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Inserts a new recipe row in the 'recipes' SQLite table.
      * @param writeableDatabase SQLiteDatabase instance.
      * @param recipe Recipe instance.
-     * @return An Optional instance that wraps the nullable ID of the inserted recipe row.
+     * @return The ID of the inserted recipe.
      */
-    private static Optional<Integer> insertInRecipesTable(
+    private static int insertInRecipesTable(
             @NonNull SQLiteDatabase writeableDatabase,
             @NonNull Recipe recipe
     ) {
@@ -247,6 +242,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         // this query string should get the last inserted recipe id
         final String querySql = "SELECT id FROM recipes ORDER BY id DESC LIMIT 1;";
         final String[] queryArgs = {};
+        int id = 0;
 
         // insert row
         writeableDatabase.beginTransaction();
@@ -259,17 +255,16 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             writeableDatabase.endTransaction();
         }
 
-        // get (nullable) id
+        // get id
         try (final Cursor cursor = writeableDatabase.rawQuery(querySql, queryArgs)) {
-            if (!cursor.moveToFirst()) {
-                Log.e(null, "Couldn't get the recipe ID when inserting it.");
-                return Optional.empty();
-            }
+            cursor.moveToFirst(); // this operation should be guaranteed.
 
-            final int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-
-            return Optional.of(id);
+            id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
+
+        return id;
     }
 
     /**
