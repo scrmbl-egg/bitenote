@@ -8,6 +8,6 @@
     <utensil name="oven"/>
     <utensil name="pan"/>
     <utensil name="pot"/>
-    <utensil name="rollingPin"/>
     <utensil name="toaster"/>
+    <utensil name="barbecue"/>
 </utensils>
