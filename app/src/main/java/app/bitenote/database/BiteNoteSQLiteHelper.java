@@ -68,6 +68,18 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Constructor for the SQLite recipes interface with support for a custom name. Use this
+     * constructor for testing purposes only.
+     * @param context Context.
+     */
+    public BiteNoteSQLiteHelper(@NonNull String databaseName, @NonNull Context context) {
+        super(context, databaseName, null, DATABASE_VERSION);
+
+        // SQLiteOpenHelper doesn't expose its context, so it must be referenced again.
+        this.context = context;
+    }
+
+    /**
      * Inserts a new recipe into the database and returns its ID.
      * @param recipe Recipe instance.
      * @return An {@link Optional} instance that wraps the nullable ID.
