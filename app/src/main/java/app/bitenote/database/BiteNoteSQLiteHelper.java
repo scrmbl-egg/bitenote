@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
 
 import app.bitenote.instances.Ingredient;
@@ -124,6 +126,24 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         } finally {
             database.endTransaction();
             database.close();
+        }
+    }
+
+    /**
+     * Gets a {@link Recipe} instance from its table row ID.
+     * @param recipeId ID of the ingredient.
+     * @return An {@link Optional} instance that wraps the nullable ID.
+     */
+    public Optional<Recipe> getRecipeFromId(int recipeId) {
+        assert recipeId != 0 : "Recipe ID can't be 0";
+
+        try (final SQLiteDatabase database = getReadableDatabase()) {
+            final Optional<Recipe> recipeOption = getRecipeRowData(database, recipeId);
+            if (recipeOption.isEmpty()) {
+                return Optional.empty();
+            }
+
+            return recipeOption;
         }
     }
 
@@ -334,5 +354,41 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         } finally {
             writeableDatabase.endTransaction();
         }
+    }
+
+    /**
+     * Gets the data from a 'recipes' table row.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param recipeId ID of the recipe.
+     * @return An {@link Optional} instance that may contain the recipe.
+     */
+    private static Optional<Recipe> getRecipeRowData(
+            @NonNull SQLiteDatabase database,
+            int recipeId
+    ) {
+        final String sql = "SELECT * FROM recipes WHERE id = ? ORDER BY id ASC LIMIT 1;";
+        final String[] args = {String.valueOf(recipeId)};
+        Recipe recipe = null;
+
+        try (final Cursor cursor = database.rawQuery(sql, args)) {
+            if (!cursor.moveToNext()) return Optional.empty();
+
+            // get row data (with empty sets and maps)
+            final String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            final String body = cursor.getString(cursor.getColumnIndexOrThrow("body"));
+            final HashMap<Integer, Float> ingredients = new HashMap<>();
+            final HashSet<Integer> utensils = new HashSet<>();
+            final int budget = cursor.getInt(cursor.getColumnIndexOrThrow("budget"));
+            final int diners = cursor.getInt(cursor.getColumnIndexOrThrow("diners"));
+            final Date creationDate = Date.valueOf(
+                    cursor.getString(cursor.getColumnIndexOrThrow("creation_date"))
+            );
+
+            recipe = new Recipe(name, body, ingredients, utensils, creationDate, budget, diners);
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+        }
+
+        return Optional.ofNullable(recipe);
     }
 }
