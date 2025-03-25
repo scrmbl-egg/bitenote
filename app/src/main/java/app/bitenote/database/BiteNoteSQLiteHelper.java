@@ -282,7 +282,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             @NonNull Recipe recipe
     ) {
         final String insertionSql = "INSERT INTO " +
-                "recipes(name, body, budget, diners, creationDate) VALUES (?, ?, ?, ?, ?);";
+                "recipes(name, body, budget, diners, creation_date) VALUES (?, ?, ?, ?, ?);";
         final Object[] insertionArgs = {
                 recipe.name,
                 recipe.body,
@@ -332,8 +332,9 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         final String[] updateRecipeStatements = {
                 "UPDATE recipes SET name = ? WHERE id = ?;",
                 "UPDATE recipes SET body = ? WHERE id = ?;",
-                "UPDATE recipes SET budget = ? WHERE id = ?",
-                "UPDATE recipes SET diners = ? WHERE id = ?"
+                "UPDATE recipes SET budget = ? WHERE id = ?;",
+                "UPDATE recipes SET diners = ? WHERE id = ?;",
+                "UPDATE recipes SET creation_date = ? WHERE id = ?;"
         };
         final Object[][] updateRecipeArgs = {
                 {recipeInstance.name, recipeId},

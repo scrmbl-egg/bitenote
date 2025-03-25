@@ -30,12 +30,12 @@ class BiteNoteSQLiteTableHelper {
     static void createTables(@NonNull SQLiteDatabase database) {
         Log.d(null, "Creating database tables...");
 
-        final String createUtensilsTable = "CREATE TABLE utensils (" +
+        final String createUtensilsTable = "CREATE TABLE utensils(" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
 
-        final String createMeasurementTypesTable = "CREATE TABLE measurement_types (" +
+        final String createMeasurementTypesTable = "CREATE TABLE measurement_types(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
@@ -49,7 +49,7 @@ class BiteNoteSQLiteTableHelper {
                 "creation_date DATE NOT NULL" +
                 ");";
 
-        final String createIngredientsTable = "CREATE TABLE ingredients (" +
+        final String createIngredientsTable = "CREATE TABLE ingredients(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "measurement_id INTEGER NOT NULL," +
@@ -57,17 +57,19 @@ class BiteNoteSQLiteTableHelper {
                 "FOREIGN KEY (measurement_id) REFERENCES measurement_types(id)" +
                 ");";
 
-        final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients (" +
-                "recipe_id INTEGER PRIMARY KEY," +
-                "ingredient_id INTEGER PRIMARY KEY," +
+        final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients(" +
+                "recipe_id INTEGER NOT NULL," +
+                "ingredient_id INTEGER NOT NULL," +
                 "amount FLOAT," +
+                "PRIMARY KEY (recipe_id, ingredient_id)," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
-                "FOREIGN KEY (ingredient_id) REFERENCES ingrs(id)" +
+                "FOREIGN KEY (ingredient_id) REFERENCES ingredients(id)" +
                 ");";
 
-        final String createRecipeUtensilsTable = "CREATE TABLE recipe_utensils (" +
-                "recipe_id INTEGER PRIMARY KEY," +
-                "utensil_id INTEGER PRIMARY KEY," +
+        final String createRecipeUtensilsTable = "CREATE TABLE recipe_utensils(" +
+                "recipe_id INTEGER NOT NULL," +
+                "utensil_id INTEGER NOT NULL," +
+                "PRIMARY KEY (recipe_id, utensil_id)," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
                 "FOREIGN KEY (utensil_id) REFERENCES utensils(id)" +
                 ");";
@@ -94,12 +96,12 @@ class BiteNoteSQLiteTableHelper {
      * @param database SQLiteDatabase instance.
      */
     static void dropTables(@NonNull SQLiteDatabase database) {
-        String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
-        String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurement_types;";
-        String dropRecipesTable = "DROP TABLE IF EXISTS recipes;";
-        String dropIngredientsTable = "DROP TABLE IF EXISTS ingredients;";
-        String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipe_ingredients;";
-        String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipe_utensils;";
+        final String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
+        final String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurement_types;";
+        final String dropRecipesTable = "DROP TABLE IF EXISTS recipes;";
+        final String dropIngredientsTable = "DROP TABLE IF EXISTS ingredients;";
+        final String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipe_ingredients;";
+        final String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipe_utensils;";
 
         database.beginTransaction();
         try {
@@ -163,9 +165,9 @@ class BiteNoteSQLiteTableHelper {
                 Object[] args = {parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)};
 
                 database.execSQL(sql, args);
+                parser.next();
             }
 
-            parser.next();
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
@@ -205,9 +207,9 @@ class BiteNoteSQLiteTableHelper {
                 };
 
                 database.execSQL(sql, args);
+                parser.next();
             }
 
-            parser.next();
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
@@ -283,9 +285,9 @@ class BiteNoteSQLiteTableHelper {
     }
 
     /**
-     *
+     * Handles the {@link Stack} of {@link String}s depending on the found parser tag.
      * @param parser {@link XmlResourceParser} instance.
-     * @param strStack {@link Stack} instance where the
+     * @param strStack {@link Stack} instance where the ingredient name is being built.
      * @return {@code true} if the last tag was an 'ingredient' tag.
      */
     private static boolean handleIngredientStringStack(
@@ -332,9 +334,7 @@ class BiteNoteSQLiteTableHelper {
             String measurementTypeName
     ) {
         final String sql = "SELECT id FROM measurement_types WHERE name = ?;";
-        final String[] args = {
-            measurementTypeName
-        };
+        final String[] args = {measurementTypeName};
         Integer result = null;
 
         try (final Cursor cursor = database.rawQuery(sql, args)) {
