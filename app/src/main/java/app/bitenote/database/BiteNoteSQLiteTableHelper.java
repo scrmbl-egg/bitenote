@@ -30,12 +30,12 @@ class BiteNoteSQLiteTableHelper {
     static void createTables(@NonNull SQLiteDatabase database) {
         Log.d(null, "Creating database tables...");
 
-        final String createUtensilsTable = "CREATE TABLE utensils (" +
+        final String createUtensilsTable = "CREATE TABLE utensils(" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
 
-        final String createMeasurementTypesTable = "CREATE TABLE measurement_types (" +
+        final String createMeasurementTypesTable = "CREATE TABLE measurement_types(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
@@ -49,7 +49,7 @@ class BiteNoteSQLiteTableHelper {
                 "creation_date DATE NOT NULL" +
                 ");";
 
-        final String createIngredientsTable = "CREATE TABLE ingredients (" +
+        final String createIngredientsTable = "CREATE TABLE ingredients(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "measurement_id INTEGER NOT NULL," +
@@ -57,17 +57,19 @@ class BiteNoteSQLiteTableHelper {
                 "FOREIGN KEY (measurement_id) REFERENCES measurement_types(id)" +
                 ");";
 
-        final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients (" +
-                "recipe_id INTEGER PRIMARY KEY," +
-                "ingredient_id INTEGER PRIMARY KEY," +
+        final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients(" +
+                "recipe_id INTEGER NOT NULL," +
+                "ingredient_id INTEGER NOT NULL," +
                 "amount FLOAT," +
+                "PRIMARY KEY (recipe_id, ingredient_id)," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
-                "FOREIGN KEY (ingredient_id) REFERENCES ingrs(id)" +
+                "FOREIGN KEY (ingredient_id) REFERENCES ingredients(id)" +
                 ");";
 
-        final String createRecipeUtensilsTable = "CREATE TABLE recipe_utensils (" +
-                "recipe_id INTEGER PRIMARY KEY," +
-                "utensil_id INTEGER PRIMARY KEY," +
+        final String createRecipeUtensilsTable = "CREATE TABLE recipe_utensils(" +
+                "recipe_id INTEGER NOT NULL," +
+                "utensil_id INTEGER NOT NULL," +
+                "PRIMARY KEY (recipe_id, utensil_id)," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
                 "FOREIGN KEY (utensil_id) REFERENCES utensils(id)" +
                 ");";
