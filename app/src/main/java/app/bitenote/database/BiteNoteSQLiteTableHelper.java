@@ -165,9 +165,9 @@ class BiteNoteSQLiteTableHelper {
                 Object[] args = {parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)};
 
                 database.execSQL(sql, args);
+                parser.next();
             }
 
-            parser.next();
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
@@ -207,9 +207,9 @@ class BiteNoteSQLiteTableHelper {
                 };
 
                 database.execSQL(sql, args);
+                parser.next();
             }
 
-            parser.next();
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
