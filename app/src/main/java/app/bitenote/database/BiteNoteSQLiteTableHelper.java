@@ -285,9 +285,9 @@ class BiteNoteSQLiteTableHelper {
     }
 
     /**
-     *
+     * Handles the {@link Stack} of {@link String}s depending on the found parser tag.
      * @param parser {@link XmlResourceParser} instance.
-     * @param strStack {@link Stack} instance where the
+     * @param strStack {@link Stack} instance where the ingredient name is being built.
      * @return {@code true} if the last tag was an 'ingredient' tag.
      */
     private static boolean handleIngredientStringStack(
