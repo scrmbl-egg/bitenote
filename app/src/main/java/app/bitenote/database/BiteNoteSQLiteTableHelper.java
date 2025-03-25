@@ -96,12 +96,12 @@ class BiteNoteSQLiteTableHelper {
      * @param database SQLiteDatabase instance.
      */
     static void dropTables(@NonNull SQLiteDatabase database) {
-        String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
-        String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurement_types;";
-        String dropRecipesTable = "DROP TABLE IF EXISTS recipes;";
-        String dropIngredientsTable = "DROP TABLE IF EXISTS ingredients;";
-        String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipe_ingredients;";
-        String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipe_utensils;";
+        final String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
+        final String dropMeasurementTypesTable = "DROP TABLE IF EXISTS measurement_types;";
+        final String dropRecipesTable = "DROP TABLE IF EXISTS recipes;";
+        final String dropIngredientsTable = "DROP TABLE IF EXISTS ingredients;";
+        final String dropRecipeIngredientsTable = "DROP TABLE IF EXISTS recipe_ingredients;";
+        final String dropRecipeUtensilsTable = "DROP TABLE IF EXISTS recipe_utensils;";
 
         database.beginTransaction();
         try {
@@ -334,9 +334,7 @@ class BiteNoteSQLiteTableHelper {
             String measurementTypeName
     ) {
         final String sql = "SELECT id FROM measurement_types WHERE name = ?;";
-        final String[] args = {
-            measurementTypeName
-        };
+        final String[] args = {measurementTypeName};
         Integer result = null;
 
         try (final Cursor cursor = database.rawQuery(sql, args)) {
