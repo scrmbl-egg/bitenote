@@ -65,7 +65,6 @@ public class Recipe {
 
     /**
      * Advanced Recipe constructor.
-     *
      * @param name Title of the recipe.
      * @param body Body text of the recipe.
      * @param ingredients Recipe ingredients HashMap.
