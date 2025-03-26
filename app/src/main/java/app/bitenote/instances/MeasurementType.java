@@ -2,6 +2,8 @@ package app.bitenote.instances;
 
 import androidx.annotation.NonNull;
 
+import java.util.Objects;
+
 /**
  * A container for data of one utensil in the database. The data in {@link MeasurementType}
  * instances can't be changed, because every possible utensil is pre-defined and immutable.
@@ -43,5 +45,23 @@ public class MeasurementType {
      */
     public MeasurementType(@NonNull String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        /*
+         * Since MeasurementTypes are immutable, two references with the same data should be
+         * considered equal.
+         */
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MeasurementType that = (MeasurementType) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }

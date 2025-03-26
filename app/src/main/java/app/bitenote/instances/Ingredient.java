@@ -3,6 +3,7 @@ package app.bitenote.instances;
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -105,5 +106,26 @@ public class Ingredient {
         final Stack<String> fullNameStack = new Stack<>();
         fullNameStack.addAll(Arrays.asList(fullName.split("\\" + NAME_DELIMITER)));
         this.name = fullNameStack.pop();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        /*
+         * Since Ingredients are immutable, two references with the same data should be considered
+         * equal.
+         */
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return measurementTypeId == that.measurementTypeId
+                && canBeMeasuredInUnits == that.canBeMeasuredInUnits
+                && Objects.equals(fullName, that.fullName)
+                && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fullName, name, measurementTypeId, canBeMeasuredInUnits);
     }
 }
