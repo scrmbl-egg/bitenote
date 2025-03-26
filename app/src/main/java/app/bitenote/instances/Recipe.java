@@ -93,6 +93,26 @@ public class Recipe {
     }
 
     /**
+     * Deep copy {@link Recipe} constructor.
+     * @param recipe {@link Recipe} instance to be copied.
+     */
+    public Recipe(Recipe recipe) {
+        this.name = recipe.name;
+        this.body = recipe.body;
+        this.budget = recipe.budget;
+        this.diners = recipe.diners;
+
+        /// the creation date of a copy is the current system time
+        this.creationDate = new Date(System.currentTimeMillis());
+
+        /// for a true copy of a recipe, maps and sets must be deep copied.
+        this.ingredients = new HashMap<>();
+        this.utensils = new HashSet<>();
+        recipe.ingredients.forEach(this::putIngredient); // hashmap deep copy
+        recipe.utensils.forEach(this::addUtensil); // hashset deep copy
+    }
+
+    /**
      * Gets the utensils of the recipe.
      * @return An unmodifiable set view of the utensils. Each element represents an ID of an
      * utensil.
