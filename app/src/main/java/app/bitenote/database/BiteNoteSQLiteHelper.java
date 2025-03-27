@@ -85,6 +85,24 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Gets the amount of recipe rows in the database.
+     * @return An integer representing the number of recipes in the database.
+     */
+    public int getRecipeCount() {
+        final String sql = "SELECT count(*) AS recipe_count FROM recipes;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args);
+        ) {
+            cursor.moveToFirst(); // this operation should be guaranteed
+
+            return cursor.getInt(cursor.getColumnIndex("recipe_count")); // shouldn't return -1
+        }
+    }
+
+    /**
      * Inserts a new recipe into the database and returns its ID.
      * @param recipe Recipe instance.
      * @return The ID of the inserted recipe.
@@ -210,6 +228,28 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Gets the amount of ingredient rows in the database.
+     * @return An integer representing the amount of ingredients in the database.
+     * @implNote The result of this function is obtained through an SQL query, but the expectation
+     * is that the function should always return the same result. Cache the result instead of
+     * calling the function multiple times to reduce operations.
+     */
+    public int getIngredientCount() {
+        final String sql = "SELECT count(*) AS ingredient_count FROM ingredients;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args);
+        ) {
+            cursor.moveToFirst(); // this operation should be guaranteed
+
+            /// shouldn't return -1
+            return cursor.getInt(cursor.getColumnIndex("ingredient_count"));
+        }
+    }
+
+    /**
      * Gets a {@link MeasurementType} instance from its table row ID.
      * @param measurementTypeId ID of the ingredient.
      * @return An {@link Optional} instance that wraps the obtained data.
@@ -241,6 +281,28 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Gets the amount of measurement type rows in the database.
+     * @return An integer representing the amount of measurement types in the database.
+     * @implNote The result of this function is obtained through an SQL query, but the expectation
+     * is that the function should always return the same result. Cache the result instead of
+     * calling the function multiple times to reduce operations.
+     */
+    public int getMeasurementTypeCount() {
+        final String sql = "SELECT count(*) AS measurement_type_count FROM measurement_types;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args);
+        ) {
+            cursor.moveToFirst(); // this operation should be guaranteed
+
+            /// shouldn't return -1
+            return cursor.getInt(cursor.getColumnIndex("measurement_type_count"));
+        }
+    }
+
+    /**
      * Gets an {@link Utensil} instance from its table row ID.
      * @param utensilId ID of the ingredient.
      * @return An {@link Optional} instance that wraps the obtained data.
@@ -269,6 +331,27 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         }
 
         return Optional.ofNullable(utensil);
+    }
+
+    /**
+     * Gets the amount of utensil rows in the database.
+     * @return An integer representing the amount of utensils in the database.
+     * @implNote The result of this function is obtained through an SQL query, but the expectation
+     * is that the function should always return the same result. Cache the result instead of
+     * calling the function multiple times to reduce operations.
+     */
+    public int getUtensilCount() {
+        final String sql = "SELECT count(*) AS utensil_count FROM utensils;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args);
+        ) {
+            cursor.moveToFirst(); // this operation should be guaranteed
+
+            return cursor.getInt(cursor.getColumnIndex("utensil_count")); // shouldn't return -1
+        }
     }
 
     /**
