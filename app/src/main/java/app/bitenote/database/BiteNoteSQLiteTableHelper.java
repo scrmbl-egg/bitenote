@@ -188,7 +188,10 @@ class BiteNoteSQLiteTableHelper {
         final String sql = "INSERT INTO measurement_types(name) VALUES (?);";
 
         database.beginTransaction();
-        try (final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils)) {
+        try (
+                final XmlResourceParser parser =
+                        context.getResources().getXml(R.xml.measurement_types)
+        ) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     parser.next();
