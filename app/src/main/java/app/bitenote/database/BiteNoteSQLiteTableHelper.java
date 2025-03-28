@@ -246,6 +246,10 @@ class BiteNoteSQLiteTableHelper {
         try (final XmlResourceParser parser = context.getResources().getXml(R.xml.ingredients)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    if (parser.getEventType() == XmlPullParser.END_TAG && !strStack.isEmpty()) {
+                        strStack.pop();
+                    }
+
                     parser.next();
                     continue;
                 }
@@ -274,7 +278,6 @@ class BiteNoteSQLiteTableHelper {
                         )
                 };
 
-                strStack.pop(); // pop last stack string for next ingredient
                 database.execSQL(sql, args);
                 parser.next();
             }
@@ -299,23 +302,18 @@ class BiteNoteSQLiteTableHelper {
     ) {
         switch (parser.getName()) {
             case Ingredient.XML_TYPE_TAG:
-                /// in case of type tag, clear stack and push type name
-                strStack.clear();
                 strStack.push(parser.getAttributeValue(
                         null,
                         Ingredient.XML_TYPE_NAME_ATTRIBUTE
                 ));
                 return false;
             case Ingredient.XML_SUBTYPE_TAG:
-                /// in case of subtype tag, pop stack and push subtype name
-                strStack.pop();
                 strStack.push(parser.getAttributeValue(
                         null,
                         Ingredient.XML_SUBTYPE_NAME_ATTRIBUTE
                 ));
                 return false;
             case Ingredient.XML_TAG:
-                /// in case of ingredient tag, push name
                 strStack.push(parser.getAttributeValue(
                         null,
                         Ingredient.XML_NAME_ATTRIBUTE
