@@ -189,6 +189,10 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 return Optional.empty();
             }
 
+            /// insert other table data into the recipe instance
+            populateRecipeInstanceUtensils(database, recipeOption.get(), recipeId);
+            populateRecipeInstanceIngredients(database, recipeOption.get(), recipeId);
+
             return recipeOption;
         }
     }
