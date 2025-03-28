@@ -565,6 +565,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
                 recipeInstance.putIngredient(ingredientId, amount);
             } while (cursor.moveToNext());
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
     }
 
@@ -617,6 +619,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
                 recipeInstance.addUtensil(utensilId);
             } while (cursor.moveToNext());
+        } catch (IllegalArgumentException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
     }
 
