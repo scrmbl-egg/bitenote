@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Stack;
 
 import app.bitenote.R;
@@ -330,24 +331,22 @@ class BiteNoteSQLiteTableHelper {
      * @param measurementTypeName Name of the measurement type. This should be obtained from an XML.
      * @return Optional that may contain the ID of the measurement type.
      */
-    private static Optional<Integer> getMeasurementTypeIdFromName(
+    private static OptionalInt getMeasurementTypeIdFromName(
             @NonNull SQLiteDatabase database,
             String measurementTypeName
     ) {
         final String sql = "SELECT id FROM measurement_types WHERE name = ?;";
         final String[] args = {measurementTypeName};
-        Integer result = null;
 
         try (final Cursor cursor = database.rawQuery(sql, args)) {
             if (!cursor.moveToFirst()) {
-                return Optional.empty();
+                return OptionalInt.empty();
             }
 
-            result = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            return OptionalInt.of(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
         } catch (IllegalArgumentException e) {
             Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            return OptionalInt.empty();
         }
-
-        return Optional.ofNullable(result);
     }
 }
