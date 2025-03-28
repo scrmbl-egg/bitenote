@@ -137,11 +137,11 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             /// delete and reinsert ingredients
             deleteRecipeIngredientRows(database, recipeId);
-            insertRecipeInstanceIngredients(database, recipeInstance, recipeId);
+            populateRecipeInstanceIngredients(database, recipeInstance, recipeId);
 
             /// delete and reinsert utensils
             deleteRecipeUtensilRows(database, recipeId);
-            insertRecipeInstanceUtensils(database, recipeInstance, recipeId);
+            populateRecipeInstanceUtensils(database, recipeInstance, recipeId);
         }
     }
 
@@ -547,7 +547,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance {@link Recipe} instance.
      * @param recipeId ID of the recipe.
      */
-    private static void insertRecipeInstanceIngredients(
+    private static void populateRecipeInstanceIngredients(
             @NonNull SQLiteDatabase database,
             @NonNull Recipe recipeInstance,
             int recipeId
@@ -600,7 +600,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance {@link Recipe} instance.
      * @param recipeId ID of the recipe.
      */
-    private static void insertRecipeInstanceUtensils(
+    private static void populateRecipeInstanceUtensils(
             @NonNull SQLiteDatabase database,
             @NonNull Recipe recipeInstance,
             int recipeId
