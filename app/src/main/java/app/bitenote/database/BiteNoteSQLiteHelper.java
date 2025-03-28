@@ -439,7 +439,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Inserts a row in the 'recipeIngredients' SQLite table.
+     * Inserts a row in the 'recipe_ingredients' table.
      * @param writeableDatabase Writeable SQLiteDatabase instance.
      * @param recipeInstance Instance of the recipe.
      * @param recipeId The recipe ID in the SQLite database.
@@ -473,7 +473,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Inserts a row in the 'recipeUtensils' SQLite table.
+     * Inserts a row in the 'recipe_utensils' table.
      * @param writeableDatabase Writeable SQLiteDatabase instance.
      * @param recipeInstance Instance of the recipe.
      * @param recipeId The recipe ID in the SQLite database.
@@ -541,8 +541,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Inserts rows in the 'recipe_ingredients' table with the data from the
-     * {@link Recipe#ingredients} map.
+     * Inserts elements from the 'recipe_ingredients' table into the {@link Recipe#ingredients}
+     * field of a {@link Recipe} instance.
      * @param database {@link SQLiteDatabase} instance.
      * @param recipeInstance {@link Recipe} instance.
      * @param recipeId ID of the recipe.
@@ -568,6 +568,12 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Deletes all rows from the 'recipe_ingredients' table that reference a specified recipe row
+     * ID.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param recipeId ID of the recipe.
+     */
     private static void deleteRecipeIngredientRows(
             @NonNull SQLiteDatabase database,
             int recipeId
@@ -588,8 +594,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Inserts rows in the 'recipe_utensils' table with the data from the {@link Recipe#utensils}
-     * set.
+     * Inserts elements from the 'recipe_utensils' table into the {@link Recipe#utensils} field of
+     * a {@link Recipe} instance.
      * @param database {@link SQLiteDatabase} instance.
      * @param recipeInstance {@link Recipe} instance.
      * @param recipeId ID of the recipe.
@@ -614,6 +620,11 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Deletes all rows from the 'recipe_utensils' table that reference a specified recipe row ID.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param recipeId ID of the recipe.
+     */
     private static void deleteRecipeUtensilRows(
             @NonNull SQLiteDatabase database,
             int recipeId
