@@ -38,6 +38,21 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      */
     private final Context context;
 
+    /**
+     * Amount of total ingredients in the database.
+     */
+    private Integer ingredientCount = null;
+
+    /**
+     * Amount of total utensils in the database.
+     */
+    private Integer utensilCount = null;
+
+    /**
+     * Amount of total measurement types in the database.
+     */
+    private Integer measurementTypeCount = null;
+
     @Override
     public void onCreate(@NonNull SQLiteDatabase database) {
         BiteNoteSQLiteTableHelper.createTables(database);
@@ -87,6 +102,9 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets the amount of recipe rows in the database.
      * @return An integer representing the number of recipes in the database.
+     * @implNote Getting the amount of recipes in the database requires an SQL query each time this
+     * function is called. It is recommended to cache the return value when it is used multiple
+     * times when no modifications are done to the database.
      */
     public int getRecipeCount() {
         final String sql = "SELECT count(*) AS recipe_count FROM recipes;";
@@ -234,11 +252,12 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets the amount of ingredient rows in the database.
      * @return An integer representing the amount of ingredients in the database.
-     * @implNote The result of this function is obtained through an SQL query, but the expectation
-     * is that the function should always return the same result. Cache the result instead of
-     * calling the function multiple times to reduce operations.
      */
     public int getIngredientCount() {
+        if (ingredientCount != null) {
+            return ingredientCount;
+        }
+
         final String sql = "SELECT count(*) AS ingredient_count FROM ingredients;";
         final String[] args = {};
 
@@ -249,7 +268,8 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             cursor.moveToFirst(); // this operation should be guaranteed
 
             /// shouldn't return -1
-            return cursor.getInt(cursor.getColumnIndex("ingredient_count"));
+            ingredientCount = cursor.getInt(cursor.getColumnIndex("ingredient_count"));
+            return ingredientCount;
         }
     }
 
@@ -287,11 +307,12 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets the amount of measurement type rows in the database.
      * @return An integer representing the amount of measurement types in the database.
-     * @implNote The result of this function is obtained through an SQL query, but the expectation
-     * is that the function should always return the same result. Cache the result instead of
-     * calling the function multiple times to reduce operations.
      */
     public int getMeasurementTypeCount() {
+        if (measurementTypeCount != null) {
+            return measurementTypeCount;
+        }
+
         final String sql = "SELECT count(*) AS measurement_type_count FROM measurement_types;";
         final String[] args = {};
 
@@ -302,7 +323,10 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             cursor.moveToFirst(); // this operation should be guaranteed
 
             /// shouldn't return -1
-            return cursor.getInt(cursor.getColumnIndex("measurement_type_count"));
+            measurementTypeCount = cursor.getInt(
+                    cursor.getColumnIndex("measurement_type_count")
+            );
+            return measurementTypeCount;
         }
     }
 
@@ -340,11 +364,12 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets the amount of utensil rows in the database.
      * @return An integer representing the amount of utensils in the database.
-     * @implNote The result of this function is obtained through an SQL query, but the expectation
-     * is that the function should always return the same result. Cache the result instead of
-     * calling the function multiple times to reduce operations.
      */
     public int getUtensilCount() {
+        if (utensilCount != null) {
+            return utensilCount;
+        }
+
         final String sql = "SELECT count(*) AS utensil_count FROM utensils;";
         final String[] args = {};
 
@@ -354,7 +379,9 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         ) {
             cursor.moveToFirst(); // this operation should be guaranteed
 
-            return cursor.getInt(cursor.getColumnIndex("utensil_count")); // shouldn't return -1
+            /// shouldn't return -1
+            utensilCount = cursor.getInt(cursor.getColumnIndex("utensil_count"));
+            return utensilCount;
         }
     }
 
