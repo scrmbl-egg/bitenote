@@ -550,7 +550,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         Recipe recipe = null;
 
         try (final Cursor cursor = database.rawQuery(sql, args)) {
-            if (!cursor.moveToNext()) return Optional.empty();
+            if (!cursor.moveToFirst()) return Optional.empty();
 
             // get row data (with empty sets and maps)
             final String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
