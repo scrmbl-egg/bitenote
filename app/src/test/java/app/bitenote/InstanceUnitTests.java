@@ -41,7 +41,7 @@ public class InstanceUnitTests {
 
     @Test
     public void areMeasurementTypesEqual() {
-        final String name = "volume";
+        final String name = MeasurementType.VOLUME_TYPE_STRING;
 
         final MeasurementType t1 = new MeasurementType(name);
         final MeasurementType t2 = new MeasurementType(name);
