@@ -216,6 +216,30 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Gets the IDs of recipes that meet the conditions of a {}
+     * @param rQuery {@link RecipeQuery} instance. Contains the data that will be filtered.
+     * @return
+     */
+    public int[] getQueriedRecipeIds(@NonNull RecipeQuery rQuery) {
+        final String[] args = {}; // arguments are handled in RecipeQuery.toSQLString
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(rQuery.toSQLString(), args)
+        ) {
+            if (!cursor.moveToFirst()) return new int[0]; // return empty array
+
+            /// allocate array of ids
+            int[] idArray = new int[cursor.getCount()];
+            do {
+                idArray[cursor.getPosition()] = cursor.getInt(cursor.getColumnIndex("id"));
+            } while (cursor.moveToNext());
+
+            return idArray;
+        }
+    }
+
+    /**
      * Gets an {@link Ingredient} instance from its table row ID.
      * @param ingredientId ID of the ingredient.
      * @return An {@link Optional} instance that wraps the obtained data.
