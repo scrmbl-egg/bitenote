@@ -196,7 +196,7 @@ public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets a {@link Recipe} instance from its table row ID.
      * @param recipeId ID of the ingredient.
-     * @return An {@link Optional} instance that wraps the nullable ID.
+     * @return An {@link Optional} instance that wraps the nullable {@link Recipe}.
      */
     public Optional<Recipe> getRecipeFromId(int recipeId) {
         assert recipeId != 0 : "Recipe ID can't be 0";
