@@ -23,7 +23,7 @@ import app.bitenote.instances.Utensil;
  * Helper package class to handle immutable table initialisation and XML parsing.
  * @author Daniel N.
  */
-class BiteNoteSQLiteTableHelper {
+final class BiteNoteSQLiteTableHelper {
     /**
      * Creates all tables in the database.
      * @param database SQLiteDatabase instance.

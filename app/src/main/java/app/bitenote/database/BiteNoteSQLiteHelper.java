@@ -22,7 +22,7 @@ import app.bitenote.instances.Utensil;
  * recipes database.
  * @author Daniel N.
  */
-public class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
+public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Name of the database.
      */

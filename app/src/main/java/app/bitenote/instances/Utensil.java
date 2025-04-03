@@ -10,7 +10,7 @@ import java.util.Objects;
  * @see app.bitenote.database.BiteNoteSQLiteHelper#getUtensilFromId(int)
  * @author Daniel N.
  */
-public class Utensil {
+public final class Utensil {
     /**
      * XML utensil tag in the {@code res/xml/utensils.xml} document.
      */

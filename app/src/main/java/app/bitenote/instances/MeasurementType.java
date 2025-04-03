@@ -10,7 +10,7 @@ import java.util.Objects;
  * @see app.bitenote.database.BiteNoteSQLiteHelper#getMeasurementTypeFromId(int)
  * @author Daniel N.
  */
-public class MeasurementType {
+public final class MeasurementType {
     /**
      * XML measurement type tag in the {@code res/xml/measurement_types.xml} document.
      */

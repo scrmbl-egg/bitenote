@@ -12,7 +12,7 @@ import java.util.Stack;
  * @see app.bitenote.database.BiteNoteSQLiteHelper#getIngredientFromId(int)
  * @author Daniel N.
  */
-public class Ingredient {
+public final class Ingredient {
     /**
      * Ingredient name delimiter.
      */

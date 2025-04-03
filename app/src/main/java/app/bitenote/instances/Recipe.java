@@ -14,7 +14,7 @@ import java.util.Set;
  * information that help discriminate recipes when querying them.
  * @author Daniel N.
  */
-public class Recipe {
+public final class Recipe {
     /**
      * Name of the recipe.
      */
