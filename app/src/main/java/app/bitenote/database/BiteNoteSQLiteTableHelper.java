@@ -37,12 +37,12 @@ class BiteNoteSQLiteTableHelper {
                 ");";
 
         final String createMeasurementTypesTable = "CREATE TABLE measurement_types(" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
 
         final String createRecipesTable = "CREATE TABLE recipes (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "body MEDIUMTEXT NOT NULL DEFAULT ''," +
                 "budget INTEGER NOT NULL," +
@@ -51,7 +51,7 @@ class BiteNoteSQLiteTableHelper {
                 ");";
 
         final String createIngredientsTable = "CREATE TABLE ingredients(" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "measurement_id INTEGER NOT NULL," +
                 "can_be_measured_in_units BOOLEAN NOT NULL," +
