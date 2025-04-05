@@ -7,6 +7,7 @@ import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
+import app.bitenote.database.RecipeQuery;
 import app.bitenote.instances.Ingredient;
 import app.bitenote.instances.MeasurementType;
 import app.bitenote.instances.Recipe;
@@ -66,5 +67,58 @@ public class InstanceUnitTests {
 
         /// Recipes, despite having the same data, should not be considered equal.
         assertNotEquals(r1, r2);
+    }
+
+    @Test
+    public void areInclusionsAndBansCorrect() {
+        final RecipeQuery rq = new RecipeQuery();
+        final boolean incl1 = rq.includeIngredient(1, true);
+        final boolean ban1 = rq.banIngredient(1, true);
+        final boolean ban2 = rq.banUtensil(1, true);
+        final boolean incl2 = rq.includeUtensil(1, true);
+
+        /// test all operations return true
+        assertTrue(incl1);
+        assertTrue(ban1);
+        assertTrue(ban2);
+        assertTrue(incl2);
+
+        /// test bans and inclusion checks
+        assertTrue(rq.isIngredientBanned(1));
+        assertFalse(rq.isIngredientPresent(1));
+        assertTrue(rq.isUtensilPresent(1));
+        assertFalse(rq.isUtensilBanned(1));
+
+        /// test that random ingredients or utensils are neither present or banned
+        assertFalse(rq.isIngredientPresent(10));
+        assertFalse(rq.isIngredientBanned(10));
+        assertFalse(rq.isUtensilPresent(10));
+        assertFalse(rq.isUtensilBanned(10));
+    }
+
+    @Test
+    public void areRecipeQueriesEqual() {
+        final String nameSearchQuery = "test";
+        final int maxBudget = 25;
+        final int minDiners = 2;
+
+        final RecipeQuery rq1 = new RecipeQuery(
+                nameSearchQuery, new HashMap<>(), new HashMap<>(), maxBudget, minDiners
+        );
+        rq1.includeIngredient(2, false);
+        rq1.includeUtensil(3, false);
+        rq1.banIngredient(10, false);
+        rq1.banUtensil(4, false);
+
+        final RecipeQuery rq2 = new RecipeQuery(
+                nameSearchQuery, new HashMap<>(), new HashMap<>(), maxBudget, minDiners
+        );
+        rq2.includeIngredient(2, false);
+        rq2.includeUtensil(3, false);
+        rq2.banIngredient(10, false);
+        rq2.banUtensil(4, false);
+
+        /// Recipes, despite having the same data, should not be considered equal.
+        assertEquals(rq1, rq2);
     }
 }
