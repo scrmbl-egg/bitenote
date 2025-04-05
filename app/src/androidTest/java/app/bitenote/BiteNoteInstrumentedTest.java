@@ -81,6 +81,10 @@ public class BiteNoteInstrumentedTest {
             assertEquals(r.budget, rOption.get().budget);
             assertEquals(r.diners, rOption.get().diners);
             assertArrayEquals(
+                    r.getIngredients().keySet().toArray(new Integer[0]),
+                    rOption.get().getIngredients().keySet().toArray(new Integer[0])
+            );
+            assertArrayEquals(
                     r.getIngredients().values().toArray(),
                     rOption.get().getIngredients().values().toArray()
             );
