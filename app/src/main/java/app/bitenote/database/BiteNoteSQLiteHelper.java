@@ -138,7 +138,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Updates a recipe row from the database and all other rows that reference it.
      * @param recipeId Recipe ID.
-     * @param recipeInstance {@link Recipe} instance which holds the new data for the row.
+     * @param recipeInstance {@link Recipe} instance which holds the new data for the rows.
      */
     public void updateRecipe(int recipeId, @NonNull Recipe recipeInstance) {
         assert recipeId != 0 : "Recipe ID can't be 0";
