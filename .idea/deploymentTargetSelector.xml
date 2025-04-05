@@ -8,10 +8,13 @@
       <SelectionState runConfigName="BiteNoteInstrumentedTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="insertAndRetrieveRecipe()">
+      <SelectionState runConfigName="rowCountsAreNotZero()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="rowCountsAreNotZero()">
+      <SelectionState runConfigName="recipeInsertionAndRetrievalAreCorrect()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="recipeInsertionAndUpdatingIsCorrect()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
