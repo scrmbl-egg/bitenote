@@ -155,11 +155,11 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             /// delete and reinsert ingredients
             deleteRecipeIngredientRows(database, recipeId);
-            populateRecipeInstanceIngredients(database, recipeInstance, recipeId);
+            insertInRecipeIngredientsTable(database, recipeInstance, recipeId);
 
             /// delete and reinsert utensils
             deleteRecipeUtensilRows(database, recipeId);
-            populateRecipeInstanceUtensils(database, recipeInstance, recipeId);
+            insertInRecipeUtensilsTable(database, recipeInstance, recipeId);
         }
     }
 
@@ -471,14 +471,15 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 "UPDATE recipes SET name = ? WHERE id = ?;",
                 "UPDATE recipes SET body = ? WHERE id = ?;",
                 "UPDATE recipes SET budget = ? WHERE id = ?;",
-                "UPDATE recipes SET diners = ? WHERE id = ?;",
-                "UPDATE recipes SET creation_date = ? WHERE id = ?;"
+                "UPDATE recipes SET diners = ? WHERE id = ?;"
+                // creation_date is not updated
         };
         final Object[][] updateRecipeArgs = {
                 {recipeInstance.name, recipeId},
                 {recipeInstance.body, recipeId},
                 {recipeInstance.budget, recipeId},
                 {recipeInstance.diners, recipeId},
+                // creation_date is not updated
         };
         writeableDatabase.beginTransaction();
         try {
