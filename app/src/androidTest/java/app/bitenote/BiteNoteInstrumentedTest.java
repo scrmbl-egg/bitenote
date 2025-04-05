@@ -45,7 +45,7 @@ public class BiteNoteInstrumentedTest {
     }
 
     @Test
-    public void insertAndRetrieveRecipe() {
+    public void recipeInsertionAndRetrievalIsCorrect() {
         final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         try (
