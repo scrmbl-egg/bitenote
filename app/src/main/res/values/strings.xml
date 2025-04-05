@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">BiteNote</string>
+    <string name="app_name" translatable="false">BiteNote</string>
+    <string name="home_activity_label">Home</string>
+    <string name="recipe_query_activity_label">Filter Recipes</string>
 </resources>
