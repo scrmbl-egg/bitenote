@@ -94,4 +94,62 @@ public class BiteNoteInstrumentedTest {
             );
         }
     }
+
+    @Test
+    public void recipeInsertionAndUpdatingIsCorrect() {
+        final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        try (
+                final BiteNoteSQLiteHelper sqliteHelper =
+                        new BiteNoteSQLiteHelper(TEST_DATABASE_NAME, appContext)
+        ) {
+            final Recipe r1 = new Recipe(
+                    "test_recipe",
+                    "This is a recipe body.",
+                    new HashMap<>(),
+                    new HashSet<>(),
+                    new Date(System.currentTimeMillis()),
+                    25,
+                    2
+            );
+
+            final int r1Id = sqliteHelper.insertRecipe(r1);
+
+            final Recipe r2 = new Recipe(
+                    "test_recipe_2",
+                    "This is another recipe body.",
+                    new HashMap<>(),
+                    new HashSet<>(),
+                    new Date(System.currentTimeMillis()),
+                    30,
+                    3
+            );
+            r2.addUtensil(1);
+            r2.addUtensil(2);
+            r2.putIngredient(1, 1f);
+            r2.putIngredient(2, 2f);
+
+            sqliteHelper.updateRecipe(r1Id, r2);
+            final Optional<Recipe> r2Option = sqliteHelper.getRecipeFromId(r1Id);
+
+            assertTrue(r2Option.isPresent());
+
+            assertEquals(r2.name, r2Option.get().name);
+            assertEquals(r2.body, r2Option.get().body);
+            assertEquals(r2.budget, r2Option.get().budget);
+            assertEquals(r2.diners, r2Option.get().diners);
+            assertArrayEquals(
+                    r2.getIngredients().keySet().toArray(new Integer[0]),
+                    r2Option.get().getIngredients().keySet().toArray(new Integer[0])
+            );
+            assertArrayEquals(
+                    r2.getIngredients().values().toArray(),
+                    r2Option.get().getIngredients().values().toArray()
+            );
+            assertArrayEquals(
+                    r2.getUtensils().toArray(),
+                    r2Option.get().getUtensils().toArray()
+            );
+        }
+    }
 }
