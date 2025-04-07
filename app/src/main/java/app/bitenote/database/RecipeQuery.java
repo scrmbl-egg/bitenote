@@ -333,7 +333,7 @@ public final class RecipeQuery {
                 "budget <= %d AND diners >= %d AND id IN (SELECT recipe_id FROM " +
                 "recipe_ingredients WHERE ingredient_id != 0%s AND ingredient_id != 0%s) AND id " +
                 "IN (SELECT recipe_id FROM recipe_utensils WHERE utensil_id != 0%s AND " +
-                "utensil_id != 0%s);";
+                "utensil_id != 0%s) ORDER BY creation_date DESC;";
         final String includedIngredientStatement = " OR ingredient_id = %d";
         final String bannedIngredientStatement = " OR ingredient_id != %d";
         final String includedUtensilStatement = " OR ingredient_id = %d";
