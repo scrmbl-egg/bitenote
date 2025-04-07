@@ -9,7 +9,8 @@ import java.util.Objects;
 
 /**
  * Represents an object that allows the database to query recipes.
- * @see BiteNoteSQLiteHelper#getQueriedRecipes(RecipeQuery) 
+ * @see BiteNoteSQLiteHelper#getQueriedRecipes(RecipeQuery)
+ * @author Daniel N.
  */
 public final class RecipeQuery {
     /**

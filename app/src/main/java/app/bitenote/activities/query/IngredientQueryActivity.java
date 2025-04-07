@@ -8,6 +8,7 @@ import app.bitenote.R;
 /**
  * Class that represents the activity where the user specifies which ingredients the recipes of the
  * query must have or must not have.
+ * @author Daniel N.
  */
 public final class IngredientQueryActivity extends AppCompatActivity {
     @Override

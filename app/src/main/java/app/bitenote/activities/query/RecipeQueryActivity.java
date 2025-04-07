@@ -8,6 +8,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import app.bitenote.R;
 
+/**
+ * Class that represents the activity where the user creates a query for filtering recipes.
+ * @author Daniel N.
+ */
 public final class RecipeQueryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

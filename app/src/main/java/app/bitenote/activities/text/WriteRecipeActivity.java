@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import app.bitenote.R;
 
+/**
+ * Class that represents the activity where the user edits or writes a recipe.
+ * @author Daniel N.
+ */
 public final class WriteRecipeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
