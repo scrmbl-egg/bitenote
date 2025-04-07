@@ -8,8 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.sql.Date;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 
 import app.bitenote.instances.Ingredient;
@@ -216,27 +218,83 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets the IDs of recipes that meet the conditions of a {}
-     * @param rQuery {@link RecipeQuery} instance. Contains the data that will be filtered.
-     * @return
+     * Gets all recipes, ordered from newest to oldest.
+     * @return A unmodifiable {@link Map} view where the key represents the recipe ID, and the
+     * value is an instance of {@link Recipe} containing all the data associated with that recipe
+     * ID.
      */
-    public int[] getQueriedRecipeIds(@NonNull RecipeQuery rQuery) {
+    public Map<Integer, Recipe> getAllRecipes() {
+        final int recipeCount = getRecipeCount();
+        final HashMap<Integer, Recipe> recipeHashMap = new HashMap<>();
+        final int[] idArray = new int[getRecipeCount()];
+
+        /// query for all recipes, orders from newest to oldest
+        final String sql = "SELECT id FROM recipes ORDER BY creation_date DESC;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) return Collections.unmodifiableMap(recipeHashMap);
+
+            /*
+             * The amount of times the cursor iterates through the rows should match the length of
+             * the allocated array.
+             */
+            do {
+                idArray[cursor.getPosition()] = cursor.getInt(cursor.getColumnIndex("id"));
+            } while (cursor.moveToNext());
+        }
+
+        for (int i = 0; i < idArray.length; i++) {
+            final Optional<Recipe> recipeOption = getRecipeFromId(idArray[i]);
+            if (recipeOption.isEmpty()) continue;
+
+            recipeHashMap.put(idArray[i], recipeOption.get());
+        }
+
+        return Collections.unmodifiableMap(recipeHashMap);
+    }
+
+    /**
+     * Gets all the recipes ordered from newest to oldest that meet the conditions of a
+     * {@link RecipeQuery}.
+     * @param rQuery {@link RecipeQuery} instance. Contains the data that will be filtered.
+     * @return A unmodifiable {@link Map} view where the key represents the recipe ID, and the
+     * value is an instance of {@link Recipe} containing all the data associated with that recipe
+     * ID.
+     */
+    public Map<Integer, Recipe> getQueriedRecipes(@NonNull RecipeQuery rQuery) {
         final String[] args = {}; // arguments are handled in RecipeQuery.toSQLString
+
+        final HashMap<Integer, Recipe> recipeHashMap = new HashMap<>();
+        int[] idArray = {};
 
         try (
                 final SQLiteDatabase database = getReadableDatabase();
                 final Cursor cursor = database.rawQuery(rQuery.toSQLString(), args)
         ) {
-            if (!cursor.moveToFirst()) return new int[0]; // return empty array
+            if (!cursor.moveToFirst()) return Collections.unmodifiableMap(recipeHashMap);
 
-            /// allocate array of ids
-            int[] idArray = new int[cursor.getCount()];
+            /// allocate new array of ids
+            int[] queryIdsArray = new int[cursor.getCount()];
             do {
-                idArray[cursor.getPosition()] = cursor.getInt(cursor.getColumnIndex("id"));
+                queryIdsArray[cursor.getPosition()] = cursor.getInt(cursor.getColumnIndex("id"));
             } while (cursor.moveToNext());
 
-            return idArray;
+            /// make (empty) id array reference the queried id's array
+            idArray = queryIdsArray;
         }
+
+        for (int i = 0; i < idArray.length; i++) {
+            final Optional<Recipe> recipeOption = getRecipeFromId(idArray[i]);
+            if (recipeOption.isEmpty()) continue;
+
+            recipeHashMap.put(idArray[i], recipeOption.get());
+        }
+
+        return Collections.unmodifiableMap(recipeHashMap);
     }
 
     /**
