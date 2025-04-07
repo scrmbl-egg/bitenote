@@ -13,7 +13,7 @@
         android:theme="@style/Theme.BiteNote"
         tools:targetApi="31">
         <activity
-            android:name=".activities.HomeActivity"
+            android:name="app.bitenote.activities.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -21,8 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name="app.bitenote.activities.query.RecipeQueryActivity"/>
-        <activity android:name="app.bitenote.activities.query.IncludeIngredientsActivity"/>
-        <activity android:name="app.bitenote.activities.query.BanIngredientsActivity"/>
+        <activity android:name="app.bitenote.activities.query.IngredientQueryActivity"/>
+        <activity android:name="app.bitenote.activities.query.UtensilQueryActivity"/>
         <activity android:name="app.bitenote.activities.query.ViewQueryActivity"/>
         <activity android:name="app.bitenote.activities.text.ReadRecipeActivity"/>
         <activity android:name="app.bitenote.activities.text.WriteRecipeActivity"/>
