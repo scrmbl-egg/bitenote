@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:contentDescription="@string/recipe">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/recipe_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recipe_example_name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="sans"
+            android:textAlignment="viewStart"
+            android:fontFamily="serif"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/recipe_body_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="30sp"
+                android:text="@string/lorem_ipsum"
+                android:textSize="14sp"
+                android:typeface="sans"
+                android:textAlignment="viewStart"
+                android:fontFamily="serif"
+                android:fadingEdge="vertical"
+                android:requiresFadingEdge="vertical"
+                android:fadingEdgeLength="32dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:ignore="VisualLintLongText" />
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
