@@ -15,7 +15,7 @@
             android:id="@+id/material_home_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
+            app:title="@string/home_activity_label"
             app:titleTextColor="?attr/colorOnPrimary"/>
 
     </com.google.android.material.appbar.AppBarLayout>
