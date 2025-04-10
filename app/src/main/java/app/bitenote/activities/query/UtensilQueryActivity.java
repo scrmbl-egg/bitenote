@@ -12,7 +12,7 @@ import app.bitenote.R;
  */
 public class UtensilQueryActivity extends AppCompatActivity {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.utensil_query_activity);
     }
