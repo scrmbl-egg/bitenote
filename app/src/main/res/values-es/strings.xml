@@ -2,4 +2,5 @@
 <resources>
     <string name="home_activity_label">Inicio</string>
     <string name="recipe_query_activity_label">Filtrar Recetas</string>
+    <string name="home_make_query_button_description">Botón de filtrar recetas</string>
 </resources>
