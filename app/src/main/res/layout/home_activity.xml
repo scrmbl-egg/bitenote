@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="24dp"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/home_make_query_button_description"
             android:src="@drawable/filter_button_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
