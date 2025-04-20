@@ -26,7 +26,7 @@ import app.bitenote.instances.Utensil;
 final class BiteNoteSQLiteTableHelper {
     /**
      * Creates all tables in the database.
-     * @param database SQLiteDatabase instance.
+     * @param database {@link SQLiteDatabase} instance.
      */
     static void createTables(@NonNull SQLiteDatabase database) {
         Log.d(null, "Creating database tables...");
@@ -94,7 +94,7 @@ final class BiteNoteSQLiteTableHelper {
 
     /**
      * Drops all tables in the database.
-     * @param database SQLiteDatabase instance.
+     * @param database {@link SQLiteDatabase} instance.
      */
     static void dropTables(@NonNull SQLiteDatabase database) {
         final String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
@@ -123,8 +123,8 @@ final class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the immutable tables of the database with XML resource data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     static void populateImmutableTables(
             @NonNull SQLiteDatabase database,
@@ -139,8 +139,8 @@ final class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the 'utensils' SQLite table with the XML data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     private static void populateUtensilsTable(
             @NonNull SQLiteDatabase database,
@@ -179,8 +179,8 @@ final class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the 'measurement_types' SQLite table with the XML data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     private static void populateMeasurementTypesTable(
             @NonNull SQLiteDatabase database,
@@ -224,8 +224,8 @@ final class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the 'ingredients' SQLiteTable with the XML data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     private static void populateIngredientsTable(
             @NonNull SQLiteDatabase database,
