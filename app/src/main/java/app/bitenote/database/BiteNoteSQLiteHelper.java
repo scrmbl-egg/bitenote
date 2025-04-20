@@ -223,7 +223,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Gets all recipes, ordered from newest to oldest.
      * @return An array of {@link Pair}s, in which the first element represents the ID of the
      * recipe, and the second element represents the data that the id references contained in a
-     * {@link Recipe} instance.
+     * {@link Recipe} instance. The elements are ordered from newest to oldest.
+     * @see Recipe#creationDate
      */
     public Pair<Integer, Recipe>[] getAllRecipes() {
         /// query for all recipes, orders from newest to oldest
