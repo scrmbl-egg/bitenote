@@ -13,6 +13,7 @@ import app.bitenote.viewmodels.BiteNoteViewModel;
 
 /**
  * Class that represents the activity where the application starts.
+ * @author Daniel N.
  */
 public final class HomeActivity extends AppCompatActivity {
     /**
