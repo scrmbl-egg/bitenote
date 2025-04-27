@@ -209,7 +209,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 parser.next();
             }
         } catch (XmlPullParserException | IOException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         }
 
         /// sort ids by their creation date in descending order
@@ -321,7 +321,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         } finally {
             database.endTransaction();
             database.close();
@@ -450,7 +450,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             ingredient = new Ingredient(fullName, measurementId, canBeMeasuredInUnits);
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
 
         return Optional.ofNullable(ingredient);
@@ -505,7 +505,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             measurementType = new MeasurementType(name);
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
 
         return Optional.ofNullable(measurementType);
@@ -562,7 +562,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             utensil = new Utensil(name);
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
 
         return Optional.ofNullable(utensil);
@@ -622,7 +622,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             writeableDatabase.execSQL(insertionSql, insertionArgs);
             writeableDatabase.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         } finally {
             writeableDatabase.endTransaction();
         }
@@ -633,7 +633,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
 
         return id;
@@ -671,7 +671,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             }
             writeableDatabase.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         } finally {
             writeableDatabase.endTransaction();
         }
@@ -705,7 +705,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             writeableDatabase.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         } finally {
             writeableDatabase.endTransaction();
         }
@@ -737,7 +737,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             writeableDatabase.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         } finally {
             writeableDatabase.endTransaction();
         }
@@ -773,7 +773,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             recipe = new Recipe(name, body, ingredients, utensils, creationDate, budget, diners);
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
 
         return Optional.ofNullable(recipe);
@@ -805,7 +805,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 recipeInstance.putIngredient(ingredientId, amount);
             } while (cursor.moveToNext());
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
     }
 
@@ -828,7 +828,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         } finally {
             database.endTransaction();
         }
@@ -859,7 +859,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 recipeInstance.addUtensil(utensilId);
             } while (cursor.moveToNext());
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message"));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
         }
     }
 
@@ -881,7 +881,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message."));
         } finally {
             database.endTransaction();
         }
