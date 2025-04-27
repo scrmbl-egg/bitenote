@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
@@ -52,6 +53,8 @@ public class BiteNoteInstrumentedTest {
                 final BiteNoteSQLiteHelper sqliteHelper =
                      new BiteNoteSQLiteHelper(TEST_DATABASE_NAME, appContext)
         ) {
+            assertEquals(0, sqliteHelper.getRecipeCount());
+
             final Recipe r = new Recipe(
                     "test_recipe",
                     "This is a recipe body.",
@@ -92,6 +95,11 @@ public class BiteNoteInstrumentedTest {
                     r.getUtensils().toArray(),
                     rOption.get().getUtensils().toArray()
             );
+
+            sqliteHelper.deleteRecipe(rId);
+
+            final Optional<Recipe> secondRecipeOptional = sqliteHelper.getRecipeFromId(rId);
+            assertTrue(secondRecipeOptional.isEmpty());
         }
     }
 
@@ -108,7 +116,7 @@ public class BiteNoteInstrumentedTest {
                     "This is a recipe body.",
                     new HashMap<>(),
                     new HashSet<>(),
-                    new Date(System.currentTimeMillis()),
+                    Date.valueOf("2020-2-2"),
                     25,
                     2
             );
@@ -120,7 +128,7 @@ public class BiteNoteInstrumentedTest {
                     "This is another recipe body.",
                     new HashMap<>(),
                     new HashSet<>(),
-                    new Date(System.currentTimeMillis()),
+                    Date.valueOf("2022-2-2"),  // this field shouldn't modify the original
                     30,
                     3
             );
@@ -138,6 +146,7 @@ public class BiteNoteInstrumentedTest {
             assertEquals(r2.body, r2Option.get().body);
             assertEquals(r2.budget, r2Option.get().budget);
             assertEquals(r2.diners, r2Option.get().diners);
+            assertNotEquals(r2.creationDate, r2Option.get().creationDate); // assert no modification
             assertArrayEquals(
                     r2.getIngredients().keySet().toArray(new Integer[0]),
                     r2Option.get().getIngredients().keySet().toArray(new Integer[0])
@@ -150,6 +159,57 @@ public class BiteNoteInstrumentedTest {
                     r2.getUtensils().toArray(),
                     r2Option.get().getUtensils().toArray()
             );
+
+            sqliteHelper.deleteRecipe(r1Id);
+            final Optional<Recipe> deletedRecipeOption = sqliteHelper.getRecipeFromId(r1Id);
+            assertTrue(deletedRecipeOption.isEmpty());
+        }
+    }
+
+    @Test
+    public void areExampleRecipesInserted() {
+        final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        try (
+                final BiteNoteSQLiteHelper sqliteHelper =
+                     new BiteNoteSQLiteHelper(TEST_DATABASE_NAME, appContext)
+        ) {
+            assertEquals(0, sqliteHelper.getRecipeCount());
+
+            final int[] exampleRecipeIds = sqliteHelper.insertExampleRecipes();
+            final int[] allRecipeIds =
+                    Arrays.stream(sqliteHelper.getAllRecipes())
+                    .mapToInt((pair) -> pair.first)
+                    .toArray();
+
+            /// assert that, if no other recipes are added, all ids should be the same.
+            assertArrayEquals(allRecipeIds, exampleRecipeIds);
+
+            final Optional<Recipe> recipeOption =
+                    sqliteHelper.getRecipeFromId(exampleRecipeIds[0]);
+
+            assertTrue(recipeOption.isPresent());
+
+            assertEquals("This is a test recipe", recipeOption.get().name);
+            assertEquals("This is a test recipe body.", recipeOption.get().body);
+            assertEquals(Date.valueOf("1970-1-1"), recipeOption.get().creationDate);
+            assertEquals(2, recipeOption.get().diners);
+            assertEquals(10, recipeOption.get().budget);
+            assertArrayEquals(
+                    new Integer[] {1, 2, 3},
+                    recipeOption.get().getIngredients().keySet().toArray(new Integer[0])
+            );
+            assertArrayEquals(
+                    new Float[] {1f, 2f, 3f},
+                    recipeOption.get().getIngredients().values().toArray()
+            );
+            assertArrayEquals(
+                    new Integer[] {1, 2},
+                    recipeOption.get().getUtensils().toArray()
+            );
+
+            sqliteHelper.deleteRecipes(exampleRecipeIds);
+            assertEquals(0, sqliteHelper.getRecipeCount());
         }
     }
 }
