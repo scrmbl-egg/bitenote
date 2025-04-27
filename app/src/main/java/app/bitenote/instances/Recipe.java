@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -249,5 +250,24 @@ public final class Recipe {
      */
     public boolean containsIngredient(int ingredientId) {
         return ingredients.containsKey(ingredientId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return budget == recipe.budget
+                && diners == recipe.diners
+                && Objects.equals(name, recipe.name)
+                && Objects.equals(body, recipe.body)
+                && Objects.equals(creationDate, recipe.creationDate)
+                && Objects.equals(ingredients, recipe.ingredients)
+                && Objects.equals(utensils, recipe.utensils);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, body, budget, diners, creationDate, ingredients, utensils);
     }
 }
