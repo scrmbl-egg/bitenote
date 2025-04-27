@@ -16,6 +16,57 @@ import java.util.Set;
  */
 public final class Recipe {
     /**
+     * XML recipe tag in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_TAG = "recipe";
+
+    /**
+     * XML recipe name tag in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_NAME_TAG = "name";
+
+    /**
+     * XML recipe body in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_BODY_TAG = "body";
+
+    /**
+     * XML recipe diners in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_DINERS_TAG = "diners";
+
+    /**
+     * XML recipe budget in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_BUDGET_TAG = "budget";
+
+    /**
+     * XML recipe creation date in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_CREATION_DATE_TAG = "creation_date";
+
+    /**
+     * XML recipe ingredient in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_INGREDIENT_TAG = "ingredient";
+
+    /**
+     * XML recipe ingredient {@code id} attribute in the {@code res/xml/example_recipes.xml}
+     * document.
+     */
+    public static final String XML_RECIPE_INGREDIENT_ID_ATTRIBUTE = "id";
+
+    /**
+     * XML recipe utensil tag in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_UTENSIL_TAG = "utensil";
+
+    /**
+     * XML recipe utensil {@code id} attribute in the {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_UTENSIL_ID_ATTRIBUTE = "id";
+
+    /**
      * Name of the recipe.
      */
     public String name;

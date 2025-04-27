@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes xmlns:android="http://schemas.android.com/apk/res/android">
+    <recipe>
+        <name>This is a test recipe</name>
+        <body>
+            This is a test recipe body.
+        </body>
+        <diners>2</diners>
+        <budget>10</budget>
+        <creation_date>1970-1-1</creation_date>
+        <ingredient id="1">1</ingredient>
+        <ingredient id="2">2</ingredient>
+        <ingredient id="3">3</ingredient>
+        <utensil id="1"/>
+        <utensil id="2"/>
+    </recipe>
+    <recipe>
+        <name>Carbonara Spaghetti</name>
+        <body>
+            This is a second test for a recipe's body. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </body>
+        <diners>2</diners>
+        <budget>10</budget>
+        <creation_date>2025-1-1</creation_date>
+        <ingredient id="5">1</ingredient>
+        <ingredient id="6">5</ingredient>
+        <utensil id="5"/>
+    </recipe>
+</recipes>

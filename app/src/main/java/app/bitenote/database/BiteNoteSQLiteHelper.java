@@ -1,21 +1,24 @@
 package app.bitenote.database;
 
 import android.content.Context;
+import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.util.Pair;
-
 import androidx.annotation.NonNull;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import java.io.IOException;
 import java.sql.Date;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 
+import app.bitenote.R;
 import app.bitenote.instances.Ingredient;
 import app.bitenote.instances.MeasurementType;
 import app.bitenote.instances.Recipe;
@@ -101,6 +104,134 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
          * getReadableDatabase() functions are called for the first time.
          */
         this.context = context;
+    }
+
+    /**
+     * Inserts the example recipes from 'test_recipes.xml' into the database.
+     * @return The ID array of the inserted recipes, ordered by creation.
+     * @see BiteNoteSQLiteHelper#getRecipeFromId(int)
+     */
+    public int[] insertExampleRecipes() {
+        final ArrayList<Integer> exampleIdList = new ArrayList<>();
+        final Recipe currentRecipeData = new Recipe();
+        String lastFoundXmlTag = "";
+        int currentIngredientId = 0;
+        int currentUtensilId = 0;
+
+        try (
+                final XmlResourceParser parser = context.getResources().getXml(
+                        R.xml.example_recipes
+                )
+        ) {
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+                if (parser.getEventType() == XmlPullParser.START_TAG) {
+                    switch (parser.getName()) {
+                        case Recipe.XML_RECIPE_NAME_TAG:
+                        case Recipe.XML_RECIPE_BODY_TAG:
+                        case Recipe.XML_RECIPE_DINERS_TAG:
+                        case Recipe.XML_RECIPE_BUDGET_TAG:
+                        case Recipe.XML_RECIPE_CREATION_DATE_TAG:
+                            lastFoundXmlTag = parser.getName();
+                            parser.next();
+                            break;
+                        case Recipe.XML_RECIPE_INGREDIENT_TAG:
+                            lastFoundXmlTag = parser.getName();
+                            currentIngredientId = parser.getAttributeIntValue(
+                                    null,
+                                    Recipe.XML_RECIPE_INGREDIENT_ID_ATTRIBUTE,
+                                    0
+                            );
+                            parser.next();
+                            break;
+                        case Recipe.XML_RECIPE_UTENSIL_TAG:
+                            lastFoundXmlTag = parser.getName();
+                            currentUtensilId = parser.getAttributeIntValue(
+                                    null,
+                                    Recipe.XML_RECIPE_UTENSIL_ID_ATTRIBUTE,
+                                    0
+                            );
+                            currentRecipeData.addUtensil(currentUtensilId);
+                            parser.next();
+                            break;
+                        default:
+                            parser.next();
+                            continue;
+                    }
+
+                    if (parser.getEventType() != XmlPullParser.TEXT) {
+                        parser.next();
+                        continue;
+                    }
+
+                    switch (lastFoundXmlTag) {
+                        case Recipe.XML_RECIPE_NAME_TAG:
+                            currentRecipeData.name = parser.getText().trim();
+                            break;
+                        case Recipe.XML_RECIPE_BODY_TAG:
+                            /// replace file line endings and tabs, and collapse spaces
+                            currentRecipeData.body = parser.getText()
+                                    .trim()
+                                    .replaceAll("(\\r\\n|\\n)", "\n")
+                                    .replaceAll("\\n+", " ")
+                                    .replaceAll("\\t+", " ")
+                                    .replaceAll(" +", " ");
+                            break;
+                        case Recipe.XML_RECIPE_DINERS_TAG:
+                            currentRecipeData.diners = Integer.valueOf(parser.getText().trim());
+                            break;
+                        case Recipe.XML_RECIPE_BUDGET_TAG:
+                            currentRecipeData.budget = Integer.valueOf(parser.getText().trim());
+                            break;
+                        case Recipe.XML_RECIPE_CREATION_DATE_TAG:
+                            currentRecipeData.creationDate = Date.valueOf(parser.getText().trim());
+                            break;
+                        case Recipe.XML_RECIPE_INGREDIENT_TAG:
+                            currentRecipeData.putIngredient(
+                                    currentIngredientId,
+                                    Float.valueOf(parser.getText().trim())
+                            );
+                            break;
+                            // utensil case doesn't need to be handled since there is no TEXT
+                    }
+                } else if (
+                        parser.getEventType() == XmlPullParser.END_TAG
+                        && parser.getName().equals(Recipe.XML_RECIPE_TAG)
+                ) {
+                    /// all data is gathered, insert into the database
+                    int parsedExampleId = insertRecipe(currentRecipeData);
+                    exampleIdList.add(parsedExampleId);
+
+                    /// clear recipe data sets and maps
+                    currentRecipeData.clearIngredients();
+                    currentRecipeData.clearUtensils();
+                }
+
+                parser.next();
+            }
+        } catch (XmlPullParserException | IOException e) {
+            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+        }
+
+        /// sort ids by their creation date in descending order
+        exampleIdList.sort((a, b) -> {
+            final long aCreationDateTime = getRecipeFromId(a).get().creationDate.getTime();
+            final long bCreationDateTime = getRecipeFromId(b).get().creationDate.getTime();
+
+            /*
+             * comparators are weird and expect the following values depending on the comparison
+             * 1 -> greater than
+             * 0 -> equal
+             * -1 -> less than
+             * but these must be inverted for it to be sorted in decending order
+             *
+             * why
+             */
+            if (aCreationDateTime > bCreationDateTime) return -1;
+            else if (aCreationDateTime == bCreationDateTime) return 0;
+            else return 1;
+        });
+
+        return exampleIdList.stream().mapToInt(Integer::intValue).toArray();
     }
 
     /**
