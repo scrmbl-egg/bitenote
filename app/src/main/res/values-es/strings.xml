@@ -5,4 +5,10 @@
     <string name="recipe_query_activity_label">Filtrar Recetas</string>
     <string name="home_make_query_button_description">Botón de filtrar recetas</string>
     <string name="recipe_example_name">Mi Receta de Ejemplo</string>
+    <string name="recipe_card_diners_label">"Comensales: "</string>
+    <string name="recipe_card_budget_label">"Presupuesto: "</string>
+    <string name="read_recipe_activity_label">Leer Receta</string>
+    <string name="write_recipe_activity_label">Editar/Escribir Receta</string>
+    <string name="recipe_name_hint">Nombre de receta</string>
+    <string name="recipe_body_hint">Cuerpo de receta</string>
 </resources>
