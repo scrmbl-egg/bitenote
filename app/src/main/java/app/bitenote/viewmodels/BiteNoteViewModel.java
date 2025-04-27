@@ -25,4 +25,10 @@ public class BiteNoteViewModel extends AndroidViewModel {
         super(application);
         sqliteHelper = new BiteNoteSQLiteHelper(application);
     }
+
+    @Override
+    protected void onCleared() {
+        sqliteHelper.close();
+        super.onCleared();
+    }
 }
