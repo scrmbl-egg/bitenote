@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import app.bitenote.database.BiteNoteSQLiteHelper;
+import app.bitenote.database.RecipeQuery;
+
 /**
  * Represents an instance of a recipe. It stores the text contents of the recipe, and relevant
  * information that help discriminate recipes when querying them.
@@ -86,9 +89,11 @@ public final class Recipe {
     public int diners;
 
     /**
-     * Date when the recipe was created.
+     * Date when the recipe was created. This property determines how instances will be ordered
+     * in database queries.
+     * @see BiteNoteSQLiteHelper#getQueriedRecipes(RecipeQuery)
      */
-    public final Date creationDate;
+    public Date creationDate;
 
     /**
      * Ingredient HashMap. The key is the ingredient ID, and the value stores the amount of that
@@ -152,9 +157,7 @@ public final class Recipe {
         this.body = recipe.body;
         this.budget = recipe.budget;
         this.diners = recipe.diners;
-
-        /// the creation date of a copy is the current system time
-        this.creationDate = new Date(System.currentTimeMillis());
+        this.creationDate = Date.valueOf(recipe.creationDate.toString());
 
         /// for a true copy of a recipe, maps and sets must be deep copied.
         this.ingredients = new HashMap<>();
