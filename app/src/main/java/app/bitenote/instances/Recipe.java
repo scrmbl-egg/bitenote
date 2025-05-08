@@ -116,7 +116,7 @@ public final class Recipe {
         this.ingredients = new HashMap<>();
         this.utensils = new HashSet<>();
         this.budget = 0;
-        this.diners = 0;
+        this.diners = 1;
         this.creationDate = new Date(System.currentTimeMillis());
     }
 
