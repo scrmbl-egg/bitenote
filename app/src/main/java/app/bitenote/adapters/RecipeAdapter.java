@@ -20,7 +20,7 @@ import app.bitenote.instances.Recipe;
  * @see RecipeViewHolder
  * @author Daniel N.
  */
-public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
+public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
     /**
      * Array of recipes in the adapter. The first element of the pair represents the
      * integer ID of the recipe in the database, and the second element represents the data of that
@@ -163,6 +163,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onRecipeCardClick(recipeId, recipe);
+            });
+
+            itemView.setOnLongClickListener(view -> {
+                /// onLongClickListener implementation expects a boolean
+                if (getAdapterPosition() == RecyclerView.NO_POSITION) return false;
+
+                listener.onLongRecipeCardClick(recipeId, recipe);
+                return true; // long click handled
             });
         }
     }
