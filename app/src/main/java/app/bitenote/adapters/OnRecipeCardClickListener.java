@@ -15,4 +15,11 @@ public interface OnRecipeCardClickListener {
      * @param recipe Instance of {@link Recipe} that wraps the data.
      */
     void onRecipeCardClick(int recipeId, @NonNull Recipe recipe);
+
+    /**
+     * Function that will be called when a recipe card is clicked for a long period.
+     * @param recipeId ID of the recipe in the database.
+     * @param recipe Instance of {@link Recipe} that wraps the data.
+     */
+    void onLongRecipeCardClick(int recipeId, @NonNull Recipe recipe);
 }
