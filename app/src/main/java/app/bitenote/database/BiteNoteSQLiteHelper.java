@@ -46,17 +46,41 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     private final Context context;
 
     /**
+     * Array of {@link Pair}s, in which the first element represents the ID of the ingredient,
+     * and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
+    private Pair<Integer, Ingredient>[] ingredients = null;
+
+    /**
      * Amount of total ingredients in the database.
+     * @implNote Cached to prevent unnecessary computations.
      */
     private Integer ingredientCount = null;
 
     /**
+     * Array of {@link Pair}s, in which the first element represents the ID of the utensil,
+     * and the second element represents the data that the ID references contained in a
+     * {@link Utensil} instance.
+     */
+    private Pair<Integer, Utensil>[] utensils = null;
+
+    /**
      * Amount of total utensils in the database.
+     * @implNote Cached to prevent unnecessary computations.
      */
     private Integer utensilCount = null;
 
     /**
+     * Array of {@link Pair}s, in which the first element represents the ID of the measurement type,
+     * and the second element represents the data that the ID references contained in a
+     * {@link MeasurementType} instance.
+     */
+    private Pair<Integer, MeasurementType>[] measurementTypes = null;
+
+    /**
      * Amount of total measurement types in the database.
+     * @implNote Cached to prevent unnecessary computations.
      */
     private Integer measurementTypeCount = null;
 
@@ -362,11 +386,14 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets all recipes, ordered from newest to oldest.
+     * Gets all recipes in the database ordered from newest to oldest.
      * @return An array of {@link Pair}s, in which the first element represents the ID of the
-     * recipe, and the second element represents the data that the id references contained in a
-     * {@link Recipe} instance. The elements are ordered from newest to oldest.
-     * @see Recipe#creationDate
+     * recipe, and the second element represents the data that the ID references contained in a
+     * {@link Recipe} instance. The elements are ordered from newest to oldest, see:
+     * {@link Recipe#creationDate}.
+     * @implNote Calling this function costs more than other similar functions like
+     * {@link #getAllIngredients()}, {@link #getAllUtensils()} or {@link #getAllMeasurementTypes()}
+     * because the recipes table is mutable, which means the result can't be internally cached.
      */
     public Pair<Integer, Recipe>[] getAllRecipes() {
         /// query for all recipes, orders from newest to oldest
@@ -382,10 +409,10 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             Pair<Integer, Recipe>[] recipeArray = new Pair[cursor.getCount()];
 
             do {
-                final int recipeId = cursor.getInt(cursor.getColumnIndex("id"));
-                final Recipe recipeInstance = getRecipeFromId(recipeId).orElse(new Recipe());
+                final int id = cursor.getInt(cursor.getColumnIndex("id"));
+                final Recipe recipeInstance = getRecipeFromId(id).get();
 
-                recipeArray[cursor.getPosition()] = new Pair<>(recipeId, recipeInstance);
+                recipeArray[cursor.getPosition()] = new Pair<>(id, recipeInstance);
             } while (cursor.moveToNext());
 
             return recipeArray;
@@ -397,7 +424,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * {@link RecipeQuery}.
      * @param rQuery {@link RecipeQuery} instance. Contains the data that will be filtered.
      * @return An array of {@link Pair}s, in which the first element represents the ID of the
-     * recipe, and the second element represents the data that the id references contained in a
+     * recipe, and the second element represents the data that the ID references contained in a
      * {@link Recipe} instance.
      */
     public Pair<Integer, Recipe>[] getQueriedRecipes(@NonNull RecipeQuery rQuery) {
@@ -412,10 +439,10 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             /// allocate new array of ids
             Pair<Integer, Recipe>[] recipeArray = new Pair[cursor.getCount()];
             do {
-                final int recipeId = cursor.getInt(cursor.getColumnIndex("id"));
-                final Recipe recipeInstance = getRecipeFromId(recipeId).orElse(new Recipe());
+                final int id = cursor.getInt(cursor.getColumnIndex("id"));
+                final Recipe recipeInstance = getRecipeFromId(id).get();
 
-                recipeArray[cursor.getPosition()] = new Pair<>(recipeId, recipeInstance);
+                recipeArray[cursor.getPosition()] = new Pair<>(id, recipeInstance);
             } while (cursor.moveToNext());
 
             return recipeArray;
@@ -454,6 +481,38 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         }
 
         return Optional.ofNullable(ingredient);
+    }
+
+    /**
+     * Gets all the ingredients in the database in ascending order.
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
+    public Pair<Integer, Ingredient>[] getAllIngredients() {
+        if (ingredients != null) return ingredients;
+
+        final String sql = "SELECT id FROM ingredients ORDER BY id ASC;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) return new Pair[]{};
+
+            Pair<Integer, Ingredient>[] ingredientArray = new Pair[cursor.getCount()];
+
+            do {
+                final int id = cursor.getInt(cursor.getColumnIndex("id"));
+                final Ingredient ingredientInstance = getIngredientFromId(id).get();
+
+                ingredientArray[cursor.getPosition()] = new Pair<>(id, ingredientInstance);
+            } while (cursor.moveToNext());
+
+            ingredients = ingredientArray;
+            return ingredientArray;
+        }
     }
 
     /**
@@ -512,6 +571,38 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Gets all the measurement types in the database in ascending order.
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * measurement types, and the second element represents the data that the ID references
+     * contained in a {@link MeasurementType} instance.
+     */
+    public Pair<Integer, MeasurementType>[] getAllMeasurementTypes() {
+        if (measurementTypes != null) return measurementTypes;
+
+        final String sql = "SELECT id FROM measurement_types ORDER BY id ASC;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) return new Pair[]{};
+
+            Pair<Integer, MeasurementType>[] mTypeArray = new Pair[cursor.getCount()];
+
+            do {
+                final int id = cursor.getInt(cursor.getColumnIndex("id"));
+                final MeasurementType mTypeInstance = getMeasurementTypeFromId(id).get();
+
+                mTypeArray[cursor.getPosition()] = new Pair<>(id, mTypeInstance);
+            } while (cursor.moveToNext());
+
+            measurementTypes = mTypeArray;
+            return mTypeArray;
+        }
+    }
+
+    /**
      * Gets the amount of measurement type rows in the database.
      * @return An integer representing the amount of measurement types in the database.
      */
@@ -566,6 +657,38 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         }
 
         return Optional.ofNullable(utensil);
+    }
+
+    /**
+     * Gets all the ingredients in the database in ascending order.
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * utensil, and the second element represents the data that the ID references contained in a
+     * {@link Utensil} instance.
+     */
+    public Pair<Integer, Utensil>[] getAllUtensils() {
+        if (utensils != null) return utensils;
+
+        final String sql = "SELECT id FROM utensils ORDER BY id ASC;";
+        final String[] args = {};
+
+        try (
+                final SQLiteDatabase database = getReadableDatabase();
+                final Cursor cursor = database.rawQuery(sql, args)
+        ) {
+            if (!cursor.moveToFirst()) return new Pair[]{};
+
+            Pair<Integer, Utensil>[] utensilArray = new Pair[cursor.getCount()];
+
+            do {
+                final int id = cursor.getInt(cursor.getColumnIndex("id"));
+                final Utensil utensilInstance = getUtensilFromId(id).get();
+
+                utensilArray[cursor.getPosition()] = new Pair<>(id, utensilInstance);
+            } while (cursor.moveToNext());
+
+            utensils = utensilArray;
+            return utensilArray;
+        }
     }
 
     /**
