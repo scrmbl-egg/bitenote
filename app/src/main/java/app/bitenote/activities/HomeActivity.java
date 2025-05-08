@@ -2,6 +2,10 @@ package app.bitenote.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +19,7 @@ import app.bitenote.activities.text.WriteRecipeActivity;
 import app.bitenote.activities.text.ReadRecipeActivity;
 import app.bitenote.adapters.OnRecipeCardClickListener;
 import app.bitenote.adapters.RecipeAdapter;
+import app.bitenote.instances.Recipe;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
 /**
@@ -32,51 +37,58 @@ public final class HomeActivity extends AppCompatActivity {
      */
     private RecipeAdapter recipeAdapter;
 
+    /**
+     * Activity's Material toolbar.
+     */
+    private MaterialToolbar materialToolbar;
+
+    /**
+     * Recycler view for recipe cards.
+     */
+    private RecyclerView recyclerView;
+
+    /**
+     * Floating action button for creating a new recipe.
+     */
+    private FloatingActionButton newRecipeButton;
+
+    /**
+     * Floating action button for making a query.
+     */
+    private FloatingActionButton makeQueryButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-
-        /// init views
-        final MaterialToolbar materialToolbar = findViewById(R.id.HomeMaterialToolbar);
-        final RecyclerView recyclerView = findViewById(R.id.HomeRecipeRecyclerView);
-        final FloatingActionButton newRecipeButton = findViewById(R.id.HomeNewRecipeButton);
-        final FloatingActionButton makeQueryButton = findViewById(R.id.HomeMakeQueryButton);
 
         /// init viewmodel
         final ViewModelProvider.Factory factory =
                 new ViewModelProvider.AndroidViewModelFactory(getApplication());
         viewModel = new ViewModelProvider(this, factory).get(BiteNoteViewModel.class);
 
+        /// init views
+        materialToolbar = findViewById(R.id.HomeMaterialToolbar);
+        recyclerView = findViewById(R.id.HomeRecipeRecyclerView);
+        newRecipeButton = findViewById(R.id.HomeNewRecipeButton);
+        makeQueryButton = findViewById(R.id.HomeMakeQueryButton);
+
         /// set material toolbar
         setSupportActionBar(materialToolbar);
 
         /// set recycler view, adapter, and click listeners
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final OnRecipeCardClickListener recipeCardClickListener = (recipeId, recipe) -> {
-            final Intent readRecipeIntent =
-                    new Intent(this, ReadRecipeActivity.class);
-            readRecipeIntent.putExtra(ReadRecipeActivity.INTENT_EXTRA_RECIPE_ID, recipeId);
-            startActivity(readRecipeIntent);
-        };
         recipeAdapter = new RecipeAdapter(
                 viewModel.sqliteHelper.getAllRecipes(),
-                recipeCardClickListener
+                getOnRecipeCardClickListener()
         );
         recyclerView.setAdapter(recipeAdapter);
 
         /// set new recipe button
-        newRecipeButton.setOnClickListener(view -> {
-            final Intent intent = new Intent(this, WriteRecipeActivity.class);
-            intent.putExtra(WriteRecipeActivity.INTENT_EXTRA_IS_NEW_RECIPE, true);
-
-            startActivity(intent);
-        });
+        newRecipeButton.setOnClickListener(this::onNewRecipeButtonClick);
 
         /// set make query button
-        makeQueryButton.setOnClickListener(view ->
-                startActivity(new Intent(this, RecipeQueryActivity.class))
-        );
+        makeQueryButton.setOnClickListener(this::onMakeQueryButtonClick);
     }
 
     @Override
@@ -85,5 +97,67 @@ public final class HomeActivity extends AppCompatActivity {
 
         /// update adapter
         recipeAdapter.setRecipes(viewModel.sqliteHelper.getAllRecipes());
+    }
+
+    private OnRecipeCardClickListener getOnRecipeCardClickListener() {
+        return new OnRecipeCardClickListener() {
+            @Override
+            public void onRecipeCardClick(int recipeId, @NonNull Recipe recipe) {
+                final Intent intent =
+                        new Intent(HomeActivity.this, ReadRecipeActivity.class);
+                intent.putExtra(ReadRecipeActivity.INTENT_EXTRA_RECIPE_ID, recipeId);
+
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongRecipeCardClick(int recipeId, @NonNull Recipe recipe) {
+                new AlertDialog.Builder(HomeActivity.this)
+                        .setTitle(R.string.home_long_click_dialog_title)
+                        .setMessage(getString(R.string.home_long_click_dialog_body, recipe.name))
+                        .setPositiveButton(R.string.yes, (dialog, i) -> {
+                            /// delete recipe and update adapter
+                            viewModel.sqliteHelper.deleteRecipe(recipeId);
+                            recipeAdapter.setRecipes(viewModel.sqliteHelper.getAllRecipes());
+
+                            Toast.makeText(
+                                    HomeActivity.this,
+                                    getString(
+                                            R.string.home_long_click_dialog_positive_toast,
+                                            recipe.name
+                                    ),
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        })
+                        .setNegativeButton(R.string.no, (dialog, i) -> {
+                            Toast.makeText(
+                                    HomeActivity.this,
+                                    R.string.home_long_click_dialog_negative_toast,
+                                    Toast.LENGTH_SHORT
+                            ).show();
+
+                            dialog.dismiss();
+                        })
+                        .create()
+                        .show();
+            }
+        };
+    }
+
+    /**
+     * Function that is called when {@link #newRecipeButton} is clicked.
+     * @param view {@link View} instance.
+     */
+    private void onNewRecipeButtonClick(@NonNull View view) {
+        /// no id extra means a new recipe will be inserted
+        startActivity(new Intent(this, WriteRecipeActivity.class));
+    }
+
+    /**
+     * Function called when {@link #makeQueryButton} is clicked.
+     * @param view {@link View} reference.
+     */
+    private void onMakeQueryButtonClick(@NonNull View view) {
+        startActivity(new Intent(this, RecipeQueryActivity.class));
     }
 }
