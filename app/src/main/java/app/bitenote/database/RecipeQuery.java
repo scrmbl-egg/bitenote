@@ -2,7 +2,6 @@ package app.bitenote.database;
 
 import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
