@@ -1,4 +1,4 @@
-package app.bitenote.adapters;
+package app.bitenote.adapters.recipe;
 
 import android.annotation.SuppressLint;
 import android.util.Pair;
@@ -17,10 +17,10 @@ import app.bitenote.instances.Recipe;
 
 /**
  * Adapter for displaying {@link Recipe} data in a {@link RecyclerView} with cards.
- * @see RecipeViewHolder
+ * @see ViewHolder
  * @author Daniel N.
  */
-public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
+public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
     /**
      * Array of recipes in the adapter. The first element of the pair represents the
      * integer ID of the recipe in the database, and the second element represents the data of that
@@ -29,10 +29,10 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Reci
     private Pair<Integer, Recipe>[] recipes;
 
     /**
-     * {@link OnRecipeCardClickListener} implementation, which will determine the code the
-     * {@link RecipeViewHolder} will execute when a card is clicked.
+     * {@link OnClickListener} implementation, which will determine the code the
+     * {@link ViewHolder} will execute when a card is clicked.
      */
-    private final OnRecipeCardClickListener onRecipeCardClickListener;
+    private final OnClickListener listener;
 
     /**
      * Recipe adapter constructor.
@@ -41,32 +41,32 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Reci
      * the recipe's data is wrapped.
      * See: {@link BiteNoteSQLiteHelper#getQueriedRecipes(RecipeQuery)},
      * {@link BiteNoteSQLiteHelper#getAllRecipes()}
-     * @param onRecipeCardClickListener {@link OnRecipeCardClickListener} implementation, which
-     * will determine the code the {@link RecipeViewHolder} will execute when a card is clicked.
+     * @param listener {@link OnClickListener} implementation, which
+     * will determine the code the {@link ViewHolder} will execute when a card is clicked.
      */
     public RecipeAdapter(
             @NonNull Pair<Integer, Recipe>[] recipes,
-            @NonNull OnRecipeCardClickListener onRecipeCardClickListener
+            @NonNull OnClickListener listener
     ) {
         this.recipes = recipes;
-        this.onRecipeCardClickListener = onRecipeCardClickListener;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_card, parent, false);
 
-        return new RecipeViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final int id = recipes[position].first;
         final Recipe recipe = recipes[position].second;
 
-        holder.bind(id, recipe, onRecipeCardClickListener);
+        holder.bind(id, recipe, listener);
     }
 
     @Override
@@ -88,37 +88,37 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Reci
     }
 
     /**
-     * View holder for recipes.
+     * View holder for a single recipe.
      * @see RecipeAdapter
      * @author Daniel N.
      */
-    public static class RecipeViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         /**
-         * {@link TextView} instance that references the name of the recipe in the card.
+         * {@link TextView} instance that displays the name of the recipe in the card.
          * @see Recipe#name
          */
         private final TextView nameTextView;
 
         /**
-         * {@link TextView} instance that references the body of the recipe in the card.
+         * {@link TextView} instance that displays the body of the recipe in the card.
          * @see Recipe#body
          */
         private final TextView bodyTextView;
 
         /**
-         * {@link TextView} instance that references the creation date of the recipe in the card.
+         * {@link TextView} instance that displays the creation date of the recipe in the card.
          * @see Recipe#creationDate
          */
         private final TextView creationDateTextView;
 
         /**
-         * {@link TextView} instance that references the amount of diners of the recipe in the card.
+         * {@link TextView} instance that displays the amount of diners of the recipe in the card.
          * @see Recipe#diners
          */
         private final TextView dinersTextView;
 
         /**
-         * {@link TextView} instance that references the budget of the recipe in the card.
+         * {@link TextView} instance that displays the budget of the recipe in the card.
          * @see Recipe#budget
          */
         private final TextView budgetTextView;
@@ -127,7 +127,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Reci
          * Recipe view holder constructor.
          * @param itemView {@link View} instance.
          */
-        public RecipeViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             /// init views
@@ -142,13 +142,13 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Reci
          * Binds recipe data to the view.
          * @param recipeId ID of the database recipe.
          * @param recipe {@link Recipe} instance that holds the new data.
-         * @param listener {@link OnRecipeCardClickListener} implementation, which will determine
-         * the code the {@link RecipeViewHolder} will execute when a card is clicked.
+         * @param listener {@link OnClickListener} implementation, which will determine
+         * the code the {@link ViewHolder} will execute when a card is clicked.
          */
         private void bind(
                 int recipeId,
                 @NonNull Recipe recipe,
-                @NonNull OnRecipeCardClickListener listener
+                @NonNull OnClickListener listener
         ) {
             nameTextView.setText(recipe.name);
             bodyTextView.setText(recipe.body);
@@ -162,16 +162,36 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Reci
             itemView.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
-                listener.onRecipeCardClick(recipeId, recipe);
+                listener.onClick(recipeId, recipe);
             });
 
             itemView.setOnLongClickListener(view -> {
                 /// onLongClickListener implementation expects a boolean
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return false;
 
-                listener.onLongRecipeCardClick(recipeId, recipe);
+                listener.onLongClick(recipeId, recipe);
                 return true; // long click handled
             });
         }
+    }
+
+    /**
+     * Interface that determines what a recipe card will do when clicked.
+     * @author Daniel N.
+     */
+    public interface OnClickListener {
+        /**
+         * Function that will be called when a recipe card is clicked.
+         * @param recipeId ID of the recipe in the database.
+         * @param recipe Instance of {@link Recipe} that wraps the data.
+         */
+        void onClick(int recipeId, @NonNull Recipe recipe);
+
+        /**
+         * Function that will be called when a recipe card is clicked for a long period.
+         * @param recipeId ID of the recipe in the database.
+         * @param recipe Instance of {@link Recipe} that wraps the data.
+         */
+        void onLongClick(int recipeId, @NonNull Recipe recipe);
     }
 }

@@ -17,8 +17,7 @@ import app.bitenote.R;
 import app.bitenote.activities.query.RecipeQueryActivity;
 import app.bitenote.activities.text.WriteRecipeActivity;
 import app.bitenote.activities.text.ReadRecipeActivity;
-import app.bitenote.adapters.OnRecipeCardClickListener;
-import app.bitenote.adapters.RecipeAdapter;
+import app.bitenote.adapters.recipe.RecipeAdapter;
 import app.bitenote.instances.Recipe;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
@@ -99,10 +98,10 @@ public final class HomeActivity extends AppCompatActivity {
         recipeAdapter.setRecipes(viewModel.sqliteHelper.getAllRecipes());
     }
 
-    private OnRecipeCardClickListener getOnRecipeCardClickListener() {
-        return new OnRecipeCardClickListener() {
+    private RecipeAdapter.OnClickListener getOnRecipeCardClickListener() {
+        return new RecipeAdapter.OnClickListener() {
             @Override
-            public void onRecipeCardClick(int recipeId, @NonNull Recipe recipe) {
+            public void onClick(int recipeId, @NonNull Recipe recipe) {
                 final Intent intent =
                         new Intent(HomeActivity.this, ReadRecipeActivity.class);
                 intent.putExtra(ReadRecipeActivity.INTENT_EXTRA_RECIPE_ID, recipeId);
@@ -111,7 +110,7 @@ public final class HomeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLongRecipeCardClick(int recipeId, @NonNull Recipe recipe) {
+            public void onLongClick(int recipeId, @NonNull Recipe recipe) {
                 new AlertDialog.Builder(HomeActivity.this)
                         .setTitle(R.string.home_long_click_dialog_title)
                         .setMessage(getString(R.string.home_long_click_dialog_body, recipe.name))
