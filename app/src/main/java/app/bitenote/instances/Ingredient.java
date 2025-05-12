@@ -127,4 +127,71 @@ public final class Ingredient {
     public int hashCode() {
         return Objects.hash(fullName, name, measurementTypeId, canBeMeasuredInUnits);
     }
+
+    /**
+     * Inner {@link Ingredient} static class that is used to store the properties of an ingredient
+     * when it's present in a {@link Recipe} instance.
+     */
+    public static class InRecipeProperties {
+        /**
+         * Amount of the ingredient in the recipe.
+         * @see Ingredient#measurementTypeId
+         * @see MeasurementType
+         */
+        public int amount;
+
+        /**
+         * Determines whether the ingredient is being measured in units. If the ingredient can't
+         * be measured in units, this field defaults to {@code false}.
+         * @see Ingredient#canBeMeasuredInUnits
+         */
+        public boolean isMeasuredInUnits;
+
+        /**
+         * Basic properties constructor.
+         * @param amount Amount of the ingredient in the recipe.
+         * @param isMeasuredInUnits Determines whether the ingredient is being measured in units.
+         * @implNote This constructor doesn't check whether the ingredient can actually be measured
+         * in units. Use the following constructor instead for checking:
+         * {@link InRecipeProperties#InRecipeProperties(Ingredient, int, boolean)}}
+         * @see Ingredient#canBeMeasuredInUnits
+         */
+        public InRecipeProperties(int amount, boolean isMeasuredInUnits) {
+            this.amount = amount;
+            this.isMeasuredInUnits = isMeasuredInUnits;
+        }
+
+        /**
+         * Properties constructor. Does additional checks.
+         * @param ingredient {@link Ingredient} instance which the properties reference.
+         * @param amount Amount of the ingredient in the recipe.
+         * @param isMeasuredInUnits Determines whether the ingredient is being measured in units.
+         * Will default to {@code false} if the ingredient can't be measured in units.
+         * @see Ingredient#canBeMeasuredInUnits
+         */
+        public InRecipeProperties(
+                @NonNull Ingredient ingredient,
+                int amount,
+                boolean isMeasuredInUnits
+        ) {
+            new InRecipeProperties(
+                    amount,
+                    ingredient.canBeMeasuredInUnits && isMeasuredInUnits
+            );
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            InRecipeProperties that = (InRecipeProperties) o;
+            return amount == that.amount
+                    && isMeasuredInUnits == that.isMeasuredInUnits;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(amount, isMeasuredInUnits);
+        }
+    }
 }

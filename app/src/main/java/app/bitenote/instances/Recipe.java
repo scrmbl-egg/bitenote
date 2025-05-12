@@ -12,6 +12,7 @@ import java.util.Set;
 
 import app.bitenote.database.BiteNoteSQLiteHelper;
 import app.bitenote.database.RecipeQuery;
+import app.bitenote.instances.Ingredient.InRecipeProperties;
 
 /**
  * Represents an instance of a recipe. It stores the text contents of the recipe, and relevant
@@ -96,10 +97,10 @@ public final class Recipe {
     public Date creationDate;
 
     /**
-     * Ingredient HashMap. The key is the ingredient ID, and the value stores the amount of that
-     * ingredient.
+     * Ingredient HashMap. The key is the ingredient ID, and the value stores the properties of
+     * that ingredient.
      */
-    private final HashMap<Integer, Float> ingredients;
+    private final HashMap<Integer, InRecipeProperties> ingredients;
 
     /**
      * Utensil HashSet. Each element is an utensil ID.
@@ -133,7 +134,7 @@ public final class Recipe {
     public Recipe(
             @NonNull String name,
             @NonNull String body,
-            @NonNull HashMap<Integer, Float> ingredients,
+            @NonNull HashMap<Integer, InRecipeProperties> ingredients,
             @NonNull HashSet<Integer> utensils,
             @NonNull Date creationDate,
             int budget,
@@ -216,19 +217,31 @@ public final class Recipe {
     /**
      * Gets the ingredients of the recipe.
      * @return An unmodifiable map view of the ingredients. The key represents the ingredient ID,
-     * and the value represents the amount of that ingredient.
+     * and the value represents the properties of that ingredient.
      */
-    public Map<Integer, Float> getIngredients() {
+    public Map<Integer, InRecipeProperties> getIngredients() {
         return Collections.unmodifiableMap(ingredients);
     }
 
     /**
      * Puts an ingredient into the recipe.
      * @param ingredientId ID of the ingredient.
-     * @param amount Ingredient amount.
+     * @param amount Amount of the ingredient.
+     * @implNote Since {@link InRecipeProperties#isMeasuredInUnits} is not specified, it will be
+     * {@code false}.
      */
-    public void putIngredient(int ingredientId, float amount) {
-        ingredients.put(ingredientId, amount);
+    public void putIngredient(int ingredientId, int amount) {
+        ingredients.put(ingredientId, new InRecipeProperties(amount, false));
+    }
+
+    /**
+     * Puts an ingredient into the recipe.
+     * @param ingredientId ID of the ingredient.
+     * @param properties {@link InRecipeProperties} instance, which specifies the properties of
+     * the ingredient in the recipe.
+     */
+    public void putIngredient(int ingredientId, @NonNull InRecipeProperties properties) {
+        ingredients.put(ingredientId, properties);
     }
 
     /**

@@ -61,7 +61,8 @@ final class BiteNoteSQLiteTableHelper {
         final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients(" +
                 "recipe_id INTEGER NOT NULL," +
                 "ingredient_id INTEGER NOT NULL," +
-                "amount FLOAT," +
+                "amount FLOAT NOT NULL," +
+                "is_measured_in_units BOOLEAN NOT NULL," +
                 "PRIMARY KEY (recipe_id, ingredient_id)," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
                 "FOREIGN KEY (ingredient_id) REFERENCES ingredients(id)" +
