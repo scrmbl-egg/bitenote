@@ -152,7 +152,7 @@ public final class Recipe {
      * Deep copy {@link Recipe} constructor.
      * @param recipe {@link Recipe} instance to be copied.
      */
-    public Recipe(Recipe recipe) {
+    public Recipe(@NonNull Recipe recipe) {
         this.name = recipe.name;
         this.body = recipe.body;
         this.budget = recipe.budget;
