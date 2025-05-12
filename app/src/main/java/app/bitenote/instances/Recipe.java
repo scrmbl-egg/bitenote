@@ -182,7 +182,7 @@ public final class Recipe {
     public void addUtensil(int utensilId) {
         final boolean addedId = utensils.add(utensilId);
         if (!addedId) {
-            Log.w(null, "Attempted to add an utensil that was already present.");
+            Log.w("recipe", "Attempted to add an utensil that was already present.");
         }
     }
 
@@ -193,7 +193,7 @@ public final class Recipe {
     public void removeUtensil(int utensilId) {
         final boolean containedId = utensils.remove(utensilId);
         if (!containedId) {
-            Log.w(null, "Attempted to remove an utensil that wasn't present.");
+            Log.w("recipe", "Attempted to remove an utensil that wasn't present.");
         }
     }
 
