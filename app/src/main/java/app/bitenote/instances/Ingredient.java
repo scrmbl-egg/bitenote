@@ -99,7 +99,7 @@ public final class Ingredient {
 
         /*
          * To reduce computations, it is better to have a field with the regular name rather than
-         * splitting the full name each time the getName function is called.
+         * splitting the full name each time a "getName" function is called.
          */
 
         final Stack<String> fullNameStack = new Stack<>();
