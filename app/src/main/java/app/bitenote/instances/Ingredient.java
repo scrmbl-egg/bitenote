@@ -1,7 +1,6 @@
 package app.bitenote.instances;
 
 import androidx.annotation.NonNull;
-
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Stack;
