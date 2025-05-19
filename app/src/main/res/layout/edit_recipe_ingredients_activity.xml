@@ -18,13 +18,13 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/ReadRecipeMaterialToolbar"
+                android:id="@+id/EditRecipeIngredientsMaterialToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:navigationIcon="?attr/homeAsUpIndicator"
                 app:navigationIconTint="?attr/colorOnPrimary"
-                app:title="@string/read_recipe_activity_label"
-                app:titleTextColor="?attr/colorOnPrimary"/>
+                app:title="@string/edit_recipe_ingredients_activity_label"
+                app:titleTextColor="?attr/colorOnPrimary" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -32,12 +32,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -45,42 +43,37 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/ReadRecipeNameTextView"
+                        android:id="@+id/textView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginRight="8dp"
-                        android:fontFamily="serif"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:minHeight="64dp"
-                        android:text="@string/recipe_example_name"
-                        android:textAlignment="center"
-                        android:textAllCaps="false"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:padding="8dp"
+                        android:text="@string/in_recipe_ingredients_label" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/EditRecipeIngredientsAddedIngredientsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/ReadRecipeBodyTextView"
+                        android:id="@+id/textView2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="8dp"
-                        android:fontFamily="serif"
-                        android:text="@string/lorem_ipsum"
-                        android:textAllCaps="false"
-                        android:textSize="16sp" />
+                        android:padding="8dp"
+                        android:text="@string/available_ingredients" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/EditRecipeIngredientsNonAddedIngredientsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <View
-                        android:id="@+id/ExtraSpaceView"
                         android:layout_width="match_parent"
-                        android:layout_height="94dp" />
+                        android:layout_height="100dp" />
                 </LinearLayout>
             </ScrollView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/ReadRecipeEditRecipeButton"
+                android:id="@+id/EditRecipeIngredientsSaveChangesButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
@@ -90,7 +83,7 @@
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/baseline_edit_note_24" />
+                app:srcCompat="@drawable/baseline_save_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

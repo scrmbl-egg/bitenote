@@ -26,5 +26,8 @@
         <activity android:name="app.bitenote.activities.query.ViewQueryActivity"/>
         <activity android:name="app.bitenote.activities.text.ReadRecipeActivity"/>
         <activity android:name="app.bitenote.activities.text.WriteRecipeActivity"/>
+        <activity android:name="app.bitenote.activities.text.editing.EditRecipePropertiesActivity" />
+        <activity android:name="app.bitenote.activities.text.editing.EditRecipeUtensilsActivity" />
+        <activity android:name="app.bitenote.activities.text.editing.EditRecipeIngredientsActivity" />
     </application>
 </manifest>

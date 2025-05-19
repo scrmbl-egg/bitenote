@@ -61,7 +61,7 @@
             android:layout_marginTop="4dp">
 
             <TextView
-                android:id="@+id/recipe_diners_label_text_view"
+                android:id="@+id/RecipeDinersLabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="serif"
@@ -79,11 +79,11 @@
                 android:maxLength="2"
                 android:textAlignment="viewStart"
                 android:typeface="serif"
-                app:layout_constraintStart_toEndOf="@+id/recipe_diners_label_text_view"
+                app:layout_constraintStart_toEndOf="@+id/RecipeDinersLabelTextView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/recipe_budget_label_text_view"
+                android:id="@+id/RecipeBudgetLabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -101,7 +101,7 @@
                 android:maxLength="4"
                 android:text="000$"
                 android:textAlignment="viewStart"
-                app:layout_constraintStart_toEndOf="@+id/recipe_budget_label_text_view"
+                app:layout_constraintStart_toEndOf="@+id/RecipeBudgetLabelTextView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

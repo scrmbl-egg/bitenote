@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.List;
 import java.util.Locale;
 
 import app.bitenote.R;
@@ -26,7 +27,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
      * integer ID of the recipe in the database, and the second element represents the data of that
      * recipe, wrapped in a {@link Recipe} instance.
      */
-    private Pair<Integer, Recipe>[] recipes;
+    private List<Pair<Integer, Recipe>> recipes;
 
     /**
      * {@link OnClickListener} implementation, which will determine the code the
@@ -45,7 +46,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
      * will determine the code the {@link ViewHolder} will execute when a card is clicked.
      */
     public RecipeAdapter(
-            @NonNull Pair<Integer, Recipe>[] recipes,
+            @NonNull List<Pair<Integer, Recipe>> recipes,
             @NonNull OnClickListener listener
     ) {
         this.recipes = recipes;
@@ -63,15 +64,15 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = recipes[position].first;
-        final Recipe recipe = recipes[position].second;
+        final int id = recipes.get(position).first;
+        final Recipe recipe = recipes.get(position).second;
 
         holder.bind(id, recipe, listener);
     }
 
     @Override
     public int getItemCount() {
-        return recipes.length;
+        return recipes.size();
     }
 
     /**
@@ -81,7 +82,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
      * the recipe's data is wrapped.
      */
     @SuppressLint("NotifyDataSetChanged")
-    public void setRecipes(@NonNull Pair<Integer, Recipe>[] recipes) {
+    public void setRecipes(@NonNull List<Pair<Integer, Recipe>> recipes) {
         this.recipes = recipes;
 
         notifyDataSetChanged();
@@ -155,6 +156,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
             creationDateTextView.setText(recipe.creationDate.toString());
             dinersTextView.setText(String.valueOf(recipe.diners));
             budgetTextView.setText(String.format(Locale.getDefault(),"%d$", recipe.budget));
+            // todo: change dollar for language currency
 
             itemView.setContentDescription(itemView.getContentDescription() + ": " + recipe.name);
             /// :-(
