@@ -13,4 +13,36 @@
     <string name="write_recipe_activity_label">Edit/Write Recipe</string>
     <string name="recipe_name_hint">Recipe name</string>
     <string name="recipe_body_hint">Recipe body</string>
+    <string name="edit_recipe_properties_activity_label">Edit Recipe Properties</string>
+    <string name="edit_recipe_properties_budget_label">Budget:</string>
+    <string name="edit_recipe_properties_diners_label">Diners:</string>
+    <string name="edit_recipe_ingredients_button_text">EDIT INGREDIENTS</string>
+    <string name="edit_recipe_utensils_button_text">EDIT UTENSILS</string>
+    <string name="home_long_click_dialog_title">Alert</string>
+    <string name="home_long_click_dialog_body">Do you want to delete the recipe: %s?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="home_long_click_dialog_positive_toast">Deleted recipe: %s</string>
+    <string name="home_long_click_dialog_negative_toast">Recipe deletion cancelled</string>
+    <string name="edit_recipe_ingredients_activity_label">Edit Recipe Ingredients</string>
+    <string name="edit_recipe_utensils_activity_label">Edit Recipe Utensils</string>
+    <string name="weight_measurement" translatable="false">g</string>
+    <string name="volume_measurement" translatable="false">mL</string>
+    <string name="units_measurement">units</string>
+    <string name="currency_symbol">$</string>
+    <string name="ingredient_example_name">Ingredient name</string>
+    <string name="utensil_example_name">Utensil name</string>
+    <string name="in_recipe_utensils_label">Utensils in the recipe:</string>
+    <string name="in_recipe_ingredients_label">Ingredients in the recipe:</string>
+    <string name="available_ingredients">Available ingredients:</string>
+    <string name="available_utensils">Available utensils:</string>
+    <string name="ingredient_query_activity_label">Filter Ingredients</string>
+    <string name="utensil_query_activity_label">Filter Utensils</string>
+    <string name="included_utensils_label">Included utensils:</string>
+    <string name="included_ingredients_label">Included ingredients:</string>
+    <string name="banned_utensils_label">Banned utensils:</string>
+    <string name="banned_ingredients_label">Banned ingredients:</string>
+    <string name="view_query_activity_label">Filtered Recipes</string>
+    <string name="budget_edit_text_hint">Recipe\'s budget</string>
+    <string name="max_budget_edit_text_hint">Max budget.</string>
 </resources>
