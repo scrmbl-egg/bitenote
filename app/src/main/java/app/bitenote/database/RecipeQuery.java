@@ -3,7 +3,9 @@ package app.bitenote.database;
 import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -86,7 +88,7 @@ public final class RecipeQuery {
      * Gets the present ingredients in the query.
      * @return An array of integers, each representing a present ingredient ID.
      */
-    public int[] getPresentIngredients() {
+    public List<Integer> getIncludedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
         ingredientQuery.forEach((ingredientId, isPresent) -> {
@@ -95,14 +97,14 @@ public final class RecipeQuery {
             idList.add(ingredientId);
         });
 
-        return idList.stream().mapToInt(Integer::intValue).toArray(); // returns the list as int[]
+        return Collections.unmodifiableList(idList);
     }
 
     /**
      * Gets the banned ingredients in the query.
      * @return An array of integers, each representing a banned ingredient ID.
      */
-    public int[] getBannedIngredients() {
+    public List<Integer> getBannedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
         ingredientQuery.forEach((ingredientId, isPresent) -> {
@@ -111,14 +113,22 @@ public final class RecipeQuery {
             idList.add(ingredientId);
         });
 
-        return idList.stream().mapToInt(Integer::intValue).toArray(); // returns the list as int[]
+        return Collections.unmodifiableList(idList);
+    }
+
+    public List<Integer> getQueriedIngredients() {
+        final ArrayList<Integer> idList = new ArrayList<>();
+
+        ingredientQuery.forEach((ingredientId, isPresent) -> idList.add(ingredientId));
+
+        return Collections.unmodifiableList(idList);
     }
 
     /**
      * Gets the present utensils in the query.
      * @return An array of integers, each representing a present utensil ID.
      */
-    public int[] getPresentUtensils() {
+    public List<Integer> getIncludedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
         utensilQuery.forEach((utensilId, isPresent) -> {
@@ -127,14 +137,14 @@ public final class RecipeQuery {
             idList.add(utensilId);
         });
 
-        return idList.stream().mapToInt(Integer::intValue).toArray(); // returns the list as int[]
+        return Collections.unmodifiableList(idList);
     }
 
     /**
      * Gets the banned utensils in the query.
      * @return An array of integers, each representing a banned utensil ID.
      */
-    public int[] getBannedUtensils() {
+    public List<Integer> getBannedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
         utensilQuery.forEach((utensilId, isPresent) -> {
@@ -143,7 +153,15 @@ public final class RecipeQuery {
             idList.add(utensilId);
         });
 
-        return idList.stream().mapToInt(Integer::intValue).toArray(); // returns the list as int[]
+        return Collections.unmodifiableList(idList);
+    }
+
+    public List<Integer> getQueriedUtensils() {
+        final ArrayList<Integer> idList = new ArrayList<>();
+
+        utensilQuery.forEach((utensilId, utensil) -> idList.add(utensilId));
+
+        return Collections.unmodifiableList(idList);
     }
 
     /**
@@ -271,10 +289,12 @@ public final class RecipeQuery {
     }
 
     /**
-     * Clears all present ingredients from the query.
+     * Clears all included ingredients from the query.
      */
-    public void clearPresentIngredients() {
-        ingredientQuery.forEach(ingredientQuery::remove);
+    public void clearIncludedIngredients() {
+        ingredientQuery.forEach((ingredientId, isPresent) ->
+                ingredientQuery.remove(ingredientId, true)
+        );
     }
 
     /**
@@ -282,7 +302,7 @@ public final class RecipeQuery {
      */
     public void clearBannedIngredients() {
         ingredientQuery.forEach((ingredientId, isPresent) ->
-                ingredientQuery.remove(ingredientId, !isPresent)
+                ingredientQuery.remove(ingredientId, false)
         );
     }
 
