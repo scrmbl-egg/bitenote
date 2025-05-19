@@ -32,6 +32,16 @@ public final class MeasurementType {
     public static final String WEIGHT_TYPE_STRING = "weight";
 
     /**
+     * ID of the weight measurement type in the database.
+     */
+    public static final int WEIGHT_ID = 1;
+
+    /**
+     * ID of the volume measurement type in the database.
+     */
+    public static final int VOLUME_ID = 2;
+
+    /**
      * Name of the measurement type.
      */
     public final String name;
