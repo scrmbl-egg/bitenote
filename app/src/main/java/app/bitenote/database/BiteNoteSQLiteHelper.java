@@ -14,9 +14,13 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import app.bitenote.R;
 import app.bitenote.instances.Ingredient;
@@ -50,7 +54,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
-    private Pair<Integer, Ingredient>[] ingredients = null;
+    private List<Pair<Integer, Ingredient>> ingredients = null;
 
     /**
      * Amount of total ingredients in the database.
@@ -63,7 +67,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * and the second element represents the data that the ID references contained in a
      * {@link Utensil} instance.
      */
-    private Pair<Integer, Utensil>[] utensils = null;
+    private List<Pair<Integer, Utensil>> utensils = null;
 
     /**
      * Amount of total utensils in the database.
@@ -76,7 +80,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * and the second element represents the data that the ID references contained in a
      * {@link MeasurementType} instance.
      */
-    private Pair<Integer, MeasurementType>[] measurementTypes = null;
+    private List<Pair<Integer, MeasurementType>> measurementTypes = null;
 
     /**
      * Amount of total measurement types in the database.
@@ -212,7 +216,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                         case Recipe.XML_RECIPE_INGREDIENT_TAG:
                             currentRecipeData.putIngredient(
                                     currentIngredientId,
-                                    Float.valueOf(parser.getText().trim())
+                                    Integer.valueOf(parser.getText().trim())
                             );
                             break;
                             // utensil case doesn't need to be handled since there is no TEXT
@@ -395,7 +399,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * {@link #getAllIngredients()}, {@link #getAllUtensils()} or {@link #getAllMeasurementTypes()}
      * because the recipes table is mutable, which means the result can't be internally cached.
      */
-    public Pair<Integer, Recipe>[] getAllRecipes() {
+    public List<Pair<Integer, Recipe>> getAllRecipes() {
         /// query for all recipes, orders from newest to oldest
         final String sql = "SELECT id FROM recipes ORDER BY creation_date DESC;";
         final String[] args = {};
@@ -404,18 +408,18 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 final SQLiteDatabase database = getReadableDatabase();
                 final Cursor cursor = database.rawQuery(sql, args)
         ) {
-            if (!cursor.moveToFirst()) return new Pair[]{};
+            if (!cursor.moveToFirst()) return new ArrayList<>();
 
-            Pair<Integer, Recipe>[] recipeArray = new Pair[cursor.getCount()];
+            final List<Pair<Integer, Recipe>> recipeList = new ArrayList<>(cursor.getCount());
 
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
                 final Recipe recipeInstance = getRecipeFromId(id).get();
 
-                recipeArray[cursor.getPosition()] = new Pair<>(id, recipeInstance);
+                recipeList.add(Pair.create(id, recipeInstance));
             } while (cursor.moveToNext());
 
-            return recipeArray;
+            return Collections.unmodifiableList(recipeList);
         }
     }
 
@@ -427,25 +431,25 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * recipe, and the second element represents the data that the ID references contained in a
      * {@link Recipe} instance.
      */
-    public Pair<Integer, Recipe>[] getQueriedRecipes(@NonNull RecipeQuery rQuery) {
+    public List<Pair<Integer, Recipe>> getQueriedRecipes(@NonNull RecipeQuery rQuery) {
         final String[] args = {}; // arguments are handled in RecipeQuery.toSQLString
 
         try (
                 final SQLiteDatabase database = getReadableDatabase();
                 final Cursor cursor = database.rawQuery(rQuery.toSQLString(), args)
         ) {
-            if (!cursor.moveToFirst()) return new Pair[]{};
+            if (!cursor.moveToFirst()) return new ArrayList<>();
 
             /// allocate new array of ids
-            Pair<Integer, Recipe>[] recipeArray = new Pair[cursor.getCount()];
+            final List<Pair<Integer, Recipe>> recipeList = new ArrayList<>(cursor.getCount());
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
                 final Recipe recipeInstance = getRecipeFromId(id).get();
 
-                recipeArray[cursor.getPosition()] = new Pair<>(id, recipeInstance);
+                recipeList.add(Pair.create(id, recipeInstance));
             } while (cursor.moveToNext());
 
-            return recipeArray;
+            return recipeList;
         }
     }
 
@@ -470,9 +474,10 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 return Optional.empty();
             }
 
-            String fullName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-            int measurementId = cursor.getInt(cursor.getColumnIndexOrThrow("measurement_id"));
-            boolean canBeMeasuredInUnits =
+            final String fullName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            final int measurementId =
+                    cursor.getInt(cursor.getColumnIndexOrThrow("measurement_id"));
+            final boolean canBeMeasuredInUnits =
                     cursor.getInt(cursor.getColumnIndexOrThrow("can_be_measured_in_units")) != 0;
 
             ingredient = new Ingredient(fullName, measurementId, canBeMeasuredInUnits);
@@ -489,8 +494,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * ingredient, and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
-    public Pair<Integer, Ingredient>[] getAllIngredients() {
-        if (ingredients != null) return ingredients;
+    public List<Pair<Integer, Ingredient>> getAllIngredients() {
+        if (ingredients != null) return Collections.unmodifiableList(ingredients);
 
         final String sql = "SELECT id FROM ingredients ORDER BY id ASC;";
         final String[] args = {};
@@ -499,20 +504,132 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 final SQLiteDatabase database = getReadableDatabase();
                 final Cursor cursor = database.rawQuery(sql, args)
         ) {
-            if (!cursor.moveToFirst()) return new Pair[]{};
+            if (!cursor.moveToFirst()) return new ArrayList<>();
 
-            Pair<Integer, Ingredient>[] ingredientArray = new Pair[cursor.getCount()];
+            final List<Pair<Integer, Ingredient>> ingredientList = new ArrayList<>();
 
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
                 final Ingredient ingredientInstance = getIngredientFromId(id).get();
 
-                ingredientArray[cursor.getPosition()] = new Pair<>(id, ingredientInstance);
+                ingredientList.add(Pair.create(id, ingredientInstance));
             } while (cursor.moveToNext());
 
-            ingredients = ingredientArray;
-            return ingredientArray;
+            ingredients = ingredientList;
+            return Collections.unmodifiableList(ingredients);
         }
+    }
+
+    /**
+     * Gets all ingredients in the database, except the ones specified by the caller.
+     * @param except {@link Recipe} that contains the ingredients that are going to be ignored.
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
+    public List<Pair<Integer, Ingredient>> getAllIngredientsExcept(@NonNull Recipe except) {
+        return getAllIngredientsExcept(except.getIngredients().keySet());
+    }
+
+    /**
+     * Gets all ingredients in the database, except the ones specified by the caller.
+     * @param except {@link Map} where the key is an integer ID that represents an ingredients
+     * that will be excluded from the selection (values are ignored).
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
+    public List<Pair<Integer, Ingredient>> getAllIngredientsExcept(
+            @NonNull Map<Integer, ?> except
+    ) {
+        return getAllIngredientsExcept(except.keySet());
+    }
+
+    public List<Pair<Integer, Ingredient>> getAllIngredientsExcept(@NonNull RecipeQuery except) {
+        final Set<Integer> exceptSet = new HashSet<>();
+        for (int id: except.getQueriedIngredients()) {
+            exceptSet.add(id);
+        }
+
+        return getAllIngredientsExcept(exceptSet);
+    }
+
+    /**
+     * Gets all ingredients in the database, except the ones specified by the caller.
+     * @param except {@link Set} of integer IDs that represent the ingredients that will be
+     * excluded from the selection.
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
+    public List<Pair<Integer, Ingredient>> getAllIngredientsExcept(@NonNull Set<Integer> except) {
+        final List<Pair<Integer, Ingredient>> filteredList =
+                new ArrayList<>(getAllIngredients().size() - except.size());
+
+        for (Pair<Integer, Ingredient> pair: getAllIngredients()) {
+            if (except.contains(pair.first)) continue;
+
+            filteredList.add(pair);
+        }
+
+        return filteredList;
+    }
+
+    /**
+     * Gets all ingredient data from a recipe as a pair list.
+     * @param recipe The {@link Recipe} instance where the ingredients are going to be obtained
+     * from.
+     * @return An array of {@link Pair}s, where the first element is the ID of the ingredient,
+     * and the second element is another {@link Pair}, whose first element is the ingredient data
+     * wrapped in an {@link Ingredient} instance, and the second element is the amount of that
+     * ingredient in the recipe.
+     */
+    public List<Pair<Pair<Integer, Ingredient>, Ingredient.InRecipeProperties>> // oh...
+    getRecipeIngredientsWithProperties(
+            @NonNull Recipe recipe
+    ) {
+        final List<Pair<Pair<Integer, Ingredient>, Ingredient.InRecipeProperties>> // jeez
+                recipeIngredientsList = new ArrayList<>(recipe.getIngredients().size());
+
+        for (
+                Map.Entry<Integer, Ingredient.InRecipeProperties> entry:
+                recipe.getIngredients().entrySet()
+        ) {
+            final int id = entry.getKey();
+            final Ingredient ingredient = getIngredientFromId(id).get();
+            final Pair<Integer, Ingredient> ingredientPair = Pair.create(id, ingredient);
+            final Ingredient.InRecipeProperties properties = entry.getValue();
+
+            recipeIngredientsList.add(Pair.create(ingredientPair, properties));
+        }
+
+        return recipeIngredientsList;
+    }
+
+    public List<Pair<Integer, Ingredient>> getQueryIncludedIngredientsWithProperties(
+            @NonNull RecipeQuery query
+    ) {
+        final List<Pair<Integer, Ingredient>> list =
+                new ArrayList<>(query.getIncludedIngredients().size());
+
+        query.getIncludedIngredients().forEach(id ->
+                list.add(Pair.create(id, getIngredientFromId(id).get()))
+        );
+
+        return list;
+    }
+
+    public List<Pair<Integer, Ingredient>> getQueryBannedIngredientsWithProperties(
+            @NonNull RecipeQuery query
+    ) {
+        final List<Pair<Integer, Ingredient>> list =
+                new ArrayList<>(query.getBannedIngredients().size());
+
+        query.getBannedIngredients().forEach(id ->
+                list.add(Pair.create(id, getIngredientFromId(id).get()))
+        );
+
+        return list;
     }
 
     /**
@@ -560,7 +677,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 return Optional.empty();
             }
 
-            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            final String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
 
             measurementType = new MeasurementType(name);
         } catch (IllegalArgumentException e) {
@@ -576,7 +693,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * measurement types, and the second element represents the data that the ID references
      * contained in a {@link MeasurementType} instance.
      */
-    public Pair<Integer, MeasurementType>[] getAllMeasurementTypes() {
+    public List<Pair<Integer, MeasurementType>> getAllMeasurementTypes() {
         if (measurementTypes != null) return measurementTypes;
 
         final String sql = "SELECT id FROM measurement_types ORDER BY id ASC;";
@@ -586,19 +703,20 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 final SQLiteDatabase database = getReadableDatabase();
                 final Cursor cursor = database.rawQuery(sql, args)
         ) {
-            if (!cursor.moveToFirst()) return new Pair[]{};
+            if (!cursor.moveToFirst()) return new ArrayList<>();
 
-            Pair<Integer, MeasurementType>[] mTypeArray = new Pair[cursor.getCount()];
+            final List<Pair<Integer, MeasurementType>> mTypeList =
+                    new ArrayList<>(cursor.getCount());
 
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
                 final MeasurementType mTypeInstance = getMeasurementTypeFromId(id).get();
 
-                mTypeArray[cursor.getPosition()] = new Pair<>(id, mTypeInstance);
+                mTypeList.add(Pair.create(id, mTypeInstance));
             } while (cursor.moveToNext());
 
-            measurementTypes = mTypeArray;
-            return mTypeArray;
+            measurementTypes = mTypeList;
+            return Collections.unmodifiableList(measurementTypes);
         }
     }
 
@@ -665,7 +783,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * utensil, and the second element represents the data that the ID references contained in a
      * {@link Utensil} instance.
      */
-    public Pair<Integer, Utensil>[] getAllUtensils() {
+    public List<Pair<Integer, Utensil>> getAllUtensils() {
         if (utensils != null) return utensils;
 
         final String sql = "SELECT id FROM utensils ORDER BY id ASC;";
@@ -675,20 +793,109 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 final SQLiteDatabase database = getReadableDatabase();
                 final Cursor cursor = database.rawQuery(sql, args)
         ) {
-            if (!cursor.moveToFirst()) return new Pair[]{};
+            if (!cursor.moveToFirst()) return new ArrayList<>();
 
-            Pair<Integer, Utensil>[] utensilArray = new Pair[cursor.getCount()];
+            final List<Pair<Integer, Utensil>> utensilList = new ArrayList<>(cursor.getCount());
 
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
                 final Utensil utensilInstance = getUtensilFromId(id).get();
 
-                utensilArray[cursor.getPosition()] = new Pair<>(id, utensilInstance);
+                utensilList.add(Pair.create(id, utensilInstance));
             } while (cursor.moveToNext());
 
-            utensils = utensilArray;
-            return utensilArray;
+            utensils = utensilList;
+            return Collections.unmodifiableList(utensils);
         }
+    }
+
+    /**
+     * Gets all utensils in the database, except the ones specified by the caller.
+     * @param except {@link Recipe} that contains the ingredients that are going to be ignored.
+     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
+    public List<Pair<Integer, Utensil>> getAllUtensilsExcept(@NonNull Recipe except) {
+        return getAllUtensilsExcept(except.getUtensils());
+    }
+
+    public List<Pair<Integer, Utensil>> getAllUtensilsExcept(@NonNull RecipeQuery except) {
+        final Set<Integer> exceptSet = new HashSet<>();
+        for (int id: except.getQueriedUtensils()) {
+            exceptSet.add(id);
+        }
+
+        return getAllUtensilsExcept(exceptSet);
+    }
+
+    /**
+     * Gets all utensils in the database, except the ones specified by the caller.
+     * @param except {@link Set} of integer IDs that represent the utensils that will be excluded
+     * from the selection.
+     * @return An unmodifiable {@link List} of {@link Pair}s, in which the first element represents
+     * the ID of the utensil, and the second element represents the data that the ID references
+     * contained in a {@link Utensil} instance.
+     */
+    public List<Pair<Integer, Utensil>> getAllUtensilsExcept(@NonNull Set<Integer> except) {
+        final List<Pair<Integer, Utensil>> filteredList =
+                new ArrayList<>(getAllUtensils().size() - except.size());
+
+        for (Pair<Integer, Utensil> pair: getAllUtensils()) {
+            if (except.contains(pair.first)) continue;
+
+            filteredList.add(pair);
+        }
+
+        return filteredList;
+    }
+
+    /**
+     * Gets all utensil data from a recipe as a pair array.
+     * @param recipe The {@link Recipe} instance where the utensils are going to be obtained from.
+     * @return An array of {@link Pair}s, where the first element is the ID of the ingredient,
+     * and the second element is another {@link Pair}, whose first element is the ingredient data
+     * wrapped in an {@link Ingredient} instance, and the second element is the amount of that
+     * ingredient in the recipe.
+     */
+    public List<Pair<Integer, Utensil>> getRecipeUtensilsWithProperties(
+            @NonNull Recipe recipe
+    ) {
+        final Set<Integer> utensilIdSet = recipe.getUtensils();
+        final List<Pair<Integer, Utensil>> list = new ArrayList<>(utensilIdSet.size());
+
+        for (Integer id: utensilIdSet) {
+            final Utensil utensilData = getUtensilFromId(id).get();
+            list.add(Pair.create(id, utensilData));
+        }
+
+        return list;
+    }
+
+    public List<Pair<Integer, Utensil>> getQueryIncludedUtensilsWithProperties(
+            @NonNull RecipeQuery query
+    ) {
+        final List<Pair<Integer, Utensil>> list =
+                new ArrayList<>(query.getIncludedUtensils().size());
+
+        query.getIncludedUtensils().forEach(id ->
+                list.add(Pair.create(id, getUtensilFromId(id).get()))
+        );
+
+        return list;
+    }
+
+    public List<Pair<Integer, Utensil>> getQueryBannedUtensilsWithProperties(
+            @NonNull RecipeQuery query
+    ) {
+        final List<Pair<Integer, Utensil>> list =
+                new ArrayList<>(query.getBannedUtensils().size());
+
+        query.getBannedUtensils().forEach(id ->
+                list.add(Pair.create(id, getUtensilFromId(id).get()))
+        );
+
+        return list;
     }
 
     /**
@@ -721,7 +928,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipe Recipe instance.
      * @return The ID of the inserted recipe.
      */
-    private static int insertInRecipesTable(
+    private int insertInRecipesTable(
             @NonNull SQLiteDatabase writeableDatabase,
             @NonNull Recipe recipe
     ) {
@@ -768,7 +975,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance {@link Recipe} instance which holds the new data for the row.
      * @param recipeId ID of the recipe.
      */
-    private static void updateRecipeRow(
+    private void updateRecipeRow(
             @NonNull SQLiteDatabase writeableDatabase,
             @NonNull Recipe recipeInstance,
             int recipeId
@@ -806,7 +1013,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance Instance of the recipe.
      * @param recipeId The recipe ID in the SQLite database.
      */
-    private static void insertInRecipeIngredientsTable(
+    private void insertInRecipeIngredientsTable(
             @NonNull SQLiteDatabase writeableDatabase,
             @NonNull Recipe recipeInstance,
             int recipeId
@@ -840,7 +1047,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance Instance of the recipe.
      * @param recipeId The recipe ID in the SQLite database.
      */
-    private static void insertInRecipeUtensilsTable(
+    private void insertInRecipeUtensilsTable(
             @NonNull SQLiteDatabase writeableDatabase,
             @NonNull Recipe recipeInstance,
             int recipeId
@@ -872,7 +1079,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeId ID of the recipe.
      * @return An {@link Optional} instance that may contain the recipe.
      */
-    private static Optional<Recipe> getRecipeRowData(
+    private Optional<Recipe> getRecipeRowData(
             @NonNull SQLiteDatabase database,
             int recipeId
     ) {
@@ -886,7 +1093,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             // get row data (with empty sets and maps)
             final String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
             final String body = cursor.getString(cursor.getColumnIndexOrThrow("body"));
-            final HashMap<Integer, Float> ingredients = new HashMap<>();
+            final HashMap<Integer, Ingredient.InRecipeProperties> ingredients = new HashMap<>();
             final HashSet<Integer> utensils = new HashSet<>();
             final int budget = cursor.getInt(cursor.getColumnIndexOrThrow("budget"));
             final int diners = cursor.getInt(cursor.getColumnIndexOrThrow("diners"));
@@ -909,7 +1116,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance {@link Recipe} instance.
      * @param recipeId ID of the recipe.
      */
-    private static void populateRecipeInstanceIngredients(
+    private void populateRecipeInstanceIngredients(
             @NonNull SQLiteDatabase database,
             @NonNull Recipe recipeInstance,
             int recipeId
@@ -922,10 +1129,20 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             if (!cursor.moveToFirst()) return;
 
             do {
-                int ingredientId = cursor.getInt(cursor.getColumnIndexOrThrow("ingredient_id"));
-                float amount = cursor.getFloat(cursor.getColumnIndexOrThrow("amount"));
+                final int id =
+                        cursor.getInt(cursor.getColumnIndexOrThrow("ingredient_id"));
+                final int amount =
+                        cursor.getInt(cursor.getColumnIndexOrThrow("amount"));
+                final boolean isMeasuredInUnits =
+                        cursor.getInt(cursor.getColumnIndexOrThrow("is_measured_in_units")) != 0;
 
-                recipeInstance.putIngredient(ingredientId, amount);
+                final Ingredient.InRecipeProperties properties = new Ingredient.InRecipeProperties(
+                        getIngredientFromId(id).get(),
+                        amount,
+                        isMeasuredInUnits
+                );
+
+                recipeInstance.putIngredient(id, properties);
             } while (cursor.moveToNext());
         } catch (IllegalArgumentException e) {
             Log.e("db", Optional.ofNullable(e.getMessage()).orElse("Missing message"));
@@ -938,7 +1155,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param database {@link SQLiteDatabase} instance.
      * @param recipeId ID of the recipe.
      */
-    private static void deleteRecipeIngredientRows(
+    private void deleteRecipeIngredientRows(
             @NonNull SQLiteDatabase database,
             int recipeId
     ) {
@@ -964,7 +1181,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param recipeInstance {@link Recipe} instance.
      * @param recipeId ID of the recipe.
      */
-    private static void populateRecipeInstanceUtensils(
+    private void populateRecipeInstanceUtensils(
             @NonNull SQLiteDatabase database,
             @NonNull Recipe recipeInstance,
             int recipeId
@@ -991,7 +1208,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @param database {@link SQLiteDatabase} instance.
      * @param recipeId ID of the recipe.
      */
-    private static void deleteRecipeUtensilRows(
+    private void deleteRecipeUtensilRows(
             @NonNull SQLiteDatabase database,
             int recipeId
     ) {
