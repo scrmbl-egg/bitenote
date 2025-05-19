@@ -148,21 +148,16 @@ public final class Ingredient {
         public boolean isMeasuredInUnits;
 
         /**
-         * Basic properties constructor.
-         * @param amount Amount of the ingredient in the recipe.
-         * @param isMeasuredInUnits Determines whether the ingredient is being measured in units.
-         * @implNote This constructor doesn't check whether the ingredient can actually be measured
-         * in units. Use the following constructor instead for checking:
-         * {@link InRecipeProperties#InRecipeProperties(Ingredient, int, boolean)}}
-         * @see Ingredient#canBeMeasuredInUnits
+         * Default properties constructor. Amount will be set to {@code 0} and it will not be
+         * measured in units.
          */
-        public InRecipeProperties(int amount, boolean isMeasuredInUnits) {
-            this.amount = amount;
-            this.isMeasuredInUnits = isMeasuredInUnits;
+        public InRecipeProperties() {
+            this(0, false);
         }
 
         /**
-         * Properties constructor. Does additional checks.
+         * Properties constructor. Does additional checks to ensure {@code isMeasuredUnits} is
+         * set correctly.
          * @param ingredient {@link Ingredient} instance which the properties reference.
          * @param amount Amount of the ingredient in the recipe.
          * @param isMeasuredInUnits Determines whether the ingredient is being measured in units.
@@ -174,10 +169,21 @@ public final class Ingredient {
                 int amount,
                 boolean isMeasuredInUnits
         ) {
-            new InRecipeProperties(
-                    amount,
-                    ingredient.canBeMeasuredInUnits && isMeasuredInUnits
-            );
+            this(amount, ingredient.canBeMeasuredInUnits && isMeasuredInUnits);
+        }
+
+        /**
+         * Basic properties constructor.
+         * @param amount Amount of the ingredient in the recipe.
+         * @param isMeasuredInUnits Determines whether the ingredient is being measured in units.
+         * @implNote This constructor doesn't check whether the ingredient can actually be measured
+         * in units. Use the following constructor instead for checking:
+         * {@link InRecipeProperties#InRecipeProperties(Ingredient, int, boolean)}}
+         * @see Ingredient#canBeMeasuredInUnits
+         */
+        public InRecipeProperties(int amount, boolean isMeasuredInUnits) {
+            this.amount = amount;
+            this.isMeasuredInUnits = isMeasuredInUnits;
         }
 
         @Override
