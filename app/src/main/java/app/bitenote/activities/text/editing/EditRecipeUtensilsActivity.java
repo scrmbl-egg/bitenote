@@ -162,6 +162,10 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @return The {@link AddedRecipeUtensilAdapter.OnButtonClickListener} implementation that
+     * will run when an added utensil's card remove button is clicked.
+     */
     private AddedRecipeUtensilAdapter.OnButtonClickListener
     getOnAddedUtensilButtonClickListener() {
         return (utensilId, utensil) -> {
@@ -170,6 +174,10 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * @return The {@link NonAddedRecipeUtensilAdapter.OnButtonClickListener} implementation that
+     * will run when a non-added utensil's card add button is clicked.
+     */
     private NonAddedRecipeUtensilAdapter.OnButtonClickListener
     getOnNonAddedUtensilButtonClickListener() {
         return (utensilId, utensil) -> {

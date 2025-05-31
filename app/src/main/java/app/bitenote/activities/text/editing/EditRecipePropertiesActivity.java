@@ -176,6 +176,10 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @return The {@link SeekBar.OnSeekBarChangeListener} implementation that will run when
+     * {@link #dinersSeekBar} is changed.
+     */
     private SeekBar.OnSeekBarChangeListener getOnDinersSeekBarChangeListener() {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override

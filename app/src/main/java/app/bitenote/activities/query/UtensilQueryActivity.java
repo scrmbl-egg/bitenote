@@ -183,6 +183,10 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * @return The {@link IncludedUtensilAdapter.OnButtonsClickListener} implementation that
+     * will run when an included utensil's card buttons are clicked.
+     */
     private IncludedUtensilAdapter.OnButtonsClickListener
     getOnIncludedUtensilButtonsClickListener() {
         return new IncludedUtensilAdapter.OnButtonsClickListener() {
@@ -200,6 +204,10 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * @return The {@link BannedUtensilAdapter.OnButtonsClickListener} implementation that
+     * will run when a banned utensil's card buttons are clicked.
+     */
     private BannedUtensilAdapter.OnButtonsClickListener
     getOnBannedUtensilButtonsClickListener() {
         return new BannedUtensilAdapter.OnButtonsClickListener() {
@@ -217,6 +225,10 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * @return The {@link NonQueriedUtensilAdapter.OnButtonsClickListener} implementation that
+     * will run when a non-queried utensil's card buttons are clicked.
+     */
     private NonQueriedUtensilAdapter.OnButtonsClickListener
     getOnNonQueriedUtensilButtonsClickListener() {
         return new NonQueriedUtensilAdapter.OnButtonsClickListener() {

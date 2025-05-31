@@ -170,6 +170,10 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @return The {@link AddedRecipeIngredientAdapter.OnButtonClickListener} implementation that
+     * will run when an added ingredient's card remove button is clicked.
+     */
     private AddedRecipeIngredientAdapter.OnButtonClickListener
     getOnAddedIngredientButtonsClickListener() {
         return (ingredientId, ingredient, properties) -> {
@@ -178,6 +182,10 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * @return The {@link NonAddedRecipeIngredientAdapter.OnButtonClickListener} implementation that
+     * will run when a non-added ingredient's card add button is clicked.
+     */
     private NonAddedRecipeIngredientAdapter.OnButtonClickListener
     getOnNonAddedIngredientButtonsClickListener() {
         return (ingredientId, ingredient) -> {

@@ -190,6 +190,10 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * @return The {@link IncludedIngredientAdapter.OnButtonsClickListener} implementation that
+     * will run when an included ingredient's card buttons are clicked.
+     */
     private IncludedIngredientAdapter.OnButtonsClickListener
     getOnIncludedIngredientButtonsClickListener() {
         return new IncludedIngredientAdapter.OnButtonsClickListener() {
@@ -207,6 +211,10 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * @return The {@link BannedIngredientAdapter.OnButtonsClickListener} implementation that
+     * will run when a banned ingredient's card buttons are clicked.
+     */
     private BannedIngredientAdapter.OnButtonsClickListener
     getOnBannedIngredientButtonsClickListener() {
         return new BannedIngredientAdapter.OnButtonsClickListener() {
@@ -224,6 +232,10 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * @return The {@link NonQueriedIngredientAdapter.OnButtonsClickListener} implementation that
+     * will run when a non-queried ingredient's card buttons are clicked.
+     */
     private NonQueriedIngredientAdapter.OnButtonsClickListener
     getOnNonQueriedIngredientButtonsClickListener() {
         return new NonQueriedIngredientAdapter.OnButtonsClickListener() {
