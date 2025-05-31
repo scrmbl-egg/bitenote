@@ -2,6 +2,8 @@ package app.bitenote.activities.text;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -10,8 +12,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import app.bitenote.R;
+import app.bitenote.app.BiteNoteApplication;
 import app.bitenote.instances.Recipe;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
@@ -24,6 +29,16 @@ public final class ReadRecipeActivity extends AppCompatActivity {
      * Name of the {@link Intent} extra that holds the integer recipe ID.
      */
     public static final String INTENT_EXTRA_RECIPE_ID = "recipe_id";
+
+    /**
+     * Activity executor that creates a background thread for database operations.
+     */
+    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * Activity's handler for the main thread.
+     */
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
@@ -55,45 +70,62 @@ public final class ReadRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.read_recipe_activity);
 
-        /// init views
-        materialToolbar = findViewById(R.id.ReadRecipeMaterialToolbar);
-        editRecipeButton = findViewById(R.id.ReadRecipeEditRecipeButton);
-        nameTextView = findViewById(R.id.ReadRecipeNameTextView);
-        bodyTextView = findViewById(R.id.ReadRecipeBodyTextView);
-
         /// init viewmodel
-        viewModel = new ViewModelProvider(this).get(BiteNoteViewModel.class);
+        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
-        /// set material toolbar
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setupViews();
 
-        /// bind recipe data from ID in intent extra
-        bindRecipeData();
-
-        /// set edit recipe button
-        editRecipeButton.setOnClickListener(this::onEditRecipeButtonClick);
+        /// load data from recipe id
+        loadData(getIntent().getIntExtra(INTENT_EXTRA_RECIPE_ID, 0));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        bindRecipeData();
+        /// this feels hacky, but ensures data is updated
+        loadData(getIntent().getIntExtra(INTENT_EXTRA_RECIPE_ID, 0));
     }
 
     /**
-     * Binds the data from obtained from {@link ReadRecipeActivity#INTENT_EXTRA_RECIPE_ID}
-     * into the text views. If the {@link ReadRecipeActivity#INTENT_EXTRA_RECIPE_ID} extra points
-     * to a recipe that doesn't exist in the database, the data won't be bound.
+     * Sets up all the views in the activity.
      */
-    private void bindRecipeData() {
-        final int recipeId = getIntent().getIntExtra(INTENT_EXTRA_RECIPE_ID, 0);
-        final Optional<Recipe> recipeOption = viewModel.sqliteHelper.getRecipeFromId(recipeId);
-        recipeOption.ifPresent(recipe -> {
-            nameTextView.setText(recipe.name);
-            bodyTextView.setText(recipe.body);
+    private void setupViews() {
+        materialToolbar = findViewById(R.id.ReadRecipeMaterialToolbar);
+        editRecipeButton = findViewById(R.id.ReadRecipeEditRecipeButton);
+        nameTextView = findViewById(R.id.ReadRecipeNameTextView);
+        bodyTextView = findViewById(R.id.ReadRecipeBodyTextView);
+
+        setSupportActionBar(materialToolbar);
+        materialToolbar.setNavigationOnClickListener(view -> finish());
+
+        editRecipeButton.setOnClickListener(this::onEditRecipeButtonClick);
+    }
+
+    /**
+     * Loads the necessary recipe's data and binds it to the activity's views.
+     * @param id ID of the recipe in the database.
+     */
+    private void loadData(int id) {
+        databaseExecutor.execute(() -> {
+            final Optional<Recipe> recipeOption = viewModel.sqliteHelper.getRecipeFromId(id);
+
+            recipeOption.ifPresent(recipe ->
+                    mainThreadHandler.post(() -> {
+                        bind(recipe);
+                        viewModel.postRecipeWithId(id, recipe);
+                    })
+            );
         });
+    }
+
+    /**
+     * Binds a recipe's data into the text views of the activity.
+     * @param recipe {@link Recipe} instance.
+     */
+    private void bind(@NonNull Recipe recipe) {
+        nameTextView.setText(recipe.name);
+        bodyTextView.setText(recipe.body);
     }
 
     /**

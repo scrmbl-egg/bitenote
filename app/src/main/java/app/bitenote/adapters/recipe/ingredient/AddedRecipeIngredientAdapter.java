@@ -249,7 +249,11 @@ public final class AddedRecipeIngredientAdapter
                 @NonNull InRecipeProperties properties,
                 @NonNull OnButtonsClickListener listener
         ) {
-            nameTextView.setText(ingredient.fullName); // todo: translate
+            nameTextView.setText(itemView.getResources().getIdentifier(
+                    "ingredient_" + ingredient.fullName,
+                    "string",
+                    itemView.getContext().getPackageName()
+            ));
 
             amountEditText.setText(String.valueOf(properties.amount));
             amountEditText.setOnKeyListener((view, i, keyEvent) -> {

@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -165,7 +164,11 @@ public final class NonAddedRecipeUtensilAdapter extends
                 @NonNull Utensil utensil,
                 @NonNull OnButtonClickListener listener
         ) {
-            nameTextView.setText(utensil.name); // todo: translate
+            nameTextView.setText(itemView.getResources().getIdentifier(
+                    "utensil_" + utensil.name,
+                    "string",
+                    itemView.getContext().getPackageName()
+            ));
 
             addButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;

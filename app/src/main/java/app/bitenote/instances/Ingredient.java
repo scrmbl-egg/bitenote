@@ -15,7 +15,7 @@ public final class Ingredient {
     /**
      * Ingredient name delimiter.
      */
-    public static final String NAME_DELIMITER = ".";
+    public static final String NAME_DELIMITER = "_";
 
     /**
      * XML ingredient tag in the {@code res/xml/ingredients.xml} document.
@@ -103,7 +103,7 @@ public final class Ingredient {
          */
 
         final Stack<String> fullNameStack = new Stack<>();
-        fullNameStack.addAll(Arrays.asList(fullName.split("\\" + NAME_DELIMITER)));
+        fullNameStack.addAll(Arrays.asList(fullName.split(NAME_DELIMITER)));
         this.name = fullNameStack.pop();
     }
 

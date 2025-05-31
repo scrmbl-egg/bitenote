@@ -2,17 +2,22 @@ package app.bitenote.activities.text;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import app.bitenote.R;
 import app.bitenote.activities.text.editing.EditRecipePropertiesActivity;
+import app.bitenote.app.BiteNoteApplication;
 import app.bitenote.instances.Recipe;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
@@ -27,20 +32,17 @@ public final class WriteRecipeActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_RECIPE_ID = "recipe_id";
 
     /**
-     * The data of the recipe being edited.
-     * @implNote This field is {@code static} because the reference needs to be accessed from other
-     * activities that mutate it, and passing an ID, or a {@link android.os.Parcelable} will only
-     * create copies. Since only one recipe can be edited at a time, this should not be a problem.
+     * Activity executor that creates a background thread for database operations.
      */
-    public static Recipe currentRecipeData;
+    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
-     * The integer ID of the recipe being edited.
+     * Activity's handler for the main thread.
      */
-    private static int currentRecipeId;
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
-     * Application view model. Grants access to the app's database.
+     * Application view model. Grants access to the app's database and shared data.
      */
     private BiteNoteViewModel viewModel;
 
@@ -74,54 +76,72 @@ public final class WriteRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_recipe_activity);
 
-        /// init views
+        /// init viewmodel
+        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+
+        setupViews();
+
+        /*
+         * NOTE: The data from the currently edited recipe is assigned in this activity and not in
+         * ReadRecipeActivity because that activity is not started when a new recipe is created.
+         */
+        loadData(getIntent().getIntExtra(INTENT_EXTRA_RECIPE_ID, 0));
+
+        viewModel.recipeLiveData.observe(this, pair -> bind(pair.second));
+    }
+
+    /**
+     * Sets up all the views in the activity.
+     */
+    private void setupViews() {
         materialToolbar = findViewById(R.id.WriteRecipeMaterialToolbar);
         nameEditText = findViewById(R.id.WriteRecipeInputNameTextView);
         bodyEditText = findViewById(R.id.WriteRecipeInputBodyTextView);
         saveChangesButton = findViewById(R.id.WriteRecipeSaveChangesButton);
         propertiesButton = findViewById(R.id.WriteRecipeEditPropertiesButton);
 
-        /// set toolbar
         setSupportActionBar(materialToolbar);
         materialToolbar.setNavigationOnClickListener(view -> finish());
 
-        /// init view model
-        viewModel = new ViewModelProvider(this).get(BiteNoteViewModel.class);
-
-        /// get recipe data, and bind
-        currentRecipeId = getIntent().getIntExtra(INTENT_EXTRA_RECIPE_ID, 0);
-        final boolean isNewRecipe = currentRecipeId == 0;
-        if (isNewRecipe) {
-            /// create new instance, insert into database, and reassign id
-            currentRecipeData = new Recipe();
-            currentRecipeId = viewModel.sqliteHelper.insertRecipe(currentRecipeData);
-        } else {
-            final Optional<Recipe> recipeOption =
-                    viewModel.sqliteHelper.getRecipeFromId(currentRecipeId);
-
-            recipeOption.ifPresent(recipe -> currentRecipeData = recipe);
-        }
-        bindRecipeData();
-
-        /// set properties button
         propertiesButton.setOnClickListener(this::onPropertiesButtonClick);
-
-        /// set save changes button
-        saveChangesButton.setOnClickListener(this::onSaveButtonClick);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bindRecipeData();
+        saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
     /**
-     * Binds the data contained in {@link WriteRecipeActivity#currentRecipeData} to the text views.
+     * Loads the necessary recipe's data and binds it to the activity's views.
+     * @param id ID of the recipe in the database. If {@code 0} is passed, it means that a new
+     * recipe is being created and edited by the user.
      */
-    private void bindRecipeData() {
-        nameEditText.setText(currentRecipeData.name);
-        bodyEditText.setText(currentRecipeData.body);
+    private void loadData(int id) {
+        final boolean isNewRecipe = id == 0;
+        if (isNewRecipe) {
+            /// set new instance, insert into database, and reassign id
+            final Recipe newRecipe = new Recipe();
+            databaseExecutor.execute(() -> {
+                final int newId = viewModel.sqliteHelper.insertRecipe(newRecipe);
+
+                mainThreadHandler.post(() -> viewModel.postRecipeWithId(newId, newRecipe));
+            });
+        } else {
+            databaseExecutor.execute(() -> {
+                final Optional<Recipe> recipeOption = viewModel.sqliteHelper.getRecipeFromId(id);
+
+                recipeOption.ifPresent(recipe ->
+                        mainThreadHandler.post(() -> {
+                            viewModel.postRecipeWithId(id, recipe);
+                        })
+                );
+            });
+        }
+    }
+
+    /**
+     * Binds a recipe's data into the text views of the activity.
+     * @param recipe {@link Recipe} instance.
+     */
+    private void bind(@NonNull Recipe recipe) {
+        nameEditText.setText(recipe.name);
+        bodyEditText.setText(recipe.body);
     }
 
     /**
@@ -136,12 +156,31 @@ public final class WriteRecipeActivity extends AppCompatActivity {
      * Function called when {@link #saveChangesButton} is clicked.
      * @param view {@link View} reference.
      */
-    private void onSaveButtonClick(@NonNull View view) {
-        currentRecipeData.name = nameEditText.getText().toString();
-        currentRecipeData.body = bodyEditText.getText().toString();
+    private void onSaveChangesButtonClick(@NonNull View view) {
+        assert viewModel.recipeLiveData.getValue() != null : "Recipe live data value can't be null";
 
-        viewModel.sqliteHelper.updateRecipe(currentRecipeId, currentRecipeData);
+        final Integer recipeId = viewModel.recipeLiveData.getValue().first;
+        final Recipe recipe  = viewModel.recipeLiveData.getValue().second;
 
-        finish();
+        final Recipe modifiedCopy = new Recipe(recipe) {{
+            name = nameEditText.getText().toString().trim();
+            body = bodyEditText.getText().toString().trim();
+        }};
+
+        databaseExecutor.execute(() -> {
+            viewModel.sqliteHelper.updateRecipe(recipeId, modifiedCopy);
+
+            mainThreadHandler.post(() -> {
+                viewModel.postRecipe(modifiedCopy);
+
+                Toast.makeText(
+                        this,
+                        getString(R.string.recipe_saved_toast, modifiedCopy.name),
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                finish();
+            });
+        });
     }
 }

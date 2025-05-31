@@ -1,4 +1,4 @@
-package app.bitenote.adapters.recipe.utensil;
+package app.bitenote.adapters.query.utensil;
 
 import android.annotation.SuppressLint;
 import android.util.Pair;
@@ -19,41 +19,40 @@ import app.bitenote.database.BiteNoteSQLiteHelper;
 import app.bitenote.instances.Utensil;
 
 /**
- * Adapter for displaying {@link Utensil}s that have been added to a recipe in a
- * {@link RecyclerView} with cards in
- * {@link app.bitenote.activities.text.editing.EditRecipeUtensilsActivity}.
+ * Adapter for displaying included {@link Utensil} data in a {@link RecyclerView} with cards
+ * in {@link app.bitenote.activities.query.UtensilQueryActivity}.
  * @see ViewHolder
  * @author Daniel N.
  */
-public final class AddedRecipeUtensilAdapter
-        extends RecyclerView.Adapter<AddedRecipeUtensilAdapter.ViewHolder>
+public final class IncludedUtensilAdapter extends
+        RecyclerView.Adapter<IncludedUtensilAdapter.ViewHolder>
 {
     /**
-     * List of utensils in the adapter. The first element of the pair represents the integer ID of
-     * the utensil in the database, and the second element represents the data of that utensil,
-     * wrapped in an {@link Utensil} instance.
+     * List of utensils in the adapter. The first element of the pair represents the
+     * integer ID of the utensil in the database, and the second element represents the data of
+     * that utensil, wrapped in an {@link Utensil} instance.
      */
     private List<Pair<Integer, Utensil>> utensils;
 
     /**
-     * {@link OnButtonClickListener} implementation, which will determine the code the
-     * {@link ViewHolder} will execute when the buttons are clicked.
+     * {@link OnButtonsClickListener} implementation, which will determine
+     * the code the {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonClickListener listener;
+    private final OnButtonsClickListener listener;
 
     /**
-     * Non-added recipe utensil adapter constructor.
-     * @param utensils List of {@link Pair}s, where the first element of the pair represents the
-     * integer ID of the utensil in the database, and the second element represents the data of that
-     * utensil, wrapped in an {@link Utensil} instance. See:
-     * {@link BiteNoteSQLiteHelper#getAllUtensils()},
-     * {@link BiteNoteSQLiteHelper#getAllUtensilsExcept(Set)}.
-     * @param listener {@link OnButtonClickListener} implementation, which will determine the code
-     * the {@link ViewHolder} will execute when the buttons are clicked.
+     * Included utensils adapter constructor.
+     * @param utensils List of {@link Pair}s, where the first element of a pair is the integer
+     * ID of the utensil in the database, and the second element is an instance of {@link Utensil}
+     * where the utensil's data is wrapped.
+     * See: {@link BiteNoteSQLiteHelper#getAllUtensils()},
+     * {@link BiteNoteSQLiteHelper#getAllUtensilsExcept(Set)}
+     * @param listener {@link OnButtonsClickListener} implementation, which
+     * will determine the code the {@link ViewHolder} will execute when a card is clicked.
      */
-    public AddedRecipeUtensilAdapter(
+    public IncludedUtensilAdapter(
             @NonNull List<Pair<Integer, Utensil>> utensils,
-            @NonNull OnButtonClickListener listener
+            @NonNull OnButtonsClickListener listener
     ) {
         this.utensils = utensils;
         this.listener = listener;
@@ -63,7 +62,7 @@ public final class AddedRecipeUtensilAdapter
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.added_utensil_card, parent, false);
+                .inflate(R.layout.included_utensil_card, parent, false);
 
         return new ViewHolder(view);
     }
@@ -85,12 +84,6 @@ public final class AddedRecipeUtensilAdapter
         return Collections.unmodifiableList(utensils);
     }
 
-    /**
-     * Sets the utensils of the adapter.
-     * @param utensils List of {@link Pair}s, where the first element of the pair represents the
-     * integer ID of the utensil in the database, and the second element represents the data of that
-     * utensil, wrapped in an {@link Utensil} instance.
-     */
     @SuppressLint("NotifyDataSetChanged")
     public void setUtensils(@NonNull List<Pair<Integer, Utensil>> utensils) {
         this.utensils = utensils;
@@ -126,48 +119,62 @@ public final class AddedRecipeUtensilAdapter
     }
 
     /**
-     * View holder for a single utensil that has been added to the recipe.
+     * View holder for included utensils.
+     * @author Daniel N.
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static final class ViewHolder extends RecyclerView.ViewHolder {
         /**
-         * {@link TextView} instance that displays the name of the utensil.
+         * {@link TextView} instance that displays the translated name of the utensil in the card.
+         * @see Utensil#name
          */
         private final TextView nameTextView;
 
         /**
-         * {@link ImageButton} that is used to add the utensil to the recipe.
+         * {@link ImageButton} instance that is used for banning an utensil in the query.
+         */
+        private final ImageButton banButton;
+
+        /**
+         * {@link ImageButton} instance that is used for removing an utensil from the query.
          */
         private final ImageButton removeButton;
 
         /**
-         * Added utensil view holder constructor.
+         * Included utensil view holder constructor.
          * @param itemView {@link View} instance.
          */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             nameTextView = itemView.findViewById(R.id.IncludedUtensilCardNameTextView);
+            banButton = itemView.findViewById(R.id.IncludedUtensilCardBanButton);
             removeButton = itemView.findViewById(R.id.IncludedUtensilCardRemoveButton);
         }
 
         /**
          * Binds utensil data to the view.
-         * @param utensilId ID of the database ingredient.
-         * @param utensil {@link Utensil} instance that holds the data.
-         * @param listener {@link OnButtonClickListener} implementation, which will determine the
-         * code the {@link ViewHolder} will execute when the buttons are clicked.
+         * @param utensilId ID of the database utensil.
+         * @param utensil {@link Utensil} instance that holds the new data.
+         * @param listener {@link OnButtonsClickListener} implementation, which
+         * will determine the code the {@link ViewHolder} will execute when the buttons are clicked.
          */
         @SuppressLint("DiscouragedApi")
         public void bind(
                 int utensilId,
                 @NonNull Utensil utensil,
-                @NonNull OnButtonClickListener listener
+                @NonNull OnButtonsClickListener listener
         ) {
             nameTextView.setText(itemView.getResources().getIdentifier(
                     "utensil_" + utensil.name,
                     "string",
                     itemView.getContext().getPackageName()
             ));
+
+            banButton.setOnClickListener(view -> {
+                if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+
+                listener.onBanButtonClick(utensilId, utensil);
+            });
 
             removeButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
@@ -181,9 +188,16 @@ public final class AddedRecipeUtensilAdapter
      * Interface that determines what the buttons of a {@link ViewHolder} do when clicked.
      * @author Daniel N.
      */
-    public interface OnButtonClickListener {
+    public interface OnButtonsClickListener {
         /**
-         * Function that will be called when the remove button is clicked.
+         * Function called when the ban button is clicked.
+         * @param utensilId ID of the utensil in the database.
+         * @param utensil {@link Utensil} instance.
+         */
+        void onBanButtonClick(int utensilId, @NonNull Utensil utensil);
+
+        /**
+         * Function called when the remove button is clicked.
          * @param utensilId ID of the utensil in the database.
          * @param utensil {@link Utensil} instance.
          */

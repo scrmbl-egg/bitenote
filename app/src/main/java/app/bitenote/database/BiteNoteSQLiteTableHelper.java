@@ -164,7 +164,9 @@ final class BiteNoteSQLiteTableHelper {
                 }
 
                 // alloc array for sql args
-                Object[] args = {parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)};
+                final Object[] args = {
+                        parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)
+                };
 
                 database.execSQL(sql, args);
                 parser.next();
@@ -264,7 +266,7 @@ final class BiteNoteSQLiteTableHelper {
                 }
 
                 // when its an ingredient, get all its attributes
-                Object[] args = {
+                final Object[] args = {
                         String.join(Ingredient.NAME_DELIMITER, strStack),
                         getMeasurementTypeIdFromName(
                                 database,

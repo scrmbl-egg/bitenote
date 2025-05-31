@@ -155,8 +155,9 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
             bodyTextView.setText(recipe.body);
             creationDateTextView.setText(recipe.creationDate.toString());
             dinersTextView.setText(String.valueOf(recipe.diners));
-            budgetTextView.setText(String.format(Locale.getDefault(),"%d$", recipe.budget));
-            // todo: change dollar for language currency
+            budgetTextView.setText(
+                    itemView.getResources().getString(R.string.number_with_currency, recipe.budget)
+            );
 
             itemView.setContentDescription(itemView.getContentDescription() + ": " + recipe.name);
             /// :-(

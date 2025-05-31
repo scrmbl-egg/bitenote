@@ -1018,16 +1018,17 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             @NonNull Recipe recipeInstance,
             int recipeId
     ) {
-        final String sql = "INSERT INTO recipe_ingredients(recipe_id, ingredient_id, amount)" +
-                "VALUES (?, ?, ?);";
+        final String sql = "INSERT INTO recipe_ingredients" +
+                "(recipe_id, ingredient_id, amount, is_measured_in_units) VALUES (?, ?, ?, ?);";
 
         writeableDatabase.beginTransaction();
         try {
-            recipeInstance.getIngredients().forEach((ingredientId, amount) -> {
+            recipeInstance.getIngredients().forEach((ingredientId, properties) -> {
                 final Object[] args = {
                         recipeId,
                         ingredientId,
-                        amount
+                        properties.amount,
+                        properties.isMeasuredInUnits
                 };
 
                 writeableDatabase.execSQL(sql, args);

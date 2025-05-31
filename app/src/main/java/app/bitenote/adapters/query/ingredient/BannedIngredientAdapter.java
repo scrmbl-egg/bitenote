@@ -1,4 +1,4 @@
-package app.bitenote.adapters.recipe.ingredient;
+package app.bitenote.adapters.query.ingredient;
 
 import android.annotation.SuppressLint;
 import android.util.Pair;
@@ -9,21 +9,23 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import app.bitenote.R;
+import app.bitenote.database.BiteNoteSQLiteHelper;
 import app.bitenote.instances.Ingredient;
 
 /**
- * Adapter for displaying {@link Ingredient}s that have been not yet been added to a recipe in a
- * {@link RecyclerView} with cards in
- * {@link app.bitenote.activities.text.editing.EditRecipeIngredientsActivity}.
+ * Adapter for displaying banned {@link Ingredient} data in a {@link RecyclerView} with cards
+ * in {@link app.bitenote.activities.query.IngredientQueryActivity}.
  * @see ViewHolder
  * @author Daniel N.
  */
-public final class NonAddedRecipeIngredientAdapter
-        extends RecyclerView.Adapter<NonAddedRecipeIngredientAdapter.ViewHolder>
+public final class BannedIngredientAdapter extends
+        RecyclerView.Adapter<BannedIngredientAdapter.ViewHolder>
 {
     /**
      * List of ingredients in the adapter. The first element of the pair represents the
@@ -33,14 +35,24 @@ public final class NonAddedRecipeIngredientAdapter
     private List<Pair<Integer, Ingredient>> ingredients;
 
     /**
-     * {@link OnButtonClickListener} implementation, which will determine the code the
-     * {@link ViewHolder} will execute when the buttons are clicked.
+     * {@link OnButtonsClickListener} implementation, which will determine
+     * the code the {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonClickListener listener;
+    private final OnButtonsClickListener listener;
 
-    public NonAddedRecipeIngredientAdapter(
+    /**
+     * Banned ingredient adapter constructor.
+     * @param ingredients List of {@link Pair}s, where the first element of a pair is the integer
+     * ID of the ingredient in the database, and the second element is an instance of
+     * {@link Ingredient} where the ingredient's data is wrapped.
+     * See: {@link BiteNoteSQLiteHelper#getAllIngredients()},
+     * {@link BiteNoteSQLiteHelper#getAllIngredientsExcept(Set)}.
+     * @param listener {@link OnButtonsClickListener} implementation, which
+     * will determine the code the {@link ViewHolder} will execute when a card is clicked.
+     */
+    public BannedIngredientAdapter(
             @NonNull List<Pair<Integer, Ingredient>> ingredients,
-            @NonNull OnButtonClickListener listener
+            @NonNull OnButtonsClickListener listener
     ) {
         this.ingredients = ingredients;
         this.listener = listener;
@@ -50,7 +62,7 @@ public final class NonAddedRecipeIngredientAdapter
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.non_added_ingredient_card, parent, false);
+                .inflate(R.layout.banned_ingredient_card, parent, false);
 
         return new ViewHolder(view);
     }
@@ -68,15 +80,32 @@ public final class NonAddedRecipeIngredientAdapter
         return ingredients.size();
     }
 
+    public List<Pair<Integer, Ingredient>> getIngredients() {
+        return Collections.unmodifiableList(ingredients);
+    }
+
     /**
      * Sets the ingredients of the adapter.
-     * @param ingredients List of {@link Pair}s, where the first element of a pair is the integer
+     * @param ingredients Array of {@link Pair}s, where the first element of a pair is the integer
      * ID of the ingredient in the database, and the second element is an instance of
      * {@link Ingredient} where the ingredient's data is wrapped.
      */
     @SuppressLint("NotifyDataSetChanged")
     public void setIngredients(@NonNull List<Pair<Integer, Ingredient>> ingredients) {
         this.ingredients = ingredients;
+
+        notifyDataSetChanged();
+    }
+
+    public void addIngredient(int ingredientId, @NonNull Ingredient ingredient) {
+        final Pair<Integer, Ingredient> pairToAdd = Pair.create(ingredientId, ingredient);
+        addIngredient(pairToAdd);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void addIngredient(@NonNull Pair<Integer, Ingredient> pair) {
+        ingredients.add(pair);
+        ingredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
 
         notifyDataSetChanged();
     }
@@ -95,22 +124,8 @@ public final class NonAddedRecipeIngredientAdapter
         notifyItemRemoved(position);
     }
 
-    public void addIngredient(int ingredientId, @NonNull Ingredient ingredient) {
-        final Pair<Integer, Ingredient> pairToAdd = Pair.create(ingredientId, ingredient);
-        addIngredient(pairToAdd);
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    public void addIngredient(@NonNull Pair<Integer, Ingredient> pair) {
-        ingredients.add(pair);
-
-        ingredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
-
-        notifyDataSetChanged();
-    }
-
     /**
-     * View holder for a single ingredient that hasn't been added yet to the recipe.
+     * View holder for a single banned ingredient.
      * @author Daniel N.
      */
     public static final class ViewHolder extends RecyclerView.ViewHolder {
@@ -122,33 +137,40 @@ public final class NonAddedRecipeIngredientAdapter
         private final TextView nameTextView;
 
         /**
-         * {@link ImageButton} that is used to add the ingredient to the recipe.
+         * {@link ImageButton} instance that is used for including an ingredient in the query.
          */
-        private final ImageButton addButton;
+        private final ImageButton includeButton;
 
         /**
-         * Non-added ingredient view holder constructor.
+         * {@link ImageButton} instance that is used for removing an ingredient from the query.
+         */
+        private final ImageButton removeButton;
+
+        /**
+         * Queried ingredient view holder constructor.
          * @param itemView {@link View} instance.
          */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.NonAddedIngredientCardNameTextView);
-            addButton = itemView.findViewById(R.id.NonAddedIngredientCardAddButton);
+            /// init views
+            nameTextView = itemView.findViewById(R.id.BannedIngredientCardNameTextView);
+            includeButton = itemView.findViewById(R.id.BannedIngredientCardIncludeButton);
+            removeButton = itemView.findViewById(R.id.BannedIngredientCardRemoveButton);
         }
 
         /**
          * Binds ingredient data to the view.
          * @param ingredientId ID of the database ingredient.
          * @param ingredient {@link Ingredient} instance that holds the data.
-         * @param listener {@link OnButtonClickListener} implementation, which will determine the
+         * @param listener {@link OnButtonsClickListener} implementation, which will determine the
          * code the {@link ViewHolder} will execute when the buttons are clicked.
          */
         @SuppressLint("DiscouragedApi")
         public void bind(
                 int ingredientId,
                 @NonNull Ingredient ingredient,
-                @NonNull OnButtonClickListener listener
+                @NonNull OnButtonsClickListener listener
         ) {
             nameTextView.setText(itemView.getResources().getIdentifier(
                     "ingredient_" + ingredient.fullName,
@@ -156,10 +178,16 @@ public final class NonAddedRecipeIngredientAdapter
                     itemView.getContext().getPackageName()
             ));
 
-            addButton.setOnClickListener(view -> {
+            includeButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
-                listener.onAddButtonClick(ingredientId, ingredient);
+                listener.onIncludeButtonClick(ingredientId, ingredient);
+            });
+
+            removeButton.setOnClickListener(view -> {
+                if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+
+                listener.onRemoveButtonClick(ingredientId, ingredient);
             });
         }
     }
@@ -168,12 +196,19 @@ public final class NonAddedRecipeIngredientAdapter
      * Interface that determines what the buttons of a {@link ViewHolder} do when clicked.
      * @author Daniel N.
      */
-    public interface OnButtonClickListener {
+    public interface OnButtonsClickListener {
         /**
-         * Function that will be called when the add button is clicked.
+         * Function that will be called when the include button is clicked.
          * @param ingredientId ID of the ingredient in the database.
          * @param ingredient {@link Ingredient} instance.
          */
-        void onAddButtonClick(int ingredientId, @NonNull Ingredient ingredient);
+        void onIncludeButtonClick(int ingredientId, @NonNull Ingredient ingredient);
+
+        /**
+         * Function that will be called when the remove button is clicked.
+         * @param ingredientId ID of the ingredient in the database.
+         * @param ingredient {@link Ingredient} instance.
+         */
+        void onRemoveButtonClick(int ingredientId, @NonNull Ingredient ingredient);
     }
 }

@@ -19,7 +19,7 @@ import app.bitenote.instances.Ingredient.InRecipeProperties;
  * information that help discriminate recipes when querying them.
  * @author Daniel N.
  */
-public final class Recipe {
+public class Recipe {
     /**
      * XML recipe tag in the {@code res/xml/example_recipes.xml} document.
      */
@@ -151,20 +151,20 @@ public final class Recipe {
 
     /**
      * Deep copy {@link Recipe} constructor.
-     * @param recipe {@link Recipe} instance to be copied.
+     * @param base {@link Recipe} instance to be copied.
      */
-    public Recipe(@NonNull Recipe recipe) {
-        this.name = recipe.name;
-        this.body = recipe.body;
-        this.budget = recipe.budget;
-        this.diners = recipe.diners;
-        this.creationDate = Date.valueOf(recipe.creationDate.toString());
+    public Recipe(@NonNull Recipe base) {
+        this.name = base.name;
+        this.body = base.body;
+        this.budget = base.budget;
+        this.diners = base.diners;
+        this.creationDate = Date.valueOf(base.creationDate.toString());
 
         /// for a true copy of a recipe, maps and sets must be deep copied.
         this.ingredients = new HashMap<>();
         this.utensils = new HashSet<>();
-        recipe.ingredients.forEach(this::putIngredient); // hashmap deep copy
-        recipe.utensils.forEach(this::addUtensil); // hashset deep copy
+        this.ingredients.putAll(base.ingredients);
+        this.utensils.addAll(base.utensils);
     }
 
     /**

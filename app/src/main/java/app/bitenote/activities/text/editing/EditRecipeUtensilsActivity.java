@@ -1,27 +1,44 @@
 package app.bitenote.activities.text.editing;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import app.bitenote.R;
-import app.bitenote.activities.text.WriteRecipeActivity;
 import app.bitenote.adapters.recipe.utensil.AddedRecipeUtensilAdapter;
 import app.bitenote.adapters.recipe.utensil.NonAddedRecipeUtensilAdapter;
+import app.bitenote.app.BiteNoteApplication;
+import app.bitenote.instances.Recipe;
+import app.bitenote.instances.Utensil;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
 /**
  * Class that represents the activity where the user can edit the recipe's utensils.
  */
 public final class EditRecipeUtensilsActivity extends AppCompatActivity {
+    /**
+     * Activity executor that creates a background thread for database operations.
+     */
+    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * Activity's handler for the main thread.
+     */
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
     /**
      * Application view model. Grants access to the app's database.
      */
@@ -38,9 +55,9 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
     private AddedRecipeUtensilAdapter addedUtensilAdapter;
 
     /**
-     * todo: make docs
+     * Recycler view for added utensils.
      */
-    private RecyclerView addedUtensilRecyclerView;
+    private RecyclerView addedUtensilsRecyclerView;
 
     /**
      * Adapter for utensils that have not been added to the recipe.
@@ -48,9 +65,9 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
     private NonAddedRecipeUtensilAdapter nonAddedUtensilAdapter;
 
     /**
-     * todo: make docs
+     * Recycler view for non-added utensils.
      */
-    private RecyclerView nonAddedUtensilRecyclerView;
+    private RecyclerView nonAddedUtensilsRecyclerView;
 
     /**
      * Floating action button for saving changes.
@@ -63,41 +80,55 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
         setContentView(R.layout.edit_recipe_utensils_activity);
 
         /// init viewmodel
-        final ViewModelProvider.Factory factory =
-                new ViewModelProvider.AndroidViewModelFactory(getApplication());
-        viewModel = new ViewModelProvider(this, factory).get(BiteNoteViewModel.class);
+        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
-        /// init views
+        setupViews();
+    }
+
+    /**
+     * Sets up all the views in the activity.
+     */
+    private void setupViews() {
         materialToolbar = findViewById(R.id.EditRecipeUtensilsMaterialToolbar);
         saveChangesButton = findViewById(R.id.EditRecipeUtensilsSaveChangesButton);
-        addedUtensilRecyclerView = findViewById(R.id.EditRecipeUtensilsAddedUtensilsRecyclerView);
-        nonAddedUtensilRecyclerView =
+        addedUtensilsRecyclerView = findViewById(R.id.EditRecipeUtensilsAddedUtensilsRecyclerView);
+        nonAddedUtensilsRecyclerView =
                 findViewById(R.id.EditRecipeUtensilsNonAddedUtensilsRecyclerView);
 
-        /// set material toolbar
         setSupportActionBar(materialToolbar);
         materialToolbar.setNavigationOnClickListener(view -> finish());
 
-        /// set recycler views, adapters and click listeners
-        addedUtensilRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        addedUtensilAdapter = new AddedRecipeUtensilAdapter(
-                viewModel.sqliteHelper.getRecipeUtensilsWithProperties(
-                        WriteRecipeActivity.currentRecipeData
-                ),
-                getOnAddedUtensilButtonClickListener()
-        );
-        addedUtensilRecyclerView.setAdapter(addedUtensilAdapter);
+        assert viewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
 
-        nonAddedUtensilRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        nonAddedUtensilAdapter = new NonAddedRecipeUtensilAdapter(
-                viewModel.sqliteHelper.getAllUtensilsExcept(
-                        WriteRecipeActivity.currentRecipeData
-                ),
-                getOnNonAddedUtensilButtonClickListener()
-        );
-        nonAddedUtensilRecyclerView.setAdapter(nonAddedUtensilAdapter);
+        final Recipe recipe = viewModel.recipeLiveData.getValue().second;
 
-        /// set save changes button
+        databaseExecutor.execute(() -> {
+            final List<Pair<Integer, Utensil>>
+                    addedUtensils =
+                    viewModel.sqliteHelper.getRecipeUtensilsWithProperties(recipe);
+            final List<Pair<Integer, Utensil>>
+                    nonAddedUtensils =
+                    viewModel.sqliteHelper.getAllUtensilsExcept(recipe);
+
+            mainThreadHandler.post(() -> {
+                addedUtensilAdapter = new AddedRecipeUtensilAdapter(
+                        addedUtensils,
+                        getOnAddedUtensilButtonClickListener()
+                );
+                nonAddedUtensilAdapter = new NonAddedRecipeUtensilAdapter(
+                        nonAddedUtensils,
+                        getOnNonAddedUtensilButtonClickListener()
+                );
+                addedUtensilsRecyclerView.setAdapter(addedUtensilAdapter);
+                nonAddedUtensilsRecyclerView.setAdapter(nonAddedUtensilAdapter);
+
+                addedUtensilsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                nonAddedUtensilsRecyclerView.setLayoutManager(
+                        new LinearLayoutManager(this)
+                );
+            });
+        });
+
         saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
@@ -106,16 +137,29 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        WriteRecipeActivity.currentRecipeData.clearUtensils();
+        assert viewModel.recipeLiveData.getValue() != null : "Current recipe can't be null";
 
-        addedUtensilAdapter.getUtensils().forEach(pair ->
-                WriteRecipeActivity.currentRecipeData.addUtensil(pair.first)
-        );
+        final int id = viewModel.recipeLiveData.getValue().first;
+        final Recipe modifiedCopy = new Recipe(viewModel.recipeLiveData.getValue().second) {{
+            clearUtensils();
 
-        Toast.makeText(this, "utensils saved", Toast.LENGTH_SHORT).show();
-        // todo: use translated string
+            addedUtensilAdapter.getUtensils().forEach(pair -> addUtensil(pair.first));
+        }};
 
-        finish();
+        databaseExecutor.execute(() -> {
+            viewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
+
+            mainThreadHandler.post(() -> {
+                viewModel.postRecipe(modifiedCopy);
+                Toast.makeText(
+                        this,
+                        R.string.utensils_saved_toast,
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                finish();
+            });
+        });
     }
 
     private AddedRecipeUtensilAdapter.OnButtonClickListener

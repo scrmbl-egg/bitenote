@@ -1,27 +1,44 @@
 package app.bitenote.activities.text.editing;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import app.bitenote.R;
-import app.bitenote.activities.text.WriteRecipeActivity;
 import app.bitenote.adapters.recipe.ingredient.AddedRecipeIngredientAdapter;
 import app.bitenote.adapters.recipe.ingredient.NonAddedRecipeIngredientAdapter;
+import app.bitenote.app.BiteNoteApplication;
+import app.bitenote.instances.Ingredient;
+import app.bitenote.instances.Recipe;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
 /**
  * Class that represents the activity where the user edits the recipe's ingredients.
  */
 public final class EditRecipeIngredientsActivity extends AppCompatActivity {
+    /**
+     * Activity executor that creates a background thread for database operations.
+     */
+    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * Activity's handler for the main thread.
+     */
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
     /**
      * Application view model. Grants access to the app's database.
      */
@@ -37,6 +54,9 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
      */
     private AddedRecipeIngredientAdapter addedIngredientAdapter;
 
+    /**
+     * Recycler view for added ingredients.
+     */
     private RecyclerView addedIngredientRecyclerView;
 
     /**
@@ -44,6 +64,9 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
      */
     private NonAddedRecipeIngredientAdapter nonAddedRecipeIngredientAdapter;
 
+    /**
+     * Recycler view for non-added ingredients.
+     */
     private RecyclerView nonAddedIngredientRecyclerView;
 
     /**
@@ -57,11 +80,15 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
         setContentView(R.layout.edit_recipe_ingredients_activity);
 
         /// init viewmodel
-        final ViewModelProvider.Factory factory =
-                new ViewModelProvider.AndroidViewModelFactory(getApplication());
-        viewModel = new ViewModelProvider(this, factory).get(BiteNoteViewModel.class);
+        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
-        /// init views
+        setupViews();
+    }
+
+    /**
+     * Sets up all the views in the activity.
+     */
+    private void setupViews() {
         materialToolbar = findViewById(R.id.EditRecipeIngredientsMaterialToolbar);
         saveChangesButton = findViewById(R.id.EditRecipeIngredientsSaveChangesButton);
         addedIngredientRecyclerView =
@@ -69,30 +96,42 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
         nonAddedIngredientRecyclerView =
                 findViewById(R.id.EditRecipeIngredientsNonAddedIngredientsRecyclerView);
 
-        /// set material toolbar
         setSupportActionBar(materialToolbar);
         materialToolbar.setNavigationOnClickListener(view -> finish());
 
-        /// set recycler views, adapters, and click listeners
-        addedIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        addedIngredientAdapter = new AddedRecipeIngredientAdapter(
-                viewModel.sqliteHelper.getRecipeIngredientsWithProperties(
-                        WriteRecipeActivity.currentRecipeData
-                ),
-                getOnAddedIngredientButtonsClickListener()
-        );
-        addedIngredientRecyclerView.setAdapter(addedIngredientAdapter);
+        assert viewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
 
-        nonAddedIngredientRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        nonAddedRecipeIngredientAdapter = new NonAddedRecipeIngredientAdapter(
-                viewModel.sqliteHelper.getAllIngredientsExcept(
-                        WriteRecipeActivity.currentRecipeData
-                ),
-                getOnNonAddedIngredientButtonsClickListener()
-        );
-        nonAddedIngredientRecyclerView.setAdapter(nonAddedRecipeIngredientAdapter);
+        final Recipe recipe = viewModel.recipeLiveData.getValue().second;
 
-        /// set save changes button
+        databaseExecutor.execute(() -> {
+            final List<Pair<Pair<Integer, Ingredient>, Ingredient.InRecipeProperties>>
+                    addedIngredients =
+                    viewModel.sqliteHelper.getRecipeIngredientsWithProperties(recipe);
+            final List<Pair<Integer, Ingredient>>
+                    nonAddedIngredients =
+                    viewModel.sqliteHelper.getAllIngredientsExcept(recipe);
+
+            mainThreadHandler.post(() -> {
+                addedIngredientAdapter = new AddedRecipeIngredientAdapter(
+                        addedIngredients,
+                        getOnAddedIngredientButtonsClickListener()
+                );
+                nonAddedRecipeIngredientAdapter = new NonAddedRecipeIngredientAdapter(
+                        nonAddedIngredients,
+                        getOnNonAddedIngredientButtonsClickListener()
+                );
+                addedIngredientRecyclerView.setAdapter(addedIngredientAdapter);
+                nonAddedIngredientRecyclerView.setAdapter(nonAddedRecipeIngredientAdapter);
+
+                addedIngredientRecyclerView.setLayoutManager(
+                        new LinearLayoutManager(this)
+                );
+                nonAddedIngredientRecyclerView.setLayoutManager(
+                        new LinearLayoutManager(this)
+                );
+            });
+        });
+
         saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
@@ -101,16 +140,34 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        WriteRecipeActivity.currentRecipeData.clearIngredients();
+        assert viewModel.recipeLiveData.getValue() != null : "Current recipe can't be null";
 
-        addedIngredientAdapter.getIngredients().forEach(pair ->
-                WriteRecipeActivity.currentRecipeData.putIngredient(pair.first.first, pair.second)
-        );
+        final int id = viewModel.recipeLiveData.getValue().first;
+        final Recipe modifiedCopy = new Recipe(viewModel.recipeLiveData.getValue().second) {{
+            clearIngredients();
 
-        Toast.makeText(this, "ingredients saved", Toast.LENGTH_SHORT).show();
-        // todo: used translated string
+            addedIngredientAdapter.getIngredients().forEach(pair -> {
+                if (pair.second.amount <= 0) return;
 
-        finish();
+                putIngredient(pair.first.first, pair.second);
+            });
+        }};
+
+        databaseExecutor.execute(() -> {
+            viewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
+
+            mainThreadHandler.post(() -> {
+                viewModel.postRecipe(modifiedCopy);
+
+                Toast.makeText(
+                        this,
+                        R.string.ingredients_saved_toast,
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                finish();
+            });
+        });
     }
 
     private AddedRecipeIngredientAdapter.OnButtonsClickListener

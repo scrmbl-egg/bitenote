@@ -2,22 +2,28 @@ package app.bitenote.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import app.bitenote.R;
 import app.bitenote.activities.query.RecipeQueryActivity;
 import app.bitenote.activities.text.WriteRecipeActivity;
 import app.bitenote.activities.text.ReadRecipeActivity;
 import app.bitenote.adapters.recipe.RecipeAdapter;
+import app.bitenote.app.BiteNoteApplication;
 import app.bitenote.instances.Recipe;
 import app.bitenote.viewmodels.BiteNoteViewModel;
 
@@ -26,6 +32,16 @@ import app.bitenote.viewmodels.BiteNoteViewModel;
  * @author Daniel N.
  */
 public final class HomeActivity extends AppCompatActivity {
+    /**
+     * Activity executor that creates a background thread for database operations.
+     */
+    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * Activity's handler for the main thread.
+     */
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
     /**
      * Application view model. Grants access to the app's database.
      */
@@ -62,32 +78,9 @@ public final class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.home_activity);
 
         /// init viewmodel
-        final ViewModelProvider.Factory factory =
-                new ViewModelProvider.AndroidViewModelFactory(getApplication());
-        viewModel = new ViewModelProvider(this, factory).get(BiteNoteViewModel.class);
+        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
-        /// init views
-        materialToolbar = findViewById(R.id.HomeMaterialToolbar);
-        recyclerView = findViewById(R.id.HomeRecipeRecyclerView);
-        newRecipeButton = findViewById(R.id.HomeNewRecipeButton);
-        makeQueryButton = findViewById(R.id.HomeMakeQueryButton);
-
-        /// set material toolbar
-        setSupportActionBar(materialToolbar);
-
-        /// set recycler view, adapter, and click listeners
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recipeAdapter = new RecipeAdapter(
-                viewModel.sqliteHelper.getAllRecipes(),
-                getOnRecipeCardClickListener()
-        );
-        recyclerView.setAdapter(recipeAdapter);
-
-        /// set new recipe button
-        newRecipeButton.setOnClickListener(this::onNewRecipeButtonClick);
-
-        /// set make query button
-        makeQueryButton.setOnClickListener(this::onMakeQueryButtonClick);
+        setupViews();
     }
 
     @Override
@@ -95,7 +88,33 @@ public final class HomeActivity extends AppCompatActivity {
         super.onResume();
 
         /// update adapter
-        recipeAdapter.setRecipes(viewModel.sqliteHelper.getAllRecipes());
+        databaseExecutor.execute(() -> {
+            final List<Pair<Integer, Recipe>> allRecipes = viewModel.sqliteHelper.getAllRecipes();
+
+            mainThreadHandler.post(() -> recipeAdapter.setRecipes(allRecipes));
+        });
+    }
+
+    /**
+     * Sets up all the views in the activity.
+     */
+    private void setupViews() {
+        materialToolbar = findViewById(R.id.HomeMaterialToolbar);
+        recyclerView = findViewById(R.id.HomeRecipeRecyclerView);
+        newRecipeButton = findViewById(R.id.HomeNewRecipeButton);
+        makeQueryButton = findViewById(R.id.HomeMakeQueryButton);
+
+        setSupportActionBar(materialToolbar); // no navigation icon
+
+        recipeAdapter = new RecipeAdapter(
+                viewModel.sqliteHelper.getAllRecipes(),
+                getOnRecipeCardClickListener()
+        );
+        recyclerView.setAdapter(recipeAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        newRecipeButton.setOnClickListener(this::onNewRecipeButtonClick);
+        makeQueryButton.setOnClickListener(this::onMakeQueryButtonClick);
     }
 
     private RecipeAdapter.OnClickListener getOnRecipeCardClickListener() {
@@ -115,9 +134,15 @@ public final class HomeActivity extends AppCompatActivity {
                         .setTitle(R.string.home_long_click_dialog_title)
                         .setMessage(getString(R.string.home_long_click_dialog_body, recipe.name))
                         .setPositiveButton(R.string.yes, (dialog, i) -> {
-                            /// delete recipe and update adapter
-                            viewModel.sqliteHelper.deleteRecipe(recipeId);
-                            recipeAdapter.setRecipes(viewModel.sqliteHelper.getAllRecipes());
+                            databaseExecutor.execute(() -> {
+                                viewModel.sqliteHelper.deleteRecipe(recipeId);
+
+                                mainThreadHandler.post(() ->
+                                        recipeAdapter.setRecipes(
+                                                viewModel.sqliteHelper.getAllRecipes()
+                                        )
+                                );
+                            });
 
                             Toast.makeText(
                                     HomeActivity.this,

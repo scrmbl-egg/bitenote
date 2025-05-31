@@ -13,12 +13,7 @@ import java.util.Objects;
  * @see BiteNoteSQLiteHelper#getQueriedRecipes(RecipeQuery)
  * @author Daniel N.
  */
-public final class RecipeQuery {
-    /**
-     * The search query the user of the app inputs to find a recipe's name.
-     */
-    public String nameSearchQuery;
-
+public class RecipeQuery {
     /**
      * Minimum diners of the recipe.
      */
@@ -50,17 +45,15 @@ public final class RecipeQuery {
      */
     public RecipeQuery() {
         this(
-                "",
                 new HashMap<>(),
                 new HashMap<>(),
                 0,
-                0
+                1
         );
     }
 
     /**
      * Advanced {@link RecipeQuery} constructor.
-     * @param nameSearchQuery Search query user input.
      * @param ingredientQuery {@link HashMap} where the key is an ingredient ID, and the value is a
      * {@code boolean}. If the value is {@code true}, the ingredient ID must be present in the
      * recipe, but if it's {@code false}, it must be banned from the recipe.
@@ -71,17 +64,26 @@ public final class RecipeQuery {
      * @param minDiners Minimum diners of the recipe.
      */
     public RecipeQuery(
-            @NonNull String nameSearchQuery,
             @NonNull HashMap<Integer, Boolean> ingredientQuery,
             @NonNull HashMap<Integer, Boolean> utensilQuery,
             int maxBudget,
             int minDiners
     ) {
-        this.nameSearchQuery = nameSearchQuery;
         this.ingredientQuery = ingredientQuery;
         this.utensilQuery = utensilQuery;
         this.maxBudget = maxBudget;
         this.minDiners = minDiners;
+    }
+
+    public RecipeQuery(@NonNull RecipeQuery base) {
+        this.maxBudget = base.maxBudget;
+        this.minDiners = base.minDiners;
+
+        /// for a true copy of a recipe, maps and sets must be deep copied.
+        this.ingredientQuery = new HashMap<>();
+        this.utensilQuery = new HashMap<>();
+        this.ingredientQuery.putAll(base.ingredientQuery);
+        this.utensilQuery.putAll(base.utensilQuery);
     }
 
     /**
@@ -338,72 +340,82 @@ public final class RecipeQuery {
 
     /**
      * Gets the {@link String} representation of the SQL query.
-     * @return A {@link String} that, if passed to a database, will return a column of all recipe
-     * IDs that meet the conditions of the query object.
+     * @return A {@link String} that, if passed to a database raw query, will return a
+     * {@link android.database.Cursor} with all recipe IDs that meet the conditions defined in the
+     * query object.
      */
     @SuppressLint("DefaultLocale")
     String toSQLString() {
+        final List<Integer> includedIngredients = getIncludedIngredients();
+        final List<Integer> bannedIngredients = getBannedIngredients();
+        final List<Integer> includedUtensils = getIncludedUtensils();
+        final List<Integer> bannedUtensils = getBannedUtensils();
+
         /*
-         * This query encapsulates the search of all data contained in the class.
-         * First 2 decimal digits are budget and diners.
-         * The rest are Strings that do "OR" conditions to list all the possible included and
-         * banned ingredients and utensils.
+         * Users will leave the max budget as 0 most of the time, so to make the experience less
+         * uncomfortable, its best to consider a 0 budget query as an "infinite money" query.
          */
-        final String statement = "SELECT id FROM recipes WHERE name LIKE '%%%s%%' AND " +
-                "budget <= %d AND diners >= %d AND id IN (SELECT recipe_id FROM " +
-                "recipe_ingredients WHERE ingredient_id != 0%s AND ingredient_id != 0%s) AND id " +
-                "IN (SELECT recipe_id FROM recipe_utensils WHERE utensil_id != 0%s AND " +
-                "utensil_id != 0%s) ORDER BY creation_date DESC;";
-        final String includedIngredientStatement = " OR ingredient_id = %d";
-        final String bannedIngredientStatement = " OR ingredient_id != %d";
-        final String includedUtensilStatement = " OR ingredient_id = %d";
-        final String bannedUtensilStatement = " OR ingredient_id != %d";
+        final int newMaxBudget = maxBudget == 0 ? Integer.MAX_VALUE : maxBudget;
 
-        final StringBuilder includedIngredientsStrBuilder = new StringBuilder();
-        final StringBuilder bannedIngredientsStrBuilder = new StringBuilder();
-        final StringBuilder includedUtensilsStrBuilder = new StringBuilder();
-        final StringBuilder bannedUtensilsStrBuilder = new StringBuilder();
+        final StringBuilder queryStrBuilder = new StringBuilder("SELECT id FROM recipes WHERE ")
+                .append("budget <= ").append(newMaxBudget)
+                .append(" AND diners >= ").append(minDiners);
 
-        /// handle ingredient inclusions and bans
-        ingredientQuery.forEach((ingredientId, isPresent) -> {
-            if (isPresent) {
-                includedIngredientsStrBuilder.append(String.format(
-                        includedIngredientStatement,
-                        ingredientId
-                ));
-            } else {
-                bannedIngredientsStrBuilder.append(String.format(
-                        bannedIngredientStatement,
-                        ingredientId
-                ));
+        /// handle included ingredients
+        if (!includedIngredients.isEmpty()) {
+            queryStrBuilder.append(" AND id IN (SELECT recipe_id FROM recipe_ingredients WHERE " +
+                    "ingredient_id IN (");
+
+            for (int i = 0; i < includedIngredients.size(); i++) {
+                if (i > 0) queryStrBuilder.append(",");
+                queryStrBuilder.append(includedIngredients.get(i));
             }
-        });
 
-        /// handle utensil inclusions and bans
-        utensilQuery.forEach((utensilId, isPresent) -> {
-            if (isPresent) {
-                includedUtensilsStrBuilder.append(String.format(
-                        includedUtensilStatement,
-                        utensilId
-                ));
-            } else {
-                bannedUtensilsStrBuilder.append(String.format(
-                        bannedUtensilStatement,
-                        utensilId
-                ));
+            queryStrBuilder.append("))");
+        }
+
+        /// handle banned ingredients
+        if (!bannedIngredients.isEmpty()) {
+            queryStrBuilder.append(" AND id NOT IN (SELECT DISTINCT recipe_id FROM " +
+                            "recipe_ingredients WHERE ingredient_id IN (");
+
+            for (int i = 0; i < bannedIngredients.size(); i++) {
+                if (i > 0) queryStrBuilder.append(",");
+                queryStrBuilder.append(bannedIngredients.get(i));
             }
-        });
 
-        return String.format(
-                statement,
-                nameSearchQuery,
-                maxBudget,
-                minDiners,
-                includedIngredientsStrBuilder,
-                bannedIngredientsStrBuilder,
-                includedUtensilsStrBuilder,
-                bannedIngredientsStrBuilder
-        );
+            queryStrBuilder.append("))");
+        }
+
+        /// handle included utensils
+        if (!includedUtensils.isEmpty()) {
+            queryStrBuilder.append(" AND id IN (SELECT recipe_id FROM recipe_utensils WHERE " +
+                    "utensil_id IN (");
+
+            for (int i = 0; i < includedUtensils.size(); i++) {
+                if (i > 0) queryStrBuilder.append(",");
+                queryStrBuilder.append(includedUtensils.get(i));
+            }
+
+            queryStrBuilder.append("))");
+        }
+
+        /// handle banned utensils
+        if (!bannedUtensils.isEmpty()) {
+            queryStrBuilder.append(" AND id NOT IN (SELECT DISTINCT recipe_id FROM " +
+                    "recipe_utensils WHERE utensil_id IN (");
+
+            for (int i = 0; i < bannedUtensils.size(); i++) {
+                if (i > 0) queryStrBuilder.append(",");
+                queryStrBuilder.append(bannedUtensils.get(i));
+            }
+
+            queryStrBuilder.append("))");
+        }
+
+        queryStrBuilder.append(" ORDER BY creation_date DESC;");
+
+        return queryStrBuilder.toString();
     }
 
     @Override
@@ -413,7 +425,6 @@ public final class RecipeQuery {
         RecipeQuery that = (RecipeQuery) o;
         return minDiners == that.minDiners
                 && maxBudget == that.maxBudget
-                && Objects.equals(nameSearchQuery, that.nameSearchQuery)
                 && Objects.equals(ingredientQuery, that.ingredientQuery)
                 && Objects.equals(utensilQuery, that.utensilQuery);
     }
@@ -421,7 +432,6 @@ public final class RecipeQuery {
     @Override
     public int hashCode() {
         return Objects.hash(
-                nameSearchQuery,
                 minDiners,
                 maxBudget,
                 ingredientQuery,
