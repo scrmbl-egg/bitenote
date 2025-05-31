@@ -43,10 +43,10 @@ public final class AddedRecipeIngredientAdapter
     private List<Pair<Pair<Integer, Ingredient>, InRecipeProperties>> ingredients;
 
     /**
-     * {@link OnButtonsClickListener} implementation, which will determine
+     * {@link OnButtonClickListener} implementation, which will determine
      * the code the {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonsClickListener listener;
+    private final OnButtonClickListener listener;
 
     /**
      * Added recipe ingredient adapter constructor.
@@ -57,12 +57,12 @@ public final class AddedRecipeIngredientAdapter
      * instance that contains the data of the recipe ingredient.
      * See: {@link BiteNoteSQLiteHelper#getAllIngredients()},
      * {@link BiteNoteSQLiteHelper#getAllIngredientsExcept(Set)}
-     * @param listener {@link OnButtonsClickListener} implementation, which will determine the code
+     * @param listener {@link OnButtonClickListener} implementation, which will determine the code
      * the {@link ViewHolder} will execute when a card is clicked.
      */
     public AddedRecipeIngredientAdapter(
             @NonNull List<Pair<Pair<Integer, Ingredient>, InRecipeProperties>> ingredients,
-            @NonNull OnButtonsClickListener listener
+            @NonNull OnButtonClickListener listener
     ) {
         this.ingredients = ingredients;
         this.listener = listener;
@@ -238,7 +238,7 @@ public final class AddedRecipeIngredientAdapter
          * @param ingredient {@link Ingredient} instance that contains the ingredient data.
          * @param properties {@link InRecipeProperties} instance that contains the properties
          * of the ingredient in the recipe.
-         * @param listener {@link OnButtonsClickListener} implementation, which will determine the
+         * @param listener {@link OnButtonClickListener} implementation, which will determine the
          * code the {@link ViewHolder} will execute when the buttons are clicked.
          */
         @SuppressLint("DiscouragedApi")
@@ -247,7 +247,7 @@ public final class AddedRecipeIngredientAdapter
                 int ingredientId,
                 @NonNull Ingredient ingredient,
                 @NonNull InRecipeProperties properties,
-                @NonNull OnButtonsClickListener listener
+                @NonNull OnButtonClickListener listener
         ) {
             nameTextView.setText(itemView.getResources().getIdentifier(
                     "ingredient_" + ingredient.fullName,
@@ -302,7 +302,7 @@ public final class AddedRecipeIngredientAdapter
      * Interface that determines what the buttons of a {@link ViewHolder} do when clicked.
      * @author Daniel N.
      */
-    public interface OnButtonsClickListener {
+    public interface OnButtonClickListener {
         /**
          * Function that will be called when the remove button is clicked.
          * @param ingredientId ID of the ingredient in the database.

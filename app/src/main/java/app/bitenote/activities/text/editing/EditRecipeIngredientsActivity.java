@@ -170,7 +170,7 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
         });
     }
 
-    private AddedRecipeIngredientAdapter.OnButtonsClickListener
+    private AddedRecipeIngredientAdapter.OnButtonClickListener
     getOnAddedIngredientButtonsClickListener() {
         return (ingredientId, ingredient, properties) -> {
             addedIngredientAdapter.removeIngredient(ingredientId, ingredient, properties);
