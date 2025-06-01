@@ -40,13 +40,13 @@ public final class AddedRecipeIngredientAdapter
      * second element of the pair is an {@link InRecipeProperties} instance that contains the data
      * of the recipe ingredient.
      */
-    private List<Pair<Pair<Integer, Ingredient>, InRecipeProperties>> ingredients;
+    private List<Pair<Pair<Integer, Ingredient>, InRecipeProperties>> mIngredients;
 
     /**
      * {@link OnButtonClickListener} implementation, which will determine
      * the code the {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonClickListener listener;
+    private final OnButtonClickListener mListener;
 
     /**
      * Added recipe ingredient adapter constructor.
@@ -64,8 +64,8 @@ public final class AddedRecipeIngredientAdapter
             @NonNull List<Pair<Pair<Integer, Ingredient>, InRecipeProperties>> ingredients,
             @NonNull OnButtonClickListener listener
     ) {
-        this.ingredients = ingredients;
-        this.listener = listener;
+        mIngredients = ingredients;
+        mListener = listener;
     }
 
     @NonNull
@@ -79,17 +79,17 @@ public final class AddedRecipeIngredientAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = ingredients.get(position).first.first;
-        final Ingredient ingredient = ingredients.get(position).first.second;
-        final InRecipeProperties properties = ingredients.get(position).second;
+        final int id = mIngredients.get(position).first.first;
+        final Ingredient ingredient = mIngredients.get(position).first.second;
+        final InRecipeProperties properties = mIngredients.get(position).second;
 
         /// the ingredient list is bound because buttons in the view holders mutate it
-        holder.bind(this, id, ingredient, properties, listener);
+        holder.bind(this, id, ingredient, properties, mListener);
     }
 
     @Override
     public int getItemCount() {
-        return ingredients.size();
+        return mIngredients.size();
     }
 
     /**
@@ -101,7 +101,7 @@ public final class AddedRecipeIngredientAdapter
      * that contains the data of the recipe ingredient.
      */
     public List<Pair<Pair<Integer, Ingredient>, InRecipeProperties>> getIngredients() {
-        return Collections.unmodifiableList(ingredients);
+        return Collections.unmodifiableList(mIngredients);
     }
 
     /**
@@ -117,7 +117,7 @@ public final class AddedRecipeIngredientAdapter
     public void setIngredients(
             @NonNull List<Pair<Pair<Integer, Ingredient>,  InRecipeProperties>> ingredients
     ) {
-        this.ingredients = ingredients;
+        mIngredients = ingredients;
 
         notifyDataSetChanged();
     }
@@ -135,10 +135,10 @@ public final class AddedRecipeIngredientAdapter
     public void removeIngredient(
             @NonNull Pair<Pair<Integer, Ingredient>, InRecipeProperties> pair
     ) {
-        if (!ingredients.contains(pair)) return;
+        if (!mIngredients.contains(pair)) return;
 
-        final int position = ingredients.indexOf(pair);
-        ingredients.remove(pair);
+        final int position = mIngredients.indexOf(pair);
+        mIngredients.remove(pair);
 
         notifyItemRemoved(position);
     }
@@ -152,36 +152,36 @@ public final class AddedRecipeIngredientAdapter
 
     @SuppressLint("NotifyDataSetChanged")
     public void addIngredient(@NonNull Pair<Pair<Integer, Ingredient>, InRecipeProperties> pair) {
-        ingredients.add(pair);
+        mIngredients.add(pair);
 
         /// sort elements again
-        ingredients.sort(Comparator.comparing(p -> p.first.first));
+        mIngredients.sort(Comparator.comparing(p -> p.first.first));
 
         notifyDataSetChanged();
     }
 
     private void setAmountAtIndex(int i, int amount) {
-        ingredients.set(
+        mIngredients.set(
                 i,
                 Pair.create(
-                        ingredients.get(i).first,
+                        mIngredients.get(i).first,
                         new InRecipeProperties(
-                                ingredients.get(i).first.second,
+                                mIngredients.get(i).first.second,
                                 amount,
-                                ingredients.get(i).second.isMeasuredInUnits
+                                mIngredients.get(i).second.isMeasuredInUnits
                         )
                 )
         );
     }
 
     private void setIsMeasuredInUnitsAtIndex(int i, boolean isMeasuredInUnits) {
-        ingredients.set(
+        mIngredients.set(
                 i,
                 Pair.create(
-                        ingredients.get(i).first,
+                        mIngredients.get(i).first,
                         new InRecipeProperties(
-                                ingredients.get(i).first.second,
-                                ingredients.get(i).second.amount,
+                                mIngredients.get(i).first.second,
+                                mIngredients.get(i).second.amount,
                                 isMeasuredInUnits
                         )
                 )
@@ -198,24 +198,24 @@ public final class AddedRecipeIngredientAdapter
          * card.
          * @see Ingredient#fullName
          */
-        private final TextView nameTextView;
+        private final TextView mNameTextView;
 
         /**
          * {@link EditText} instance that displays and allows the user to edit the amount
          */
-        private final EditText amountEditText;
+        private final EditText mAmountEditText;
 
         /**
          * {@link ToggleButton} instance that is used for toggling between measurements if the
          * ingredient can be measured in units.
          * @see Ingredient#canBeMeasuredInUnits
          */
-        private final ToggleButton measurementToggleButton;
+        private final ToggleButton mMeasurementToggleButton;
 
         /**
          * {@link ImageButton} instance that is used for removing the ingredient from the recipe.
          */
-        private final ImageButton removeButton;
+        private final ImageButton mRemoveButton;
 
         /**
          * Added ingredient view holder constructor.
@@ -224,11 +224,11 @@ public final class AddedRecipeIngredientAdapter
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.AddedIngredientCardNameTextView);
-            amountEditText = itemView.findViewById(R.id.AddedIngredientAmountEditText);
-            measurementToggleButton =
+            mNameTextView = itemView.findViewById(R.id.AddedIngredientCardNameTextView);
+            mAmountEditText = itemView.findViewById(R.id.AddedIngredientAmountEditText);
+            mMeasurementToggleButton =
                     itemView.findViewById(R.id.AddedIngredientMeasurementToggleButton);
-            removeButton = itemView.findViewById(R.id.AddedIngredientCardRemoveButton);
+            mRemoveButton = itemView.findViewById(R.id.AddedIngredientCardRemoveButton);
         }
 
         /**
@@ -249,17 +249,17 @@ public final class AddedRecipeIngredientAdapter
                 @NonNull InRecipeProperties properties,
                 @NonNull OnButtonClickListener listener
         ) {
-            nameTextView.setText(itemView.getResources().getIdentifier(
+            mNameTextView.setText(itemView.getResources().getIdentifier(
                     "ingredient_" + ingredient.fullName,
                     "string",
                     itemView.getContext().getPackageName()
             ));
 
-            amountEditText.setText(String.valueOf(properties.amount));
-            amountEditText.setOnKeyListener((view, i, keyEvent) -> {
+            mAmountEditText.setText(String.valueOf(properties.amount));
+            mAmountEditText.setOnKeyListener((view, i, keyEvent) -> {
                 adapter.setAmountAtIndex(
                         getAdapterPosition(),
-                        Integer.parseInt(amountEditText.getText().toString())
+                        Integer.parseInt(mAmountEditText.getText().toString())
                 );
                 return false;
             });
@@ -277,20 +277,20 @@ public final class AddedRecipeIngredientAdapter
                     break;
             }
 
-            measurementToggleButton.setTextOff(measurementText);
+            mMeasurementToggleButton.setTextOff(measurementText);
 
-            measurementToggleButton.setChecked(
+            mMeasurementToggleButton.setChecked(
                     ingredient.canBeMeasuredInUnits && properties.isMeasuredInUnits
             );
-            measurementToggleButton.setEnabled(ingredient.canBeMeasuredInUnits);
-            measurementToggleButton.setOnClickListener(view ->
+            mMeasurementToggleButton.setEnabled(ingredient.canBeMeasuredInUnits);
+            mMeasurementToggleButton.setOnClickListener(view ->
                     adapter.setIsMeasuredInUnitsAtIndex(
                             getAdapterPosition(),
-                            measurementToggleButton.isChecked()
+                            mMeasurementToggleButton.isChecked()
                     )
             );
 
-            removeButton.setOnClickListener(view -> {
+            mRemoveButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onRemoveButtonClick(ingredientId, ingredient, properties);

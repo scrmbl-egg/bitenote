@@ -30,7 +30,7 @@ public class RecipeQuery {
      * {@code true} value means the ingredient MUST BE PRESENT in the recipe, on the other hand,
      * {@code false} means the ingredient is BANNED.
      */
-    private final HashMap<Integer, Boolean> ingredientQuery;
+    private final HashMap<Integer, Boolean> mIngredientQuery;
 
     /**
      * Map of utensils in the query. The key represents the ID of the utensil, while the
@@ -38,7 +38,7 @@ public class RecipeQuery {
      * {@code true} value means the utensil MUST BE PRESENT in the recipe, on the other hand,
      * {@code false} means the utensil is BANNED.
      */
-    private final HashMap<Integer, Boolean> utensilQuery;
+    private final HashMap<Integer, Boolean> mUtensilQuery;
 
     /**
      * Basic {@link RecipeQuery} constructor.
@@ -69,8 +69,8 @@ public class RecipeQuery {
             int maxBudget,
             int minDiners
     ) {
-        this.ingredientQuery = ingredientQuery;
-        this.utensilQuery = utensilQuery;
+        this.mIngredientQuery = ingredientQuery;
+        this.mUtensilQuery = utensilQuery;
         this.maxBudget = maxBudget;
         this.minDiners = minDiners;
     }
@@ -80,10 +80,10 @@ public class RecipeQuery {
         this.minDiners = base.minDiners;
 
         /// for a true copy of a recipe, maps and sets must be deep copied.
-        this.ingredientQuery = new HashMap<>();
-        this.utensilQuery = new HashMap<>();
-        this.ingredientQuery.putAll(base.ingredientQuery);
-        this.utensilQuery.putAll(base.utensilQuery);
+        this.mIngredientQuery = new HashMap<>();
+        this.mUtensilQuery = new HashMap<>();
+        this.mIngredientQuery.putAll(base.mIngredientQuery);
+        this.mUtensilQuery.putAll(base.mUtensilQuery);
     }
 
     /**
@@ -93,7 +93,7 @@ public class RecipeQuery {
     public List<Integer> getIncludedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        ingredientQuery.forEach((ingredientId, isPresent) -> {
+        mIngredientQuery.forEach((ingredientId, isPresent) -> {
             if (!isPresent) return;
 
             idList.add(ingredientId);
@@ -109,7 +109,7 @@ public class RecipeQuery {
     public List<Integer> getBannedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        ingredientQuery.forEach((ingredientId, isPresent) -> {
+        mIngredientQuery.forEach((ingredientId, isPresent) -> {
             if (isPresent) return;
 
             idList.add(ingredientId);
@@ -121,7 +121,7 @@ public class RecipeQuery {
     public List<Integer> getQueriedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        ingredientQuery.forEach((ingredientId, isPresent) -> idList.add(ingredientId));
+        mIngredientQuery.forEach((ingredientId, isPresent) -> idList.add(ingredientId));
 
         return Collections.unmodifiableList(idList);
     }
@@ -133,7 +133,7 @@ public class RecipeQuery {
     public List<Integer> getIncludedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        utensilQuery.forEach((utensilId, isPresent) -> {
+        mUtensilQuery.forEach((utensilId, isPresent) -> {
             if (!isPresent) return;
 
             idList.add(utensilId);
@@ -149,7 +149,7 @@ public class RecipeQuery {
     public List<Integer> getBannedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        utensilQuery.forEach((utensilId, isPresent) -> {
+        mUtensilQuery.forEach((utensilId, isPresent) -> {
             if (isPresent) return;
 
             idList.add(utensilId);
@@ -161,7 +161,7 @@ public class RecipeQuery {
     public List<Integer> getQueriedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        utensilQuery.forEach((utensilId, utensil) -> idList.add(utensilId));
+        mUtensilQuery.forEach((utensilId, utensil) -> idList.add(utensilId));
 
         return Collections.unmodifiableList(idList);
     }
@@ -174,13 +174,13 @@ public class RecipeQuery {
      * @return {@code true} if the ingredient was successfully included or updated.
      */
     public boolean includeIngredient(int ingredientId, boolean overrideBans) {
-        final Boolean previousValue = ingredientQuery.putIfAbsent(ingredientId, true);
+        final Boolean previousValue = mIngredientQuery.putIfAbsent(ingredientId, true);
         /// previousValue is null if the key/ingredientId was absent
 
         if (previousValue == null) return true;
 
         if (overrideBans) {
-            ingredientQuery.put(ingredientId, true);
+            mIngredientQuery.put(ingredientId, true);
             return true;
         }
 
@@ -195,13 +195,13 @@ public class RecipeQuery {
      * @return {@code true} if the ingredient was successfully banned.
      */
     public boolean banIngredient(int ingredientId, boolean overrideInclusions) {
-        final Boolean previousValue = ingredientQuery.putIfAbsent(ingredientId, false);
+        final Boolean previousValue = mIngredientQuery.putIfAbsent(ingredientId, false);
         /// previousValue is null if the key/ingredientId was absent
 
         if (previousValue == null) return true;
 
         if (overrideInclusions) {
-            ingredientQuery.put(ingredientId, false);
+            mIngredientQuery.put(ingredientId, false);
             return true;
         }
 
@@ -216,13 +216,13 @@ public class RecipeQuery {
      * @return {@code true} if the utensil was successfully banned.
      */
     public boolean includeUtensil(int utensilId, boolean overrideBans) {
-        final Boolean previousValue = utensilQuery.putIfAbsent(utensilId, true);
+        final Boolean previousValue = mUtensilQuery.putIfAbsent(utensilId, true);
         /// previousValue is null if the key/utensilId was absent
 
         if (previousValue == null) return true;
 
         if (overrideBans) {
-            utensilQuery.put(utensilId, true);
+            mUtensilQuery.put(utensilId, true);
             return true;
         }
 
@@ -237,13 +237,13 @@ public class RecipeQuery {
      * @return {@code true} if the utensil was successfully banned.
      */
     public boolean banUtensil(int utensilId, boolean overrideInclusions) {
-        final Boolean previousValue = utensilQuery.putIfAbsent(utensilId, false);
+        final Boolean previousValue = mUtensilQuery.putIfAbsent(utensilId, false);
         /// previousValue is null if the key/utensilId was absent
 
         if (previousValue == null) return true;
 
         if (overrideInclusions) {
-            utensilQuery.put(utensilId, false);
+            mUtensilQuery.put(utensilId, false);
             return true;
         }
 
@@ -256,8 +256,8 @@ public class RecipeQuery {
      * @return {@code true} if the ingredient ID is marked as present in the query.
      */
     public boolean isIngredientPresent(int ingredientId) {
-        return ingredientQuery.containsKey(ingredientId)
-                && Boolean.TRUE.equals(ingredientQuery.get(ingredientId));
+        return mIngredientQuery.containsKey(ingredientId)
+                && Boolean.TRUE.equals(mIngredientQuery.get(ingredientId));
     }
 
     /**
@@ -266,8 +266,8 @@ public class RecipeQuery {
      * @return {@code true} if the ingredient ID is marked as banned from the query.
      */
     public boolean isIngredientBanned(int ingredientId) {
-        return ingredientQuery.containsKey(ingredientId)
-                && Boolean.FALSE.equals(ingredientQuery.get(ingredientId));
+        return mIngredientQuery.containsKey(ingredientId)
+                && Boolean.FALSE.equals(mIngredientQuery.get(ingredientId));
     }
 
     /**
@@ -276,8 +276,8 @@ public class RecipeQuery {
      * @return {@code true} if the utensil ID is marked as present in the query.
      */
     public boolean isUtensilPresent(int utensilId) {
-        return utensilQuery.containsKey(utensilId)
-                && Boolean.TRUE.equals(utensilQuery.get(utensilId));
+        return mUtensilQuery.containsKey(utensilId)
+                && Boolean.TRUE.equals(mUtensilQuery.get(utensilId));
     }
 
     /**
@@ -286,16 +286,16 @@ public class RecipeQuery {
      * @return {@code true} if the utensil ID is marked as banned from the query.
      */
     public boolean isUtensilBanned(int utensilId) {
-        return utensilQuery.containsKey(utensilId)
-                && Boolean.FALSE.equals(utensilQuery.get(utensilId));
+        return mUtensilQuery.containsKey(utensilId)
+                && Boolean.FALSE.equals(mUtensilQuery.get(utensilId));
     }
 
     /**
      * Clears all included ingredients from the query.
      */
     public void clearIncludedIngredients() {
-        ingredientQuery.forEach((ingredientId, isPresent) ->
-                ingredientQuery.remove(ingredientId, true)
+        mIngredientQuery.forEach((ingredientId, isPresent) ->
+                mIngredientQuery.remove(ingredientId, true)
         );
     }
 
@@ -303,8 +303,8 @@ public class RecipeQuery {
      * Clears all banned ingredients from the query.
      */
     public void clearBannedIngredients() {
-        ingredientQuery.forEach((ingredientId, isPresent) ->
-                ingredientQuery.remove(ingredientId, false)
+        mIngredientQuery.forEach((ingredientId, isPresent) ->
+                mIngredientQuery.remove(ingredientId, false)
         );
     }
 
@@ -312,22 +312,22 @@ public class RecipeQuery {
      * Clears all ingredients (present or banned) from the query.
      */
     public void clearAllIngredients() {
-        ingredientQuery.clear();
+        mIngredientQuery.clear();
     }
 
     /**
      * Clears all present utensils from the query.
      */
     public void clearPresentUtensils() {
-        utensilQuery.forEach(utensilQuery::remove);
+        mUtensilQuery.forEach(mUtensilQuery::remove);
     }
 
     /**
      * Clears all banned utensils from the query.
      */
     public void clearBannedUtensils() {
-        utensilQuery.forEach((utensilId, isPresent) ->
-                utensilQuery.remove(utensilId, !isPresent)
+        mUtensilQuery.forEach((utensilId, isPresent) ->
+                mUtensilQuery.remove(utensilId, !isPresent)
         );
     }
 
@@ -335,7 +335,7 @@ public class RecipeQuery {
      * Clears all the utensils (present or banned) from the query.
      */
     public void clearAllUtensils() {
-        utensilQuery.clear();
+        mUtensilQuery.clear();
     }
 
     /**
@@ -425,8 +425,8 @@ public class RecipeQuery {
         RecipeQuery that = (RecipeQuery) o;
         return minDiners == that.minDiners
                 && maxBudget == that.maxBudget
-                && Objects.equals(ingredientQuery, that.ingredientQuery)
-                && Objects.equals(utensilQuery, that.utensilQuery);
+                && Objects.equals(mIngredientQuery, that.mIngredientQuery)
+                && Objects.equals(mUtensilQuery, that.mUtensilQuery);
     }
 
     @Override
@@ -434,8 +434,8 @@ public class RecipeQuery {
         return Objects.hash(
                 minDiners,
                 maxBudget,
-                ingredientQuery,
-                utensilQuery
+                mIngredientQuery,
+                mUtensilQuery
         );
     }
 }

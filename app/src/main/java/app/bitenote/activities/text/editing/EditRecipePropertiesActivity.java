@@ -30,52 +30,52 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Text input where the recipe's budget is edited.
      */
-    private EditText budgetEditText;
+    private EditText mBudgetEditText;
 
     /**
      * Seek bar where the recipe's diners are edited.
      */
-    private SeekBar dinersSeekBar;
+    private SeekBar mDinersSeekBar;
 
     /**
-     * Text view that indicates the progress of {@link #dinersSeekBar}.
+     * Text view that indicates the progress of {@link #mDinersSeekBar}.
      */
-    private TextView dinersSeekBarProgressTextView;
+    private TextView mDinersSeekBarProgressTextView;
 
     /**
      * Button that allows the user to go to the {@link EditRecipeIngredientsActivity} activity.
      */
-    private Button editIngredientsButton;
+    private Button mEditIngredientsButton;
 
     /**
      * Button that allows the user to go to the {@link EditRecipeUtensilsActivity} activity.
      */
-    private Button editUtensilsButton;
+    private Button mEditUtensilsButton;
 
     /**
      * Floating button to save changes in the recipe's properties.
      */
-    private FloatingActionButton saveChangesButton;
+    private FloatingActionButton mSaveChangesButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,33 +83,33 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
         setContentView(R.layout.edit_recipe_properties_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
 
         /// bind to live data
-        viewModel.recipeLiveData.observe(this, idRecipePair -> bind(idRecipePair.second));
+        mViewModel.recipeLiveData.observe(this, idRecipePair -> bind(idRecipePair.second));
     }
 
     /**
      * Sets up all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.EditRecipePropertiesMaterialToolbar);
-        budgetEditText = findViewById(R.id.EditRecipePropertiesBudgetEditText);
-        dinersSeekBar = findViewById(R.id.EditRecipePropertiesDinersSeekBar);
-        dinersSeekBarProgressTextView =
+        mMaterialToolbar = findViewById(R.id.EditRecipePropertiesMaterialToolbar);
+        mBudgetEditText = findViewById(R.id.EditRecipePropertiesBudgetEditText);
+        mDinersSeekBar = findViewById(R.id.EditRecipePropertiesDinersSeekBar);
+        mDinersSeekBarProgressTextView =
                 findViewById(R.id.EditRecipePropertiesDinersSeekBarProgressTextView);
-        editIngredientsButton = findViewById(R.id.EditRecipePropertiesEditIngredientsButton);
-        editUtensilsButton = findViewById(R.id.EditRecipePropertiesEditUtensilsButton);
-        saveChangesButton = findViewById(R.id.EditRecipePropertiesSaveChangesButton);
+        mEditIngredientsButton = findViewById(R.id.EditRecipePropertiesEditIngredientsButton);
+        mEditUtensilsButton = findViewById(R.id.EditRecipePropertiesEditUtensilsButton);
+        mSaveChangesButton = findViewById(R.id.EditRecipePropertiesSaveChangesButton);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        editIngredientsButton.setOnClickListener(this::onEditIngredientsButtonClick);
-        editUtensilsButton.setOnClickListener(this::onEditUtensilsButtonClick);
-        saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
+        mEditIngredientsButton.setOnClickListener(this::onEditIngredientsButtonClick);
+        mEditUtensilsButton.setOnClickListener(this::onEditUtensilsButtonClick);
+        mSaveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
     /**
@@ -117,16 +117,16 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
      * @param recipe {@link Recipe} instance.
      */
     private void bind(@NonNull Recipe recipe) {
-        budgetEditText.setText(String.valueOf(recipe.budget));
+        mBudgetEditText.setText(String.valueOf(recipe.budget));
 
         /// set diners seek bar
-        dinersSeekBar.setProgress(recipe.diners - 1);
-        dinersSeekBar.setOnSeekBarChangeListener(getOnDinersSeekBarChangeListener());
-        dinersSeekBarProgressTextView.setText(String.valueOf(recipe.diners));
+        mDinersSeekBar.setProgress(recipe.diners - 1);
+        mDinersSeekBar.setOnSeekBarChangeListener(getOnDinersSeekBarChangeListener());
+        mDinersSeekBarProgressTextView.setText(String.valueOf(recipe.diners));
     }
 
     /**
-     * Function called when {@link #editIngredientsButton} is clicked.
+     * Function called when {@link #mEditIngredientsButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onEditIngredientsButtonClick(@NonNull View view) {
@@ -134,7 +134,7 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
     }
 
     /**
-     * Function called when {@link #editUtensilsButton} is clicked.
+     * Function called when {@link #mEditUtensilsButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onEditUtensilsButtonClick(@NonNull View view) {
@@ -142,28 +142,28 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
     }
 
     /**
-     * Function called when {@link #saveChangesButton} is clicked.
+     * Function called when {@link #mSaveChangesButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        assert viewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
+        assert mViewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
 
-        int id = viewModel.recipeLiveData.getValue().first;
-        final Recipe modifiedCopy = new Recipe(viewModel.recipeLiveData.getValue().second) {{
-            diners = dinersSeekBar.getProgress() + 1;
+        int id = mViewModel.recipeLiveData.getValue().first;
+        final Recipe modifiedCopy = new Recipe(mViewModel.recipeLiveData.getValue().second) {{
+            diners = mDinersSeekBar.getProgress() + 1;
 
             try {
-                budget = Integer.parseInt(budgetEditText.getText().toString());
+                budget = Integer.parseInt(mBudgetEditText.getText().toString());
             } catch (NumberFormatException e) {
                 budget = 0; // set to 0 if edit text is empty
             }
         }};
 
-        databaseExecutor.execute(() -> {
-            viewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
+        mDatabaseExecutor.execute(() -> {
+            mViewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
 
-            mainThreadHandler.post(() -> {
-                viewModel.postRecipeWithId(id, modifiedCopy);
+            mMainThreadHandler.post(() -> {
+                mViewModel.postRecipeWithId(id, modifiedCopy);
 
                 Toast.makeText(
                         this,
@@ -178,13 +178,13 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
 
     /**
      * @return The {@link SeekBar.OnSeekBarChangeListener} implementation that will run when
-     * {@link #dinersSeekBar} is changed.
+     * {@link #mDinersSeekBar} is changed.
      */
     private SeekBar.OnSeekBarChangeListener getOnDinersSeekBarChangeListener() {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                dinersSeekBarProgressTextView.setText(String.valueOf(i + 1));
+                mDinersSeekBarProgressTextView.setText(String.valueOf(i + 1));
             }
 
             @Override

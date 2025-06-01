@@ -32,47 +32,47 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Adapter for utensils that have been added to the recipe.
      */
-    private AddedRecipeUtensilAdapter addedUtensilAdapter;
+    private AddedRecipeUtensilAdapter mAddedUtensilAdapter;
 
     /**
      * Recycler view for added utensils.
      */
-    private RecyclerView addedUtensilsRecyclerView;
+    private RecyclerView mAddedUtensilsRecyclerView;
 
     /**
      * Adapter for utensils that have not been added to the recipe.
      */
-    private NonAddedRecipeUtensilAdapter nonAddedUtensilAdapter;
+    private NonAddedRecipeUtensilAdapter mNonAddedUtensilAdapter;
 
     /**
      * Recycler view for non-added utensils.
      */
-    private RecyclerView nonAddedUtensilsRecyclerView;
+    private RecyclerView mNonAddedUtensilsRecyclerView;
 
     /**
      * Floating action button for saving changes.
      */
-    private FloatingActionButton saveChangesButton;
+    private FloatingActionButton mSaveChangesButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +80,7 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
         setContentView(R.layout.edit_recipe_utensils_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
     }
@@ -89,68 +89,68 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
      * Sets up all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.EditRecipeUtensilsMaterialToolbar);
-        saveChangesButton = findViewById(R.id.EditRecipeUtensilsSaveChangesButton);
-        addedUtensilsRecyclerView = findViewById(R.id.EditRecipeUtensilsAddedUtensilsRecyclerView);
-        nonAddedUtensilsRecyclerView =
+        mMaterialToolbar = findViewById(R.id.EditRecipeUtensilsMaterialToolbar);
+        mSaveChangesButton = findViewById(R.id.EditRecipeUtensilsSaveChangesButton);
+        mAddedUtensilsRecyclerView = findViewById(R.id.EditRecipeUtensilsAddedUtensilsRecyclerView);
+        mNonAddedUtensilsRecyclerView =
                 findViewById(R.id.EditRecipeUtensilsNonAddedUtensilsRecyclerView);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        assert viewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
+        assert mViewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
 
-        final Recipe recipe = viewModel.recipeLiveData.getValue().second;
+        final Recipe recipe = mViewModel.recipeLiveData.getValue().second;
 
-        databaseExecutor.execute(() -> {
+        mDatabaseExecutor.execute(() -> {
             final List<Pair<Integer, Utensil>>
                     addedUtensils =
-                    viewModel.sqliteHelper.getRecipeUtensilsWithProperties(recipe);
+                    mViewModel.sqliteHelper.getRecipeUtensilsWithProperties(recipe);
             final List<Pair<Integer, Utensil>>
                     nonAddedUtensils =
-                    viewModel.sqliteHelper.getAllUtensilsExcept(recipe);
+                    mViewModel.sqliteHelper.getAllUtensilsExcept(recipe);
 
-            mainThreadHandler.post(() -> {
-                addedUtensilAdapter = new AddedRecipeUtensilAdapter(
+            mMainThreadHandler.post(() -> {
+                mAddedUtensilAdapter = new AddedRecipeUtensilAdapter(
                         addedUtensils,
                         getOnAddedUtensilButtonClickListener()
                 );
-                nonAddedUtensilAdapter = new NonAddedRecipeUtensilAdapter(
+                mNonAddedUtensilAdapter = new NonAddedRecipeUtensilAdapter(
                         nonAddedUtensils,
                         getOnNonAddedUtensilButtonClickListener()
                 );
-                addedUtensilsRecyclerView.setAdapter(addedUtensilAdapter);
-                nonAddedUtensilsRecyclerView.setAdapter(nonAddedUtensilAdapter);
+                mAddedUtensilsRecyclerView.setAdapter(mAddedUtensilAdapter);
+                mNonAddedUtensilsRecyclerView.setAdapter(mNonAddedUtensilAdapter);
 
-                addedUtensilsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                nonAddedUtensilsRecyclerView.setLayoutManager(
+                mAddedUtensilsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                mNonAddedUtensilsRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
             });
         });
 
-        saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
+        mSaveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
     /**
-     * Function called when {@link #saveChangesButton} is clicked.
+     * Function called when {@link #mSaveChangesButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        assert viewModel.recipeLiveData.getValue() != null : "Current recipe can't be null";
+        assert mViewModel.recipeLiveData.getValue() != null : "Current recipe can't be null";
 
-        final int id = viewModel.recipeLiveData.getValue().first;
-        final Recipe modifiedCopy = new Recipe(viewModel.recipeLiveData.getValue().second) {{
+        final int id = mViewModel.recipeLiveData.getValue().first;
+        final Recipe modifiedCopy = new Recipe(mViewModel.recipeLiveData.getValue().second) {{
             clearUtensils();
 
-            addedUtensilAdapter.getUtensils().forEach(pair -> addUtensil(pair.first));
+            mAddedUtensilAdapter.getUtensils().forEach(pair -> addUtensil(pair.first));
         }};
 
-        databaseExecutor.execute(() -> {
-            viewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
+        mDatabaseExecutor.execute(() -> {
+            mViewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
 
-            mainThreadHandler.post(() -> {
-                viewModel.postRecipe(modifiedCopy);
+            mMainThreadHandler.post(() -> {
+                mViewModel.postRecipe(modifiedCopy);
                 Toast.makeText(
                         this,
                         R.string.utensils_saved_toast,
@@ -169,8 +169,8 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
     private AddedRecipeUtensilAdapter.OnButtonClickListener
     getOnAddedUtensilButtonClickListener() {
         return (utensilId, utensil) -> {
-            addedUtensilAdapter.removeUtensil(utensilId, utensil);
-            nonAddedUtensilAdapter.addUtensil(utensilId, utensil);
+            mAddedUtensilAdapter.removeUtensil(utensilId, utensil);
+            mNonAddedUtensilAdapter.addUtensil(utensilId, utensil);
         };
     }
 
@@ -181,8 +181,8 @@ public final class EditRecipeUtensilsActivity extends AppCompatActivity {
     private NonAddedRecipeUtensilAdapter.OnButtonClickListener
     getOnNonAddedUtensilButtonClickListener() {
         return (utensilId, utensil) -> {
-            nonAddedUtensilAdapter.removeUtensil(utensilId, utensil);
-            addedUtensilAdapter.addUtensil(utensilId, utensil);
+            mNonAddedUtensilAdapter.removeUtensil(utensilId, utensil);
+            mAddedUtensilAdapter.addUtensil(utensilId, utensil);
         };
     }
 }

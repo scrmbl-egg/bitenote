@@ -34,57 +34,57 @@ public final class IngredientQueryActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Adapter for ingredients that are included in the query.
      */
-    private IncludedIngredientAdapter includedIngredientAdapter;
+    private IncludedIngredientAdapter mIncludedIngredientAdapter;
 
     /**
      * Recycler view for included ingredients.
      */
-    private RecyclerView includedIngredientsRecyclerView;
+    private RecyclerView mIncludedIngredientsRecyclerView;
 
     /**
      * Adapter for ingredients that have been banned from the query.
      */
-    private BannedIngredientAdapter bannedIngredientAdapter;
+    private BannedIngredientAdapter mBannedIngredientAdapter;
 
     /**
      * Recycler view for banned ingredients.
      */
-    private RecyclerView bannedIngredientsRecyclerView;
+    private RecyclerView mBannedIngredientsRecyclerView;
 
     /**
      * Adapter for ingredients that have not been added to the query.
      */
-    private NonQueriedIngredientAdapter nonQueriedIngredientAdapter;
+    private NonQueriedIngredientAdapter mNonQueriedIngredientAdapter;
 
     /**
      * Recycler view for non-queried ingredients.
      */
-    private RecyclerView nonQueriedIngredientsRecyclerView;
+    private RecyclerView mNonQueriedIngredientsRecyclerView;
 
     /**
      * Floating action button for saving changes.
      */
-    private FloatingActionButton saveChangesButton;
+    private FloatingActionButton mSaveChangesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,7 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         setContentView(R.layout.ingredient_query_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
     }
@@ -101,85 +101,85 @@ public final class IngredientQueryActivity extends AppCompatActivity {
      * Initializes all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.IngredientQueryMaterialToolbar);
-        saveChangesButton = findViewById(R.id.IngredientQuerySaveChangesButton);
-        includedIngredientsRecyclerView =
+        mMaterialToolbar = findViewById(R.id.IngredientQueryMaterialToolbar);
+        mSaveChangesButton = findViewById(R.id.IngredientQuerySaveChangesButton);
+        mIncludedIngredientsRecyclerView =
                 findViewById(R.id.IngredientQueryIncludedIngredientsRecyclerView);
-        bannedIngredientsRecyclerView =
+        mBannedIngredientsRecyclerView =
                 findViewById(R.id.IngredientQueryBannedIngredientsRecyclerView);
-        nonQueriedIngredientsRecyclerView =
+        mNonQueriedIngredientsRecyclerView =
                 findViewById(R.id.IngredientQueryNonQueriedIngredientsRecyclerView);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        assert viewModel.queryLiveData.getValue() != null : "Query live data can't be null";
+        assert mViewModel.queryLiveData.getValue() != null : "Query live data can't be null";
 
-        final RecipeQuery query = viewModel.queryLiveData.getValue();
+        final RecipeQuery query = mViewModel.queryLiveData.getValue();
 
-        databaseExecutor.execute(() -> {
+        mDatabaseExecutor.execute(() -> {
             final List<Pair<Integer, Ingredient>>
                     includedIngredients =
-                    viewModel.sqliteHelper.getQueryIncludedIngredientsWithProperties(query);
+                    mViewModel.sqliteHelper.getQueryIncludedIngredientsWithProperties(query);
             final List<Pair<Integer, Ingredient>>
                     bannedIngredients =
-                    viewModel.sqliteHelper.getQueryBannedIngredientsWithProperties(query);
+                    mViewModel.sqliteHelper.getQueryBannedIngredientsWithProperties(query);
             final List<Pair<Integer, Ingredient>>
                     nonQueriedIngredients =
-                    viewModel.sqliteHelper.getAllIngredientsExcept(query);
+                    mViewModel.sqliteHelper.getAllIngredientsExcept(query);
 
-            mainThreadHandler.post(() -> {
-                includedIngredientAdapter = new IncludedIngredientAdapter(
+            mMainThreadHandler.post(() -> {
+                mIncludedIngredientAdapter = new IncludedIngredientAdapter(
                         includedIngredients,
                         getOnIncludedIngredientButtonsClickListener()
                 );
-                bannedIngredientAdapter = new BannedIngredientAdapter(
+                mBannedIngredientAdapter = new BannedIngredientAdapter(
                         bannedIngredients,
                         getOnBannedIngredientButtonsClickListener()
                 );
-                nonQueriedIngredientAdapter = new NonQueriedIngredientAdapter(
+                mNonQueriedIngredientAdapter = new NonQueriedIngredientAdapter(
                         nonQueriedIngredients,
                         getOnNonQueriedIngredientButtonsClickListener()
                 );
-                includedIngredientsRecyclerView.setAdapter(includedIngredientAdapter);
-                bannedIngredientsRecyclerView.setAdapter(bannedIngredientAdapter);
-                nonQueriedIngredientsRecyclerView.setAdapter(nonQueriedIngredientAdapter);
+                mIncludedIngredientsRecyclerView.setAdapter(mIncludedIngredientAdapter);
+                mBannedIngredientsRecyclerView.setAdapter(mBannedIngredientAdapter);
+                mNonQueriedIngredientsRecyclerView.setAdapter(mNonQueriedIngredientAdapter);
 
-                includedIngredientsRecyclerView.setLayoutManager(
+                mIncludedIngredientsRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
-                bannedIngredientsRecyclerView.setLayoutManager(
+                mBannedIngredientsRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
-                nonQueriedIngredientsRecyclerView.setLayoutManager(
+                mNonQueriedIngredientsRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
             });
         });
 
-        saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
+        mSaveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
     /**
-     * Function called when {@link #saveChangesButton} is clicked.
+     * Function called when {@link #mSaveChangesButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        assert viewModel.queryLiveData.getValue() != null : "Current query can't be null";
+        assert mViewModel.queryLiveData.getValue() != null : "Current query can't be null";
 
-        final RecipeQuery modifiedCopy = new RecipeQuery(viewModel.queryLiveData.getValue()) {{
+        final RecipeQuery modifiedCopy = new RecipeQuery(mViewModel.queryLiveData.getValue()) {{
             clearAllIngredients();
 
-            includedIngredientAdapter.getIngredients().forEach(pair ->
+            mIncludedIngredientAdapter.getIngredients().forEach(pair ->
                     includeIngredient(pair.first, false)
             );
 
-            bannedIngredientAdapter.getIngredients().forEach(pair ->
+            mBannedIngredientAdapter.getIngredients().forEach(pair ->
                     banIngredient(pair.first, false)
             );
         }};
 
-        viewModel.postQuery(modifiedCopy);
+        mViewModel.postQuery(modifiedCopy);
 
         Toast.makeText(
                 this,
@@ -199,14 +199,14 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         return new IncludedIngredientAdapter.OnButtonsClickListener() {
             @Override
             public void onBanButtonClick(int ingredientId, @NonNull Ingredient ingredient) {
-                includedIngredientAdapter.removeIngredient(ingredientId, ingredient);
-                bannedIngredientAdapter.addIngredient(ingredientId, ingredient);
+                mIncludedIngredientAdapter.removeIngredient(ingredientId, ingredient);
+                mBannedIngredientAdapter.addIngredient(ingredientId, ingredient);
             }
 
             @Override
             public void onRemoveButtonClick(int ingredientId, @NonNull Ingredient ingredient) {
-                includedIngredientAdapter.removeIngredient(ingredientId, ingredient);
-                nonQueriedIngredientAdapter.addIngredient(ingredientId, ingredient);
+                mIncludedIngredientAdapter.removeIngredient(ingredientId, ingredient);
+                mNonQueriedIngredientAdapter.addIngredient(ingredientId, ingredient);
             }
         };
     }
@@ -220,14 +220,14 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         return new BannedIngredientAdapter.OnButtonsClickListener() {
             @Override
             public void onIncludeButtonClick(int ingredientId, @NonNull Ingredient ingredient) {
-                bannedIngredientAdapter.removeIngredient(ingredientId, ingredient);
-                includedIngredientAdapter.addIngredient(ingredientId, ingredient);
+                mBannedIngredientAdapter.removeIngredient(ingredientId, ingredient);
+                mIncludedIngredientAdapter.addIngredient(ingredientId, ingredient);
             }
 
             @Override
             public void onRemoveButtonClick(int ingredientId, @NonNull Ingredient ingredient) {
-                bannedIngredientAdapter.removeIngredient(ingredientId, ingredient);
-                nonQueriedIngredientAdapter.addIngredient(ingredientId, ingredient);
+                mBannedIngredientAdapter.removeIngredient(ingredientId, ingredient);
+                mNonQueriedIngredientAdapter.addIngredient(ingredientId, ingredient);
             }
         };
     }
@@ -241,14 +241,14 @@ public final class IngredientQueryActivity extends AppCompatActivity {
         return new NonQueriedIngredientAdapter.OnButtonsClickListener() {
             @Override
             public void onIncludeButtonClick(int ingredientId, @NonNull Ingredient ingredient) {
-                nonQueriedIngredientAdapter.removeIngredient(ingredientId, ingredient);
-                includedIngredientAdapter.addIngredient(ingredientId, ingredient);
+                mNonQueriedIngredientAdapter.removeIngredient(ingredientId, ingredient);
+                mIncludedIngredientAdapter.addIngredient(ingredientId, ingredient);
             }
 
             @Override
             public void onBanButtonClick(int ingredientId, @NonNull Ingredient ingredient) {
-                nonQueriedIngredientAdapter.removeIngredient(ingredientId, ingredient);
-                bannedIngredientAdapter.addIngredient(ingredientId, ingredient);
+                mNonQueriedIngredientAdapter.removeIngredient(ingredientId, ingredient);
+                mBannedIngredientAdapter.addIngredient(ingredientId, ingredient);
             }
         };
     }

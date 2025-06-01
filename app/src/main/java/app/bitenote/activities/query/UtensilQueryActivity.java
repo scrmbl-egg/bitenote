@@ -34,57 +34,57 @@ public final class UtensilQueryActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Adapter for utensils that have been included in the query.
      */
-    private IncludedUtensilAdapter includedUtensilAdapter;
+    private IncludedUtensilAdapter mIncludedUtensilAdapter;
 
     /**
      * Recycler view for included utensils.
      */
-    private RecyclerView includedUtensilsRecyclerView;
+    private RecyclerView mIncludedUtensilsRecyclerView;
 
     /**
      * Adapter for utensils that have been banned in the query.
      */
-    private BannedUtensilAdapter bannedUtensilAdapter;
+    private BannedUtensilAdapter mBannedUtensilAdapter;
 
     /**
      * Recycler view for banned utensils.
      */
-    private RecyclerView bannedUtensilsRecyclerView;
+    private RecyclerView mBannedUtensilsRecyclerView;
 
     /**
      * Adapter for utensils that have not been added to the query.
      */
-    private NonQueriedUtensilAdapter nonQueriedUtensilAdapter;
+    private NonQueriedUtensilAdapter mNonQueriedUtensilAdapter;
 
     /**
      * Recycler view for non-queried utensils.
      */
-    private RecyclerView nonQueriedUtensilRecyclerView;
+    private RecyclerView mNonQueriedUtensilsRecyclerView;
 
     /**
      * Floating action button for saving changes.
      */
-    private FloatingActionButton saveChangesButton;
+    private FloatingActionButton mSaveChangesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,7 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         setContentView(R.layout.utensil_query_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
     }
@@ -101,82 +101,82 @@ public final class UtensilQueryActivity extends AppCompatActivity {
      * Initializes all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.UtensilQueryMaterialToolbar);
-        saveChangesButton = findViewById(R.id.UtensilQuerySaveChangesButton);
-        includedUtensilsRecyclerView =
+        mMaterialToolbar = findViewById(R.id.UtensilQueryMaterialToolbar);
+        mSaveChangesButton = findViewById(R.id.UtensilQuerySaveChangesButton);
+        mIncludedUtensilsRecyclerView =
                 findViewById(R.id.UtensilQueryIncludedUtensilsRecyclerView);
-        bannedUtensilsRecyclerView =
+        mBannedUtensilsRecyclerView =
                 findViewById(R.id.UtensilQueryBannedUtensilsRecyclerView);
-        nonQueriedUtensilRecyclerView =
+        mNonQueriedUtensilsRecyclerView =
                 findViewById(R.id.UtensilQueryNonQueriedUtensilsRecyclerView);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        assert viewModel.queryLiveData.getValue() != null : "Query live data can't be null";
+        assert mViewModel.queryLiveData.getValue() != null : "Query live data can't be null";
 
-        final RecipeQuery query = viewModel.queryLiveData.getValue();
+        final RecipeQuery query = mViewModel.queryLiveData.getValue();
 
-        databaseExecutor.execute(() -> {
+        mDatabaseExecutor.execute(() -> {
             final List<Pair<Integer, Utensil>>
                     includedUtensils =
-                    viewModel.sqliteHelper.getQueryIncludedUtensilsWithProperties(query);
+                    mViewModel.sqliteHelper.getQueryIncludedUtensilsWithProperties(query);
             final List<Pair<Integer, Utensil>>
                     bannedUtensils =
-                    viewModel.sqliteHelper.getQueryBannedUtensilsWithProperties(query);
+                    mViewModel.sqliteHelper.getQueryBannedUtensilsWithProperties(query);
             final List<Pair<Integer, Utensil>>
                     nonQueriedUtensils =
-                    viewModel.sqliteHelper.getAllUtensilsExcept(query);
+                    mViewModel.sqliteHelper.getAllUtensilsExcept(query);
 
-            mainThreadHandler.post(() -> {
-                includedUtensilAdapter = new IncludedUtensilAdapter(
+            mMainThreadHandler.post(() -> {
+                mIncludedUtensilAdapter = new IncludedUtensilAdapter(
                         includedUtensils,
                         getOnIncludedUtensilButtonsClickListener()
                 );
-                bannedUtensilAdapter = new BannedUtensilAdapter(
+                mBannedUtensilAdapter = new BannedUtensilAdapter(
                         bannedUtensils,
                         getOnBannedUtensilButtonsClickListener()
                 );
-                nonQueriedUtensilAdapter = new NonQueriedUtensilAdapter(
+                mNonQueriedUtensilAdapter = new NonQueriedUtensilAdapter(
                         nonQueriedUtensils,
                         getOnNonQueriedUtensilButtonsClickListener()
                 );
-                includedUtensilsRecyclerView.setAdapter(includedUtensilAdapter);
-                bannedUtensilsRecyclerView.setAdapter(bannedUtensilAdapter);
-                nonQueriedUtensilRecyclerView.setAdapter(nonQueriedUtensilAdapter);
+                mIncludedUtensilsRecyclerView.setAdapter(mIncludedUtensilAdapter);
+                mBannedUtensilsRecyclerView.setAdapter(mBannedUtensilAdapter);
+                mNonQueriedUtensilsRecyclerView.setAdapter(mNonQueriedUtensilAdapter);
 
-                includedUtensilsRecyclerView.setLayoutManager(
+                mIncludedUtensilsRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
-                bannedUtensilsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                nonQueriedUtensilRecyclerView.setLayoutManager(
+                mBannedUtensilsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                mNonQueriedUtensilsRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
             });
         });
 
-        saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
+        mSaveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
     /**
-     * Function called when {@link #saveChangesButton} is clicked.
+     * Function called when {@link #mSaveChangesButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        assert viewModel.queryLiveData.getValue() != null : "Query live data can't be null";
+        assert mViewModel.queryLiveData.getValue() != null : "Query live data can't be null";
 
-        final RecipeQuery modifiedCopy = new RecipeQuery(viewModel.queryLiveData.getValue()) {{
+        final RecipeQuery modifiedCopy = new RecipeQuery(mViewModel.queryLiveData.getValue()) {{
             clearAllUtensils();
 
-            includedUtensilAdapter.getUtensils().forEach(pair ->
+            mIncludedUtensilAdapter.getUtensils().forEach(pair ->
                     includeUtensil(pair.first, true)
             );
-            bannedUtensilAdapter.getUtensils().forEach(pair ->
+            mBannedUtensilAdapter.getUtensils().forEach(pair ->
                     banUtensil(pair.first, true)
             );
         }};
 
-        viewModel.postQuery(modifiedCopy);
+        mViewModel.postQuery(modifiedCopy);
 
         Toast.makeText(this, R.string.utensils_saved_toast, Toast.LENGTH_SHORT).show();
 
@@ -192,14 +192,14 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         return new IncludedUtensilAdapter.OnButtonsClickListener() {
             @Override
             public void onBanButtonClick(int utensilId, @NonNull Utensil utensil) {
-                includedUtensilAdapter.removeUtensil(utensilId, utensil);
-                bannedUtensilAdapter.addUtensil(utensilId, utensil);
+                mIncludedUtensilAdapter.removeUtensil(utensilId, utensil);
+                mBannedUtensilAdapter.addUtensil(utensilId, utensil);
             }
 
             @Override
             public void onRemoveButtonClick(int utensilId, @NonNull Utensil utensil) {
-                includedUtensilAdapter.removeUtensil(utensilId, utensil);
-                nonQueriedUtensilAdapter.addUtensil(utensilId, utensil);
+                mIncludedUtensilAdapter.removeUtensil(utensilId, utensil);
+                mNonQueriedUtensilAdapter.addUtensil(utensilId, utensil);
             }
         };
     }
@@ -213,14 +213,14 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         return new BannedUtensilAdapter.OnButtonsClickListener() {
             @Override
             public void onIncludeButtonClick(int utensilId, @NonNull Utensil utensil) {
-                bannedUtensilAdapter.removeUtensil(utensilId, utensil);
-                includedUtensilAdapter.addUtensil(utensilId, utensil);
+                mBannedUtensilAdapter.removeUtensil(utensilId, utensil);
+                mIncludedUtensilAdapter.addUtensil(utensilId, utensil);
             }
 
             @Override
             public void onRemoveButtonClick(int utensilId, @NonNull Utensil utensil) {
-                bannedUtensilAdapter.removeUtensil(utensilId, utensil);
-                nonQueriedUtensilAdapter.addUtensil(utensilId, utensil);
+                mBannedUtensilAdapter.removeUtensil(utensilId, utensil);
+                mNonQueriedUtensilAdapter.addUtensil(utensilId, utensil);
             }
         };
     }
@@ -234,14 +234,14 @@ public final class UtensilQueryActivity extends AppCompatActivity {
         return new NonQueriedUtensilAdapter.OnButtonsClickListener() {
             @Override
             public void onIncludeButtonClick(int utensilId, @NonNull Utensil utensil) {
-                nonQueriedUtensilAdapter.removeUtensil(utensilId, utensil);
-                includedUtensilAdapter.addUtensil(utensilId, utensil);
+                mNonQueriedUtensilAdapter.removeUtensil(utensilId, utensil);
+                mIncludedUtensilAdapter.addUtensil(utensilId, utensil);
             }
 
             @Override
             public void onBanButtonClick(int utensilId, @NonNull Utensil utensil) {
-                nonQueriedUtensilAdapter.removeUtensil(utensilId, utensil);
-                bannedUtensilAdapter.addUtensil(utensilId, utensil);
+                mNonQueriedUtensilAdapter.removeUtensil(utensilId, utensil);
+                mBannedUtensilAdapter.addUtensil(utensilId, utensil);
             }
         };
     }

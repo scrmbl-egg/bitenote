@@ -28,9 +28,9 @@ public class BiteNoteViewModel extends AndroidViewModel {
 
     public final LiveData<Pair<Integer, Recipe>> recipeLiveData;
 
-    private final MutableLiveData<RecipeQuery> mutableQueryLiveData;
+    private final MutableLiveData<RecipeQuery> mMutableQueryLiveData;
 
-    private final MutableLiveData<Pair<Integer, Recipe>> mutableRecipeLiveData;
+    private final MutableLiveData<Pair<Integer, Recipe>> mMutableRecipeLiveData;
 
     /**
      * BiteNoteViewModel constructor.
@@ -42,11 +42,11 @@ public class BiteNoteViewModel extends AndroidViewModel {
 
         sqliteHelper = new BiteNoteSQLiteHelper(application);
 
-        mutableQueryLiveData = new MutableLiveData<>(new RecipeQuery());
-        mutableRecipeLiveData = new MutableLiveData<>(Pair.create(0, new Recipe()));
+        mMutableQueryLiveData = new MutableLiveData<>(new RecipeQuery());
+        mMutableRecipeLiveData = new MutableLiveData<>(Pair.create(0, new Recipe()));
 
-        queryLiveData = mutableQueryLiveData;
-        recipeLiveData = mutableRecipeLiveData;
+        queryLiveData = mMutableQueryLiveData;
+        recipeLiveData = mMutableRecipeLiveData;
     }
 
     @Override
@@ -56,18 +56,18 @@ public class BiteNoteViewModel extends AndroidViewModel {
     }
 
     public void postRecipeId(int id) {
-        postRecipeWithId(id, Objects.requireNonNull(mutableRecipeLiveData.getValue()).second);
+        postRecipeWithId(id, Objects.requireNonNull(mMutableRecipeLiveData.getValue()).second);
     }
 
     public void postRecipe(@NonNull Recipe recipe) {
-        postRecipeWithId(Objects.requireNonNull(mutableRecipeLiveData.getValue()).first, recipe);
+        postRecipeWithId(Objects.requireNonNull(mMutableRecipeLiveData.getValue()).first, recipe);
     }
 
     public void postRecipeWithId(int id, @NonNull Recipe recipe) {
-        mutableRecipeLiveData.postValue(Pair.create(id, recipe));
+        mMutableRecipeLiveData.postValue(Pair.create(id, recipe));
     }
 
     public void postQuery(@NonNull RecipeQuery query) {
-        mutableQueryLiveData.postValue(query);
+        mMutableQueryLiveData.postValue(query);
     }
 }

@@ -35,42 +35,42 @@ public final class HomeActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Adapter for recipe recycler view.
      */
-    private RecipeAdapter recipeAdapter;
+    private RecipeAdapter mRecipeAdapter;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Recycler view for recipe cards.
      */
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
 
     /**
      * Floating action button for creating a new recipe.
      */
-    private FloatingActionButton newRecipeButton;
+    private FloatingActionButton mNewRecipeButton;
 
     /**
      * Floating action button for making a query.
      */
-    private FloatingActionButton makeQueryButton;
+    private FloatingActionButton mMakeQueryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public final class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.home_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
     }
@@ -88,10 +88,10 @@ public final class HomeActivity extends AppCompatActivity {
         super.onResume();
 
         /// update adapter
-        databaseExecutor.execute(() -> {
-            final List<Pair<Integer, Recipe>> allRecipes = viewModel.sqliteHelper.getAllRecipes();
+        mDatabaseExecutor.execute(() -> {
+            final List<Pair<Integer, Recipe>> allRecipes = mViewModel.sqliteHelper.getAllRecipes();
 
-            mainThreadHandler.post(() -> recipeAdapter.setRecipes(allRecipes));
+            mMainThreadHandler.post(() -> mRecipeAdapter.setRecipes(allRecipes));
         });
     }
 
@@ -99,24 +99,28 @@ public final class HomeActivity extends AppCompatActivity {
      * Sets up all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.HomeMaterialToolbar);
-        recyclerView = findViewById(R.id.HomeRecipeRecyclerView);
-        newRecipeButton = findViewById(R.id.HomeNewRecipeButton);
-        makeQueryButton = findViewById(R.id.HomeMakeQueryButton);
+        mMaterialToolbar = findViewById(R.id.HomeMaterialToolbar);
+        mRecyclerView = findViewById(R.id.HomeRecipeRecyclerView);
+        mNewRecipeButton = findViewById(R.id.HomeNewRecipeButton);
+        mMakeQueryButton = findViewById(R.id.HomeMakeQueryButton);
 
-        setSupportActionBar(materialToolbar); // no navigation icon
+        setSupportActionBar(mMaterialToolbar); // no navigation icon
 
-        recipeAdapter = new RecipeAdapter(
-                viewModel.sqliteHelper.getAllRecipes(),
+        mRecipeAdapter = new RecipeAdapter(
+                mViewModel.sqliteHelper.getAllRecipes(),
                 getOnRecipeCardClickListener()
         );
-        recyclerView.setAdapter(recipeAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mRecipeAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        newRecipeButton.setOnClickListener(this::onNewRecipeButtonClick);
-        makeQueryButton.setOnClickListener(this::onMakeQueryButtonClick);
+        mNewRecipeButton.setOnClickListener(this::onNewRecipeButtonClick);
+        mMakeQueryButton.setOnClickListener(this::onMakeQueryButtonClick);
     }
 
+    /**
+     * @return The {@link RecipeAdapter.OnClickListener} implementation that will run when a recipe
+     * card is clicked.
+     */
     private RecipeAdapter.OnClickListener getOnRecipeCardClickListener() {
         return new RecipeAdapter.OnClickListener() {
             @Override
@@ -134,12 +138,12 @@ public final class HomeActivity extends AppCompatActivity {
                         .setTitle(R.string.home_long_click_dialog_title)
                         .setMessage(getString(R.string.home_long_click_dialog_body, recipe.name))
                         .setPositiveButton(R.string.yes, (dialog, i) -> {
-                            databaseExecutor.execute(() -> {
-                                viewModel.sqliteHelper.deleteRecipe(recipeId);
+                            mDatabaseExecutor.execute(() -> {
+                                mViewModel.sqliteHelper.deleteRecipe(recipeId);
 
-                                mainThreadHandler.post(() ->
-                                        recipeAdapter.setRecipes(
-                                                viewModel.sqliteHelper.getAllRecipes()
+                                mMainThreadHandler.post(() ->
+                                        mRecipeAdapter.setRecipes(
+                                                mViewModel.sqliteHelper.getAllRecipes()
                                         )
                                 );
                             });
@@ -169,7 +173,7 @@ public final class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Function that is called when {@link #newRecipeButton} is clicked.
+     * Function that is called when {@link #mNewRecipeButton} is clicked.
      * @param view {@link View} instance.
      */
     private void onNewRecipeButtonClick(@NonNull View view) {
@@ -178,7 +182,7 @@ public final class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Function called when {@link #makeQueryButton} is clicked.
+     * Function called when {@link #mMakeQueryButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onMakeQueryButtonClick(@NonNull View view) {

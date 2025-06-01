@@ -100,12 +100,12 @@ public class Recipe {
      * Ingredient HashMap. The key is the ingredient ID, and the value stores the properties of
      * that ingredient.
      */
-    private final HashMap<Integer, InRecipeProperties> ingredients;
+    private final HashMap<Integer, InRecipeProperties> mIngredients;
 
     /**
      * Utensil HashSet. Each element is an utensil ID.
      */
-    private final HashSet<Integer> utensils;
+    private final HashSet<Integer> mUtensils;
 
     /**
      * Basic Recipe constructor. Creates a new Recipe instance, with its creation date set to the
@@ -114,8 +114,8 @@ public class Recipe {
     public Recipe() {
         this.name = "";
         this.body = "";
-        this.ingredients = new HashMap<>();
-        this.utensils = new HashSet<>();
+        this.mIngredients = new HashMap<>();
+        this.mUtensils = new HashSet<>();
         this.budget = 0;
         this.diners = 1;
         this.creationDate = new Date(System.currentTimeMillis());
@@ -142,8 +142,8 @@ public class Recipe {
     ) {
         this.name = name;
         this.body = body;
-        this.ingredients = ingredients;
-        this.utensils = utensils;
+        this.mIngredients = ingredients;
+        this.mUtensils = utensils;
         this.creationDate = creationDate;
         this.budget = budget;
         this.diners = diners;
@@ -161,10 +161,10 @@ public class Recipe {
         this.creationDate = Date.valueOf(base.creationDate.toString());
 
         /// for a true copy of a recipe, maps and sets must be deep copied.
-        this.ingredients = new HashMap<>();
-        this.utensils = new HashSet<>();
-        this.ingredients.putAll(base.ingredients);
-        this.utensils.addAll(base.utensils);
+        this.mIngredients = new HashMap<>();
+        this.mUtensils = new HashSet<>();
+        this.mIngredients.putAll(base.mIngredients);
+        this.mUtensils.addAll(base.mUtensils);
     }
 
     /**
@@ -173,7 +173,7 @@ public class Recipe {
      * utensil.
      */
     public Set<Integer> getUtensils() {
-        return Collections.unmodifiableSet(utensils);
+        return Collections.unmodifiableSet(mUtensils);
     }
 
     /**
@@ -181,7 +181,7 @@ public class Recipe {
      * @param utensilId ID of the utensil.
      */
     public void addUtensil(int utensilId) {
-        final boolean addedId = utensils.add(utensilId);
+        final boolean addedId = mUtensils.add(utensilId);
         if (!addedId) {
             Log.w("recipe", "Attempted to add an utensil that was already present.");
         }
@@ -192,7 +192,7 @@ public class Recipe {
      * @param utensilId ID of the utensil.
      */
     public void removeUtensil(int utensilId) {
-        final boolean containedId = utensils.remove(utensilId);
+        final boolean containedId = mUtensils.remove(utensilId);
         if (!containedId) {
             Log.w("recipe", "Attempted to remove an utensil that wasn't present.");
         }
@@ -202,7 +202,7 @@ public class Recipe {
      * Removes all utensils from the recipe.
      */
     public void clearUtensils() {
-        utensils.clear();
+        mUtensils.clear();
     }
 
     /**
@@ -211,7 +211,7 @@ public class Recipe {
      * @return True if the utensil is present.
      */
     public boolean containsUtensil(int utensilId) {
-        return utensils.contains(utensilId);
+        return mUtensils.contains(utensilId);
     }
 
     /**
@@ -220,7 +220,7 @@ public class Recipe {
      * and the value represents the properties of that ingredient.
      */
     public Map<Integer, InRecipeProperties> getIngredients() {
-        return Collections.unmodifiableMap(ingredients);
+        return Collections.unmodifiableMap(mIngredients);
     }
 
     /**
@@ -231,7 +231,7 @@ public class Recipe {
      * {@code false}.
      */
     public void putIngredient(int ingredientId, int amount) {
-        ingredients.put(ingredientId, new InRecipeProperties(amount, false));
+        mIngredients.put(ingredientId, new InRecipeProperties(amount, false));
     }
 
     /**
@@ -241,7 +241,7 @@ public class Recipe {
      * the ingredient in the recipe.
      */
     public void putIngredient(int ingredientId, @NonNull InRecipeProperties properties) {
-        ingredients.put(ingredientId, properties);
+        mIngredients.put(ingredientId, properties);
     }
 
     /**
@@ -249,14 +249,14 @@ public class Recipe {
      * @param ingredientId ID of the ingredient.
      */
     public void removeIngredient(int ingredientId) {
-        ingredients.remove(ingredientId);
+        mIngredients.remove(ingredientId);
     }
 
     /**
      * Removes all ingredients from the recipe.
      */
     public void clearIngredients() {
-        ingredients.clear();
+        mIngredients.clear();
     }
 
     /**
@@ -265,7 +265,7 @@ public class Recipe {
      * @return True if the recipe contains the ingredient.
      */
     public boolean containsIngredient(int ingredientId) {
-        return ingredients.containsKey(ingredientId);
+        return mIngredients.containsKey(ingredientId);
     }
 
     @Override
@@ -278,12 +278,12 @@ public class Recipe {
                 && Objects.equals(name, recipe.name)
                 && Objects.equals(body, recipe.body)
                 && Objects.equals(creationDate, recipe.creationDate)
-                && Objects.equals(ingredients, recipe.ingredients)
-                && Objects.equals(utensils, recipe.utensils);
+                && Objects.equals(mIngredients, recipe.mIngredients)
+                && Objects.equals(mUtensils, recipe.mUtensils);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, body, budget, diners, creationDate, ingredients, utensils);
+        return Objects.hash(name, body, budget, diners, creationDate, mIngredients, mUtensils);
     }
 }

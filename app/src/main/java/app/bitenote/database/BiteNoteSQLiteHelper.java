@@ -47,51 +47,51 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Context.
      */
-    private final Context context;
+    private final Context mContext;
 
     /**
      * Array of {@link Pair}s, in which the first element represents the ID of the ingredient,
      * and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
-    private List<Pair<Integer, Ingredient>> ingredients = null;
+    private List<Pair<Integer, Ingredient>> mIngredients = null;
 
     /**
      * Amount of total ingredients in the database.
      * @implNote Cached to prevent unnecessary computations.
      */
-    private Integer ingredientCount = null;
+    private Integer mIngredientCount = null;
 
     /**
      * Array of {@link Pair}s, in which the first element represents the ID of the utensil,
      * and the second element represents the data that the ID references contained in a
      * {@link Utensil} instance.
      */
-    private List<Pair<Integer, Utensil>> utensils = null;
+    private List<Pair<Integer, Utensil>> mUtensils = null;
 
     /**
      * Amount of total utensils in the database.
      * @implNote Cached to prevent unnecessary computations.
      */
-    private Integer utensilCount = null;
+    private Integer mUtensilCount = null;
 
     /**
      * Array of {@link Pair}s, in which the first element represents the ID of the measurement type,
      * and the second element represents the data that the ID references contained in a
      * {@link MeasurementType} instance.
      */
-    private List<Pair<Integer, MeasurementType>> measurementTypes = null;
+    private List<Pair<Integer, MeasurementType>> mMeasurementTypes = null;
 
     /**
      * Amount of total measurement types in the database.
      * @implNote Cached to prevent unnecessary computations.
      */
-    private Integer measurementTypeCount = null;
+    private Integer mMeasurementTypeCount = null;
 
     @Override
     public void onCreate(@NonNull SQLiteDatabase database) {
         BiteNoteSQLiteTableHelper.createTables(database);
-        BiteNoteSQLiteTableHelper.populateImmutableTables(database, context);
+        BiteNoteSQLiteTableHelper.populateImmutableTables(database, mContext);
     }
 
     @Override
@@ -131,7 +131,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
          * This SHOULD be safe because onCreate() isn't called until the getWriteableDatabase() or
          * getReadableDatabase() functions are called for the first time.
          */
-        this.context = context;
+        this.mContext = context;
     }
 
     /**
@@ -147,7 +147,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         int currentUtensilId = 0;
 
         try (
-                final XmlResourceParser parser = context.getResources().getXml(
+                final XmlResourceParser parser = mContext.getResources().getXml(
                         R.xml.example_recipes
                 )
         ) {
@@ -495,7 +495,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * {@link Ingredient} instance.
      */
     public List<Pair<Integer, Ingredient>> getAllIngredients() {
-        if (ingredients != null) return Collections.unmodifiableList(ingredients);
+        if (mIngredients != null) return Collections.unmodifiableList(mIngredients);
 
         final String sql = "SELECT id FROM ingredients ORDER BY id ASC;";
         final String[] args = {};
@@ -515,8 +515,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 ingredientList.add(Pair.create(id, ingredientInstance));
             } while (cursor.moveToNext());
 
-            ingredients = ingredientList;
-            return Collections.unmodifiableList(ingredients);
+            mIngredients = ingredientList;
+            return Collections.unmodifiableList(mIngredients);
         }
     }
 
@@ -637,8 +637,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @return An integer representing the amount of ingredients in the database.
      */
     public int getIngredientCount() {
-        if (ingredientCount != null) {
-            return ingredientCount;
+        if (mIngredientCount != null) {
+            return mIngredientCount;
         }
 
         final String sql = "SELECT count(*) AS ingredient_count FROM ingredients;";
@@ -651,8 +651,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             cursor.moveToFirst(); // this operation should be guaranteed
 
             /// shouldn't return -1
-            ingredientCount = cursor.getInt(cursor.getColumnIndex("ingredient_count"));
-            return ingredientCount;
+            mIngredientCount = cursor.getInt(cursor.getColumnIndex("ingredient_count"));
+            return mIngredientCount;
         }
     }
 
@@ -694,7 +694,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * contained in a {@link MeasurementType} instance.
      */
     public List<Pair<Integer, MeasurementType>> getAllMeasurementTypes() {
-        if (measurementTypes != null) return measurementTypes;
+        if (mMeasurementTypes != null) return mMeasurementTypes;
 
         final String sql = "SELECT id FROM measurement_types ORDER BY id ASC;";
         final String[] args = {};
@@ -715,8 +715,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 mTypeList.add(Pair.create(id, mTypeInstance));
             } while (cursor.moveToNext());
 
-            measurementTypes = mTypeList;
-            return Collections.unmodifiableList(measurementTypes);
+            mMeasurementTypes = mTypeList;
+            return Collections.unmodifiableList(mMeasurementTypes);
         }
     }
 
@@ -725,8 +725,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @return An integer representing the amount of measurement types in the database.
      */
     public int getMeasurementTypeCount() {
-        if (measurementTypeCount != null) {
-            return measurementTypeCount;
+        if (mMeasurementTypeCount != null) {
+            return mMeasurementTypeCount;
         }
 
         final String sql = "SELECT count(*) AS measurement_type_count FROM measurement_types;";
@@ -739,10 +739,10 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             cursor.moveToFirst(); // this operation should be guaranteed
 
             /// shouldn't return -1
-            measurementTypeCount = cursor.getInt(
+            mMeasurementTypeCount = cursor.getInt(
                     cursor.getColumnIndex("measurement_type_count")
             );
-            return measurementTypeCount;
+            return mMeasurementTypeCount;
         }
     }
 
@@ -784,7 +784,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * {@link Utensil} instance.
      */
     public List<Pair<Integer, Utensil>> getAllUtensils() {
-        if (utensils != null) return utensils;
+        if (mUtensils != null) return mUtensils;
 
         final String sql = "SELECT id FROM utensils ORDER BY id ASC;";
         final String[] args = {};
@@ -804,8 +804,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                 utensilList.add(Pair.create(id, utensilInstance));
             } while (cursor.moveToNext());
 
-            utensils = utensilList;
-            return Collections.unmodifiableList(utensils);
+            mUtensils = utensilList;
+            return Collections.unmodifiableList(mUtensils);
         }
     }
 
@@ -903,8 +903,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * @return An integer representing the amount of utensils in the database.
      */
     public int getUtensilCount() {
-        if (utensilCount != null) {
-            return utensilCount;
+        if (mUtensilCount != null) {
+            return mUtensilCount;
         }
 
         final String sql = "SELECT count(*) AS utensil_count FROM utensils;";
@@ -917,8 +917,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             cursor.moveToFirst(); // this operation should be guaranteed
 
             /// shouldn't return -1
-            utensilCount = cursor.getInt(cursor.getColumnIndex("utensil_count"));
-            return utensilCount;
+            mUtensilCount = cursor.getInt(cursor.getColumnIndex("utensil_count"));
+            return mUtensilCount;
         }
     }
 

@@ -31,13 +31,13 @@ public final class NonQueriedIngredientAdapter extends
      * integer ID of the ingredient in the database, and the second element represents the data of
      * that ingredient, wrapped in an {@link Ingredient} instance.
      */
-    private List<Pair<Integer, Ingredient>> ingredients;
+    private List<Pair<Integer, Ingredient>> mIngredients;
 
     /**
      * {@link OnButtonsClickListener} implementation, which will determine
      * the code the {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonsClickListener listener;
+    private final OnButtonsClickListener mListener;
 
     /**
      * Non-queried ingredient adapter constructor.
@@ -53,8 +53,8 @@ public final class NonQueriedIngredientAdapter extends
             @NonNull List<Pair<Integer, Ingredient>> ingredients,
             @NonNull OnButtonsClickListener listener
     ) {
-        this.ingredients = ingredients;
-        this.listener = listener;
+        mIngredients = ingredients;
+        mListener = listener;
     }
 
     @NonNull
@@ -68,15 +68,15 @@ public final class NonQueriedIngredientAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = ingredients.get(position).first;
-        final Ingredient ingredient = ingredients.get(position).second;
+        final int id = mIngredients.get(position).first;
+        final Ingredient ingredient = mIngredients.get(position).second;
 
-        holder.bind(id, ingredient, listener);
+        holder.bind(id, ingredient, mListener);
     }
 
     @Override
     public int getItemCount() {
-        return ingredients.size();
+        return mIngredients.size();
     }
 
     /**
@@ -87,7 +87,7 @@ public final class NonQueriedIngredientAdapter extends
      */
     @SuppressLint("NotifyDataSetChanged")
     public void setIngredients(@NonNull List<Pair<Integer, Ingredient>> ingredients) {
-        this.ingredients = ingredients;
+        mIngredients = ingredients;
 
         notifyDataSetChanged();
     }
@@ -99,8 +99,8 @@ public final class NonQueriedIngredientAdapter extends
 
     @SuppressLint("NotifyDataSetChanged")
     public void addIngredient(@NonNull Pair<Integer, Ingredient> pair) {
-        ingredients.add(pair);
-        ingredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
+        mIngredients.add(pair);
+        mIngredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
 
         notifyDataSetChanged();
     }
@@ -111,10 +111,10 @@ public final class NonQueriedIngredientAdapter extends
     }
 
     public void removeIngredient(@NonNull Pair<Integer, Ingredient> pair) {
-        if (!ingredients.contains(pair)) return;
+        if (!mIngredients.contains(pair)) return;
 
-        final int position = ingredients.indexOf(pair);
-        ingredients.remove(pair);
+        final int position = mIngredients.indexOf(pair);
+        mIngredients.remove(pair);
 
         notifyItemRemoved(position);
     }
@@ -129,17 +129,17 @@ public final class NonQueriedIngredientAdapter extends
          * card.
          * @see Ingredient#fullName
          */
-        private final TextView nameTextView;
+        private final TextView mNameTextView;
 
         /**
          * {@link ImageButton} instance that is used for including an ingredient in the query.
          */
-        private final ImageButton includeButton;
+        private final ImageButton mIncludeButton;
 
         /**
          * {@link ImageButton} instance that is used for banning an ingredient in the query.
          */
-        private final ImageButton banButton;
+        private final ImageButton mBanButton;
 
         /**
          * Non-queried ingredient view holder constructor.
@@ -149,9 +149,9 @@ public final class NonQueriedIngredientAdapter extends
             super(itemView);
 
             /// init views
-            nameTextView = itemView.findViewById(R.id.NonQueriedIngredientCardNameTextView);
-            includeButton = itemView.findViewById(R.id.NonQueriedIngredientCardIncludeButton);
-            banButton = itemView.findViewById(R.id.NonQueriedIngredientCardBanButton);
+            mNameTextView = itemView.findViewById(R.id.NonQueriedIngredientCardNameTextView);
+            mIncludeButton = itemView.findViewById(R.id.NonQueriedIngredientCardIncludeButton);
+            mBanButton = itemView.findViewById(R.id.NonQueriedIngredientCardBanButton);
         }
 
         /**
@@ -167,19 +167,19 @@ public final class NonQueriedIngredientAdapter extends
                 @NonNull Ingredient ingredient,
                 @NonNull OnButtonsClickListener listener
         ) {
-            nameTextView.setText(itemView.getResources().getIdentifier(
+            mNameTextView.setText(itemView.getResources().getIdentifier(
                     "ingredient_" + ingredient.fullName,
                     "string",
                     itemView.getContext().getPackageName()
             ));
 
-            includeButton.setOnClickListener(view -> {
+            mIncludeButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onIncludeButtonClick(ingredientId, ingredient);
             });
 
-            banButton.setOnClickListener(view -> {
+            mBanButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onBanButtonClick(ingredientId, ingredient);

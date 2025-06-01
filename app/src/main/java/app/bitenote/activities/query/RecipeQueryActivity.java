@@ -25,42 +25,42 @@ public final class RecipeQueryActivity extends AppCompatActivity {
     /**
      * App's view model. Grants access to the database and shared live data.
      */
-    private  BiteNoteViewModel viewModel;
+    private  BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Text input where the query's max budget is edited.
      */
-    private EditText maxBudgetEditText;
+    private EditText mMaxBudgetEditText;
 
     /**
      * Seek bar where the query's minimum diners are edited.
      */
-    private SeekBar minDinersSeekBar;
+    private SeekBar mMinDinersSeekBar;
 
     /**
-     * Text view that indicates the progress of {@link #minDinersSeekBar}.
+     * Text view that indicates the progress of {@link #mMinDinersSeekBar}.
      */
-    private TextView minDinersSeekBarProgressTextView;
+    private TextView mMinDinersSeekBarProgressTextView;
 
     /**
      * Button that allows the user to go to the {@link IngredientQueryActivity} activity.
      */
-    private Button editIngredientsButton;
+    private Button mEditIngredientsButton;
 
     /**
      * Button that allows the user to go to the {@link UtensilQueryActivity} activity.
      */
-    private Button editUtensilsButton;
+    private Button mEditUtensilsButton;
 
     /**
      * Floating action button for viewing the query.
      */
-    private FloatingActionButton viewQueryButton;
+    private FloatingActionButton mViewQueryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,46 +68,46 @@ public final class RecipeQueryActivity extends AppCompatActivity {
         setContentView(R.layout.recipe_query_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         /// post new query
-        viewModel.postQuery(new RecipeQuery());
+        mViewModel.postQuery(new RecipeQuery());
 
         setupViews();
     }
 
     private void setupViews() {
-        materialToolbar = findViewById(R.id.RecipeQueryMaterialToolbar);
-        maxBudgetEditText = findViewById(R.id.RecipeQueryMaxBudgetEditText);
-        minDinersSeekBar = findViewById(R.id.RecipeQueryMinDinersSeekBar);
-        minDinersSeekBarProgressTextView =
+        mMaterialToolbar = findViewById(R.id.RecipeQueryMaterialToolbar);
+        mMaxBudgetEditText = findViewById(R.id.RecipeQueryMaxBudgetEditText);
+        mMinDinersSeekBar = findViewById(R.id.RecipeQueryMinDinersSeekBar);
+        mMinDinersSeekBarProgressTextView =
                 findViewById(R.id.RecipeQueryMinDinersSeekBarProgressTextView);
-        editIngredientsButton = findViewById(R.id.RecipeQueryEditIngredientsButton);
-        editUtensilsButton = findViewById(R.id.RecipeQueryEditUtensilsButton);
-        viewQueryButton = findViewById(R.id.RecipeQueryViewQueryButton);
+        mEditIngredientsButton = findViewById(R.id.RecipeQueryEditIngredientsButton);
+        mEditUtensilsButton = findViewById(R.id.RecipeQueryEditUtensilsButton);
+        mViewQueryButton = findViewById(R.id.RecipeQueryViewQueryButton);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        minDinersSeekBar.setOnSeekBarChangeListener(getOnMinDinersSeekBarChangeListener());
+        mMinDinersSeekBar.setOnSeekBarChangeListener(getOnMinDinersSeekBarChangeListener());
 
-        editIngredientsButton.setOnClickListener(this::onEditIngredientsButtonClick);
-        editUtensilsButton.setOnClickListener(this::onEditUtensilsButtonClick);
-        viewQueryButton.setOnClickListener(this::onViewQueryButtonClick);
+        mEditIngredientsButton.setOnClickListener(this::onEditIngredientsButtonClick);
+        mEditUtensilsButton.setOnClickListener(this::onEditUtensilsButtonClick);
+        mViewQueryButton.setOnClickListener(this::onViewQueryButtonClick);
 
         /*
          * It is unnecessary to bind the views by observing the live data because a new query object
          * is created when creating this activity. This also allows for some hacks later in the
          */
-        maxBudgetEditText.setText(""); // empty text, so we allow the users to NOT specify a budget
+        mMaxBudgetEditText.setText(""); // empty text, so we allow the users to NOT specify a budget
 
         /// set min diners seek bar
-        minDinersSeekBar.setProgress(0);
-        minDinersSeekBarProgressTextView.setText(String.valueOf(1));
+        mMinDinersSeekBar.setProgress(0);
+        mMinDinersSeekBarProgressTextView.setText(String.valueOf(1));
     }
 
     /**
-     * Function called when the {@link #editIngredientsButton} is clicked.
+     * Function called when the {@link #mEditIngredientsButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onEditIngredientsButtonClick(@NonNull View view) {
@@ -115,7 +115,7 @@ public final class RecipeQueryActivity extends AppCompatActivity {
     }
 
     /**
-     * Function called when the {@link #editUtensilsButton} is clicked.
+     * Function called when the {@link #mEditUtensilsButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onEditUtensilsButtonClick(@NonNull View view) {
@@ -123,27 +123,27 @@ public final class RecipeQueryActivity extends AppCompatActivity {
     }
 
     /**
-     * Function called when {@link #viewQueryButton} is clicked.
+     * Function called when {@link #mViewQueryButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onViewQueryButtonClick(@NonNull View view) {
-        assert viewModel.queryLiveData.getValue() != null : "Query live data can't be null";
+        assert mViewModel.queryLiveData.getValue() != null : "Query live data can't be null";
 
-        final RecipeQuery modifiedQuery = new RecipeQuery(viewModel.queryLiveData.getValue()) {{
-            minDiners = minDinersSeekBar.getProgress() + 1;
+        final RecipeQuery modifiedQuery = new RecipeQuery(mViewModel.queryLiveData.getValue()) {{
+            minDiners = mMinDinersSeekBar.getProgress() + 1;
 
             /*
              * If no budget is specified in the EditText, ignore it completely by setting
              * maxBudget to MAX_VALUE.
              */
             try {
-                maxBudget = Integer.parseInt(maxBudgetEditText.getText().toString());
+                maxBudget = Integer.parseInt(mMaxBudgetEditText.getText().toString());
             } catch (NumberFormatException e) {
                 maxBudget = Integer.MAX_VALUE;
             }
         }};
 
-        viewModel.postQuery(modifiedQuery);
+        mViewModel.postQuery(modifiedQuery);
 
         startActivity(new Intent(this, ViewQueryActivity.class));
     }
@@ -152,7 +152,7 @@ public final class RecipeQueryActivity extends AppCompatActivity {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                minDinersSeekBarProgressTextView.setText(String.valueOf(i + 1));
+                mMinDinersSeekBarProgressTextView.setText(String.valueOf(i + 1));
             }
 
             @Override

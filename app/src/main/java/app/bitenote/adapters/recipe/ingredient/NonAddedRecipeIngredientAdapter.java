@@ -30,20 +30,20 @@ public final class NonAddedRecipeIngredientAdapter
      * integer ID of the ingredient in the database, and the second element represents the data of
      * that ingredient, wrapped in an {@link Ingredient} instance.
      */
-    private List<Pair<Integer, Ingredient>> ingredients;
+    private List<Pair<Integer, Ingredient>> mIngredients;
 
     /**
      * {@link OnButtonClickListener} implementation, which will determine the code the
      * {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonClickListener listener;
+    private final OnButtonClickListener mListener;
 
     public NonAddedRecipeIngredientAdapter(
             @NonNull List<Pair<Integer, Ingredient>> ingredients,
             @NonNull OnButtonClickListener listener
     ) {
-        this.ingredients = ingredients;
-        this.listener = listener;
+        mIngredients = ingredients;
+        mListener = listener;
     }
 
     @NonNull
@@ -57,15 +57,15 @@ public final class NonAddedRecipeIngredientAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = ingredients.get(position).first;
-        final Ingredient ingredient = ingredients.get(position).second;
+        final int id = mIngredients.get(position).first;
+        final Ingredient ingredient = mIngredients.get(position).second;
 
-        holder.bind(id, ingredient, listener);
+        holder.bind(id, ingredient, mListener);
     }
 
     @Override
     public int getItemCount() {
-        return ingredients.size();
+        return mIngredients.size();
     }
 
     /**
@@ -76,7 +76,7 @@ public final class NonAddedRecipeIngredientAdapter
      */
     @SuppressLint("NotifyDataSetChanged")
     public void setIngredients(@NonNull List<Pair<Integer, Ingredient>> ingredients) {
-        this.ingredients = ingredients;
+        mIngredients = ingredients;
 
         notifyDataSetChanged();
     }
@@ -87,10 +87,10 @@ public final class NonAddedRecipeIngredientAdapter
     }
 
     public void removeIngredient(@NonNull Pair<Integer, Ingredient> pair) {
-        if (!ingredients.contains(pair)) return;
+        if (!mIngredients.contains(pair)) return;
 
-        final int position = ingredients.indexOf(pair);
-        ingredients.remove(pair);
+        final int position = mIngredients.indexOf(pair);
+        mIngredients.remove(pair);
 
         notifyItemRemoved(position);
     }
@@ -102,9 +102,9 @@ public final class NonAddedRecipeIngredientAdapter
 
     @SuppressLint("NotifyDataSetChanged")
     public void addIngredient(@NonNull Pair<Integer, Ingredient> pair) {
-        ingredients.add(pair);
+        mIngredients.add(pair);
 
-        ingredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
+        mIngredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
 
         notifyDataSetChanged();
     }
@@ -119,12 +119,12 @@ public final class NonAddedRecipeIngredientAdapter
          * card.
          * @see Ingredient#fullName
          */
-        private final TextView nameTextView;
+        private final TextView mNameTextView;
 
         /**
          * {@link ImageButton} that is used to add the ingredient to the recipe.
          */
-        private final ImageButton addButton;
+        private final ImageButton mAddButton;
 
         /**
          * Non-added ingredient view holder constructor.
@@ -133,8 +133,8 @@ public final class NonAddedRecipeIngredientAdapter
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.NonAddedIngredientCardNameTextView);
-            addButton = itemView.findViewById(R.id.NonAddedIngredientCardAddButton);
+            mNameTextView = itemView.findViewById(R.id.NonAddedIngredientCardNameTextView);
+            mAddButton = itemView.findViewById(R.id.NonAddedIngredientCardAddButton);
         }
 
         /**
@@ -150,13 +150,13 @@ public final class NonAddedRecipeIngredientAdapter
                 @NonNull Ingredient ingredient,
                 @NonNull OnButtonClickListener listener
         ) {
-            nameTextView.setText(itemView.getResources().getIdentifier(
+            mNameTextView.setText(itemView.getResources().getIdentifier(
                     "ingredient_" + ingredient.fullName,
                     "string",
                     itemView.getContext().getPackageName()
             ));
 
-            addButton.setOnClickListener(view -> {
+            mAddButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onAddButtonClick(ingredientId, ingredient);

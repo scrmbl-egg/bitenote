@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-import java.util.Locale;
 
 import app.bitenote.R;
 import app.bitenote.database.BiteNoteSQLiteHelper;
@@ -27,13 +26,13 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
      * integer ID of the recipe in the database, and the second element represents the data of that
      * recipe, wrapped in a {@link Recipe} instance.
      */
-    private List<Pair<Integer, Recipe>> recipes;
+    private List<Pair<Integer, Recipe>> mRecipes;
 
     /**
      * {@link OnClickListener} implementation, which will determine the code the
      * {@link ViewHolder} will execute when a card is clicked.
      */
-    private final OnClickListener listener;
+    private final OnClickListener mListener;
 
     /**
      * Recipe adapter constructor.
@@ -49,8 +48,8 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
             @NonNull List<Pair<Integer, Recipe>> recipes,
             @NonNull OnClickListener listener
     ) {
-        this.recipes = recipes;
-        this.listener = listener;
+        mRecipes = recipes;
+        mListener = listener;
     }
 
     @NonNull
@@ -64,15 +63,15 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = recipes.get(position).first;
-        final Recipe recipe = recipes.get(position).second;
+        final int id = mRecipes.get(position).first;
+        final Recipe recipe = mRecipes.get(position).second;
 
-        holder.bind(id, recipe, listener);
+        holder.bind(id, recipe, mListener);
     }
 
     @Override
     public int getItemCount() {
-        return recipes.size();
+        return mRecipes.size();
     }
 
     /**
@@ -83,7 +82,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
      */
     @SuppressLint("NotifyDataSetChanged")
     public void setRecipes(@NonNull List<Pair<Integer, Recipe>> recipes) {
-        this.recipes = recipes;
+        mRecipes = recipes;
 
         notifyDataSetChanged();
     }
@@ -98,31 +97,31 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
          * {@link TextView} instance that displays the name of the recipe in the card.
          * @see Recipe#name
          */
-        private final TextView nameTextView;
+        private final TextView mNameTextView;
 
         /**
          * {@link TextView} instance that displays the body of the recipe in the card.
          * @see Recipe#body
          */
-        private final TextView bodyTextView;
+        private final TextView mBodyTextView;
 
         /**
          * {@link TextView} instance that displays the creation date of the recipe in the card.
          * @see Recipe#creationDate
          */
-        private final TextView creationDateTextView;
+        private final TextView mCreationDateTextView;
 
         /**
          * {@link TextView} instance that displays the amount of diners of the recipe in the card.
          * @see Recipe#diners
          */
-        private final TextView dinersTextView;
+        private final TextView mDinersTextView;
 
         /**
          * {@link TextView} instance that displays the budget of the recipe in the card.
          * @see Recipe#budget
          */
-        private final TextView budgetTextView;
+        private final TextView mBudgetTextView;
 
         /**
          * Recipe view holder constructor.
@@ -132,11 +131,11 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
             super(itemView);
 
             /// init views
-            this.nameTextView = itemView.findViewById(R.id.RecipeCardNameTextView);
-            this.bodyTextView = itemView.findViewById(R.id.RecipeCardBodyTextView);
-            this.creationDateTextView = itemView.findViewById(R.id.RecipeCardCreationDateTextView);
-            this.dinersTextView = itemView.findViewById(R.id.RecipeCardDinersTextView);
-            this.budgetTextView = itemView.findViewById(R.id.RecipeCardBudgetTextView);
+            mNameTextView = itemView.findViewById(R.id.RecipeCardNameTextView);
+            mBodyTextView = itemView.findViewById(R.id.RecipeCardBodyTextView);
+            mCreationDateTextView = itemView.findViewById(R.id.RecipeCardCreationDateTextView);
+            mDinersTextView = itemView.findViewById(R.id.RecipeCardDinersTextView);
+            mBudgetTextView = itemView.findViewById(R.id.RecipeCardBudgetTextView);
         }
 
         /**
@@ -151,11 +150,11 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
                 @NonNull Recipe recipe,
                 @NonNull OnClickListener listener
         ) {
-            nameTextView.setText(recipe.name);
-            bodyTextView.setText(recipe.body);
-            creationDateTextView.setText(recipe.creationDate.toString());
-            dinersTextView.setText(String.valueOf(recipe.diners));
-            budgetTextView.setText(
+            mNameTextView.setText(recipe.name);
+            mBodyTextView.setText(recipe.body);
+            mCreationDateTextView.setText(recipe.creationDate.toString());
+            mDinersTextView.setText(String.valueOf(recipe.diners));
+            mBudgetTextView.setText(
                     itemView.getResources().getString(R.string.number_with_currency, recipe.budget)
             );
 

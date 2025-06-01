@@ -33,13 +33,13 @@ public final class AddedRecipeUtensilAdapter
      * the utensil in the database, and the second element represents the data of that utensil,
      * wrapped in an {@link Utensil} instance.
      */
-    private List<Pair<Integer, Utensil>> utensils;
+    private List<Pair<Integer, Utensil>> mUtensils;
 
     /**
      * {@link OnButtonClickListener} implementation, which will determine the code the
      * {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonClickListener listener;
+    private final OnButtonClickListener mListener;
 
     /**
      * Non-added recipe utensil adapter constructor.
@@ -55,8 +55,8 @@ public final class AddedRecipeUtensilAdapter
             @NonNull List<Pair<Integer, Utensil>> utensils,
             @NonNull OnButtonClickListener listener
     ) {
-        this.utensils = utensils;
-        this.listener = listener;
+        mUtensils = utensils;
+        mListener = listener;
     }
 
     @NonNull
@@ -70,19 +70,19 @@ public final class AddedRecipeUtensilAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = utensils.get(position).first;
-        final Utensil utensil = utensils.get(position).second;
+        final int id = mUtensils.get(position).first;
+        final Utensil utensil = mUtensils.get(position).second;
 
-        holder.bind(id, utensil, listener);
+        holder.bind(id, utensil, mListener);
     }
 
     @Override
     public int getItemCount() {
-        return utensils.size();
+        return mUtensils.size();
     }
 
     public List<Pair<Integer, Utensil>> getUtensils() {
-        return Collections.unmodifiableList(utensils);
+        return Collections.unmodifiableList(mUtensils);
     }
 
     /**
@@ -93,7 +93,7 @@ public final class AddedRecipeUtensilAdapter
      */
     @SuppressLint("NotifyDataSetChanged")
     public void setUtensils(@NonNull List<Pair<Integer, Utensil>> utensils) {
-        this.utensils = utensils;
+        mUtensils = utensils;
 
         notifyDataSetChanged();
     }
@@ -105,8 +105,8 @@ public final class AddedRecipeUtensilAdapter
 
     @SuppressLint("NotifyDataSetChanged")
     public void addUtensil(@NonNull Pair<Integer, Utensil> pair) {
-        utensils.add(pair);
-        utensils.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
+        mUtensils.add(pair);
+        mUtensils.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
 
         notifyDataSetChanged();
     }
@@ -117,10 +117,10 @@ public final class AddedRecipeUtensilAdapter
     }
 
     public void removeUtensil(@NonNull Pair<Integer, Utensil> pair) {
-        if (!utensils.contains(pair)) return;
+        if (!mUtensils.contains(pair)) return;
 
-        final int position = utensils.indexOf(pair);
-        utensils.remove(pair);
+        final int position = mUtensils.indexOf(pair);
+        mUtensils.remove(pair);
 
         notifyItemRemoved(position);
     }
@@ -132,12 +132,12 @@ public final class AddedRecipeUtensilAdapter
         /**
          * {@link TextView} instance that displays the name of the utensil.
          */
-        private final TextView nameTextView;
+        private final TextView mNameTextView;
 
         /**
          * {@link ImageButton} that is used to add the utensil to the recipe.
          */
-        private final ImageButton removeButton;
+        private final ImageButton mRemoveButton;
 
         /**
          * Added utensil view holder constructor.
@@ -146,8 +146,8 @@ public final class AddedRecipeUtensilAdapter
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.IncludedUtensilCardNameTextView);
-            removeButton = itemView.findViewById(R.id.IncludedUtensilCardRemoveButton);
+            mNameTextView = itemView.findViewById(R.id.IncludedUtensilCardNameTextView);
+            mRemoveButton = itemView.findViewById(R.id.IncludedUtensilCardRemoveButton);
         }
 
         /**
@@ -163,13 +163,13 @@ public final class AddedRecipeUtensilAdapter
                 @NonNull Utensil utensil,
                 @NonNull OnButtonClickListener listener
         ) {
-            nameTextView.setText(itemView.getResources().getIdentifier(
+            mNameTextView.setText(itemView.getResources().getIdentifier(
                     "utensil_" + utensil.name,
                     "string",
                     itemView.getContext().getPackageName()
             ));
 
-            removeButton.setOnClickListener(view -> {
+            mRemoveButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onRemoveButtonClick(utensilId, utensil);

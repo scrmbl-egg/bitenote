@@ -12,13 +12,13 @@ public class BiteNoteApplication extends Application {
     /**
      * Application scoped view model. Grants access to the database API and shared live data.
      */
-    private BiteNoteViewModel appViewModel;
+    private BiteNoteViewModel mAppViewModel;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        appViewModel = new ViewModelProvider.AndroidViewModelFactory(this)
+        mAppViewModel = new ViewModelProvider.AndroidViewModelFactory(this)
                 .create(BiteNoteViewModel.class);
     }
 
@@ -28,6 +28,6 @@ public class BiteNoteApplication extends Application {
      * data.
      */
     public BiteNoteViewModel getAppViewModel() {
-        return appViewModel;
+        return mAppViewModel;
     }
 }

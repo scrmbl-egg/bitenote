@@ -34,32 +34,32 @@ public final class ViewQueryActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Adapter for recipes.
      */
-    private RecipeAdapter recipeAdapter;
+    private RecipeAdapter mRecipeAdapter;
 
     /**
      * Recycler view for recipe cards.
      */
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public final class ViewQueryActivity extends AppCompatActivity {
         setContentView(R.layout.view_query_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
     }
@@ -76,23 +76,23 @@ public final class ViewQueryActivity extends AppCompatActivity {
      * Initializes all views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.ViewQueryMaterialToolbar);
-        recyclerView = findViewById(R.id.ViewQueryRecipeRecyclerView);
+        mMaterialToolbar = findViewById(R.id.ViewQueryMaterialToolbar);
+        mRecyclerView = findViewById(R.id.ViewQueryRecipeRecyclerView);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        assert viewModel.queryLiveData.getValue() != null : "Query live data can't be null";
-        final RecipeQuery query = viewModel.queryLiveData.getValue();
+        assert mViewModel.queryLiveData.getValue() != null : "Query live data can't be null";
+        final RecipeQuery query = mViewModel.queryLiveData.getValue();
 
-        databaseExecutor.execute(() -> {
+        mDatabaseExecutor.execute(() -> {
             final List<Pair<Integer, Recipe>> queriedRecipes =
-                    viewModel.sqliteHelper.getQueriedRecipes(query);
+                    mViewModel.sqliteHelper.getQueriedRecipes(query);
 
-            mainThreadHandler.post(() -> {
-                recipeAdapter = new RecipeAdapter(queriedRecipes, getOnRecipeCardClickListener());
-                recyclerView.setAdapter(recipeAdapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mMainThreadHandler.post(() -> {
+                mRecipeAdapter = new RecipeAdapter(queriedRecipes, getOnRecipeCardClickListener());
+                mRecyclerView.setAdapter(mRecipeAdapter);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             });
         });
     }
@@ -115,12 +115,12 @@ public final class ViewQueryActivity extends AppCompatActivity {
                         .setMessage(getString(R.string.home_long_click_dialog_body, recipe.name))
                         .setPositiveButton(R.string.yes, (dialog, i) -> {
                             /// delete recipe and update adapter
-                            databaseExecutor.execute(() -> {
-                                viewModel.sqliteHelper.deleteRecipe(recipeId);
+                            mDatabaseExecutor.execute(() -> {
+                                mViewModel.sqliteHelper.deleteRecipe(recipeId);
 
-                                mainThreadHandler.post(() ->
-                                        recipeAdapter.setRecipes(
-                                                viewModel.sqliteHelper.getAllRecipes()
+                                mMainThreadHandler.post(() ->
+                                        mRecipeAdapter.setRecipes(
+                                                mViewModel.sqliteHelper.getAllRecipes()
                                         )
                                 );
                             });

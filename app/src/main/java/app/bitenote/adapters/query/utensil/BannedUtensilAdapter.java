@@ -32,13 +32,13 @@ public final class BannedUtensilAdapter extends
      * integer ID of the utensil in the database, and the second element represents the data of
      * that utensil, wrapped in an {@link Utensil} instance.
      */
-    private List<Pair<Integer, Utensil>> utensils;
+    private List<Pair<Integer, Utensil>> mUtensils;
 
     /**
      * {@link OnButtonsClickListener} implementation, which will determine
      * the code the {@link ViewHolder} will execute when the buttons are clicked.
      */
-    private final OnButtonsClickListener listener;
+    private final OnButtonsClickListener mListener;
 
     /**
      * Banned utensils adapter constructor.
@@ -54,8 +54,8 @@ public final class BannedUtensilAdapter extends
             @NonNull List<Pair<Integer, Utensil>> utensils,
             @NonNull OnButtonsClickListener listener
     ) {
-        this.utensils = utensils;
-        this.listener = listener;
+        mUtensils = utensils;
+        mListener = listener;
     }
 
     @NonNull
@@ -69,24 +69,24 @@ public final class BannedUtensilAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final int id = utensils.get(position).first;
-        final Utensil utensil = utensils.get(position).second;
+        final int id = mUtensils.get(position).first;
+        final Utensil utensil = mUtensils.get(position).second;
 
-        holder.bind(id, utensil, listener);
+        holder.bind(id, utensil, mListener);
     }
 
     @Override
     public int getItemCount() {
-        return utensils.size();
+        return mUtensils.size();
     }
 
     public List<Pair<Integer, Utensil>> getUtensils() {
-        return Collections.unmodifiableList(utensils);
+        return Collections.unmodifiableList(mUtensils);
     }
 
     @SuppressLint("NotifyDataSetChanged")
     public void setUtensils(@NonNull List<Pair<Integer, Utensil>> utensils) {
-        this.utensils = utensils;
+        mUtensils = utensils;
 
         notifyDataSetChanged();
     }
@@ -98,8 +98,8 @@ public final class BannedUtensilAdapter extends
 
     @SuppressLint("NotifyDataSetChanged")
     public void addUtensil(@NonNull Pair<Integer, Utensil> pair) {
-        utensils.add(pair);
-        utensils.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
+        mUtensils.add(pair);
+        mUtensils.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
 
         notifyDataSetChanged();
     }
@@ -110,10 +110,10 @@ public final class BannedUtensilAdapter extends
     }
 
     public void removeUtensil(@NonNull Pair<Integer, Utensil> pair) {
-        if (!utensils.contains(pair)) return;
+        if (!mUtensils.contains(pair)) return;
 
-        final int position = utensils.indexOf(pair);
-        utensils.remove(pair);
+        final int position = mUtensils.indexOf(pair);
+        mUtensils.remove(pair);
 
         notifyItemRemoved(position);
     }
@@ -127,17 +127,17 @@ public final class BannedUtensilAdapter extends
          * {@link TextView} instance that displays the translated name of the utensil in the card.
          * @see Utensil#name
          */
-        private final TextView nameTextView;
+        private final TextView mNameTextView;
 
         /**
          * {@link ImageButton} instance that is used for including an utensil in the query.
          */
-        private final ImageButton includeButton;
+        private final ImageButton mIncludeButton;
 
         /**
          * {@link ImageButton} instance that is used for removing an utensil from the query.
          */
-        private final ImageButton removeButton;
+        private final ImageButton mRemoveButton;
 
         /**
          * Banned utensil view holder constructor.
@@ -146,9 +146,9 @@ public final class BannedUtensilAdapter extends
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.BannedUtensilCardNameTextView);
-            includeButton = itemView.findViewById(R.id.BannedUtensilCardIncludeButton);
-            removeButton = itemView.findViewById(R.id.BannedUtensilCardRemoveButton);
+            mNameTextView = itemView.findViewById(R.id.BannedUtensilCardNameTextView);
+            mIncludeButton = itemView.findViewById(R.id.BannedUtensilCardIncludeButton);
+            mRemoveButton = itemView.findViewById(R.id.BannedUtensilCardRemoveButton);
         }
 
         /**
@@ -164,19 +164,19 @@ public final class BannedUtensilAdapter extends
                 @NonNull Utensil utensil,
                 @NonNull OnButtonsClickListener listener
         ) {
-            nameTextView.setText(itemView.getResources().getIdentifier(
+            mNameTextView.setText(itemView.getResources().getIdentifier(
                     "utensil_" + utensil.name,
                     "string",
                     itemView.getContext().getPackageName()
             ));
 
-            includeButton.setOnClickListener(view -> {
+            mIncludeButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onIncludeButtonClick(utensilId, utensil);
             });
 
-            removeButton.setOnClickListener(view -> {
+            mRemoveButton.setOnClickListener(view -> {
                 if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
 
                 listener.onRemoveButtonClick(utensilId, utensil);

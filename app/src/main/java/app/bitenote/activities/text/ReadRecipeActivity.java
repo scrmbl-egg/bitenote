@@ -33,37 +33,37 @@ public final class ReadRecipeActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Floating action button for editing the recipe.
      */
-    private FloatingActionButton editRecipeButton;
+    private FloatingActionButton mEditRecipeButton;
 
     /**
      * Text view where the recipe's name is contained.
      */
-    private TextView nameTextView;
+    private TextView mNameTextView;
 
     /**
      * Text view where the recipe's body is contained.
      */
-    private TextView bodyTextView;
+    private TextView mBodyTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public final class ReadRecipeActivity extends AppCompatActivity {
         setContentView(R.layout.read_recipe_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
 
@@ -91,15 +91,15 @@ public final class ReadRecipeActivity extends AppCompatActivity {
      * Sets up all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.ReadRecipeMaterialToolbar);
-        editRecipeButton = findViewById(R.id.ReadRecipeEditRecipeButton);
-        nameTextView = findViewById(R.id.ReadRecipeNameTextView);
-        bodyTextView = findViewById(R.id.ReadRecipeBodyTextView);
+        mMaterialToolbar = findViewById(R.id.ReadRecipeMaterialToolbar);
+        mEditRecipeButton = findViewById(R.id.ReadRecipeEditRecipeButton);
+        mNameTextView = findViewById(R.id.ReadRecipeNameTextView);
+        mBodyTextView = findViewById(R.id.ReadRecipeBodyTextView);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        editRecipeButton.setOnClickListener(this::onEditRecipeButtonClick);
+        mEditRecipeButton.setOnClickListener(this::onEditRecipeButtonClick);
     }
 
     /**
@@ -107,13 +107,13 @@ public final class ReadRecipeActivity extends AppCompatActivity {
      * @param id ID of the recipe in the database.
      */
     private void loadData(int id) {
-        databaseExecutor.execute(() -> {
-            final Optional<Recipe> recipeOption = viewModel.sqliteHelper.getRecipeFromId(id);
+        mDatabaseExecutor.execute(() -> {
+            final Optional<Recipe> recipeOption = mViewModel.sqliteHelper.getRecipeFromId(id);
 
             recipeOption.ifPresent(recipe ->
-                    mainThreadHandler.post(() -> {
+                    mMainThreadHandler.post(() -> {
                         bind(recipe);
-                        viewModel.postRecipeWithId(id, recipe);
+                        mViewModel.postRecipeWithId(id, recipe);
                     })
             );
         });
@@ -124,12 +124,12 @@ public final class ReadRecipeActivity extends AppCompatActivity {
      * @param recipe {@link Recipe} instance.
      */
     private void bind(@NonNull Recipe recipe) {
-        nameTextView.setText(recipe.name);
-        bodyTextView.setText(recipe.body);
+        mNameTextView.setText(recipe.name);
+        mBodyTextView.setText(recipe.body);
     }
 
     /**
-     * Function called when {@link #editRecipeButton} is clicked.
+     * Function called when {@link #mEditRecipeButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onEditRecipeButtonClick(@NonNull View view) {

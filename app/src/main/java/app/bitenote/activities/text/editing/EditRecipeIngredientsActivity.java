@@ -32,47 +32,47 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
     /**
      * Activity executor that creates a background thread for database operations.
      */
-    private final Executor databaseExecutor = Executors.newSingleThreadExecutor();
+    private final Executor mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Activity's handler for the main thread.
      */
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Application view model. Grants access to the app's database.
      */
-    private BiteNoteViewModel viewModel;
+    private BiteNoteViewModel mViewModel;
 
     /**
      * Activity's Material toolbar.
      */
-    private MaterialToolbar materialToolbar;
+    private MaterialToolbar mMaterialToolbar;
 
     /**
      * Adapter for ingredients that have been added to the recipe.
      */
-    private AddedRecipeIngredientAdapter addedIngredientAdapter;
+    private AddedRecipeIngredientAdapter mAddedIngredientAdapter;
 
     /**
      * Recycler view for added ingredients.
      */
-    private RecyclerView addedIngredientRecyclerView;
+    private RecyclerView mAddedIngredientRecyclerView;
 
     /**
      * Adapter for ingredients that have not been added to the recipe.
      */
-    private NonAddedRecipeIngredientAdapter nonAddedRecipeIngredientAdapter;
+    private NonAddedRecipeIngredientAdapter mNonAddedRecipeIngredientAdapter;
 
     /**
      * Recycler view for non-added ingredients.
      */
-    private RecyclerView nonAddedIngredientRecyclerView;
+    private RecyclerView mNonAddedIngredientRecyclerView;
 
     /**
      * Floating action button for saving changes.
      */
-    private FloatingActionButton saveChangesButton;
+    private FloatingActionButton mSaveChangesButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +80,7 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
         setContentView(R.layout.edit_recipe_ingredients_activity);
 
         /// init viewmodel
-        viewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
+        mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
     }
@@ -89,75 +89,75 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
      * Sets up all the views in the activity.
      */
     private void setupViews() {
-        materialToolbar = findViewById(R.id.EditRecipeIngredientsMaterialToolbar);
-        saveChangesButton = findViewById(R.id.EditRecipeIngredientsSaveChangesButton);
-        addedIngredientRecyclerView =
+        mMaterialToolbar = findViewById(R.id.EditRecipeIngredientsMaterialToolbar);
+        mSaveChangesButton = findViewById(R.id.EditRecipeIngredientsSaveChangesButton);
+        mAddedIngredientRecyclerView =
                 findViewById(R.id.EditRecipeIngredientsAddedIngredientsRecyclerView);
-        nonAddedIngredientRecyclerView =
+        mNonAddedIngredientRecyclerView =
                 findViewById(R.id.EditRecipeIngredientsNonAddedIngredientsRecyclerView);
 
-        setSupportActionBar(materialToolbar);
-        materialToolbar.setNavigationOnClickListener(view -> finish());
+        setSupportActionBar(mMaterialToolbar);
+        mMaterialToolbar.setNavigationOnClickListener(view -> finish());
 
-        assert viewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
+        assert mViewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
 
-        final Recipe recipe = viewModel.recipeLiveData.getValue().second;
+        final Recipe recipe = mViewModel.recipeLiveData.getValue().second;
 
-        databaseExecutor.execute(() -> {
+        mDatabaseExecutor.execute(() -> {
             final List<Pair<Pair<Integer, Ingredient>, Ingredient.InRecipeProperties>>
                     addedIngredients =
-                    viewModel.sqliteHelper.getRecipeIngredientsWithProperties(recipe);
+                    mViewModel.sqliteHelper.getRecipeIngredientsWithProperties(recipe);
             final List<Pair<Integer, Ingredient>>
                     nonAddedIngredients =
-                    viewModel.sqliteHelper.getAllIngredientsExcept(recipe);
+                    mViewModel.sqliteHelper.getAllIngredientsExcept(recipe);
 
-            mainThreadHandler.post(() -> {
-                addedIngredientAdapter = new AddedRecipeIngredientAdapter(
+            mMainThreadHandler.post(() -> {
+                mAddedIngredientAdapter = new AddedRecipeIngredientAdapter(
                         addedIngredients,
                         getOnAddedIngredientButtonsClickListener()
                 );
-                nonAddedRecipeIngredientAdapter = new NonAddedRecipeIngredientAdapter(
+                mNonAddedRecipeIngredientAdapter = new NonAddedRecipeIngredientAdapter(
                         nonAddedIngredients,
                         getOnNonAddedIngredientButtonsClickListener()
                 );
-                addedIngredientRecyclerView.setAdapter(addedIngredientAdapter);
-                nonAddedIngredientRecyclerView.setAdapter(nonAddedRecipeIngredientAdapter);
+                mAddedIngredientRecyclerView.setAdapter(mAddedIngredientAdapter);
+                mNonAddedIngredientRecyclerView.setAdapter(mNonAddedRecipeIngredientAdapter);
 
-                addedIngredientRecyclerView.setLayoutManager(
+                mAddedIngredientRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
-                nonAddedIngredientRecyclerView.setLayoutManager(
+                mNonAddedIngredientRecyclerView.setLayoutManager(
                         new LinearLayoutManager(this)
                 );
             });
         });
 
-        saveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
+        mSaveChangesButton.setOnClickListener(this::onSaveChangesButtonClick);
     }
 
     /**
-     * Function called when {@link #saveChangesButton} is clicked.
+     * Function called when {@link #mSaveChangesButton} is clicked.
      * @param view {@link View} reference.
      */
     private void onSaveChangesButtonClick(@NonNull View view) {
-        assert viewModel.recipeLiveData.getValue() != null : "Current recipe can't be null";
+        assert mViewModel.recipeLiveData.getValue() != null : "Current recipe can't be null";
 
-        final int id = viewModel.recipeLiveData.getValue().first;
-        final Recipe modifiedCopy = new Recipe(viewModel.recipeLiveData.getValue().second) {{
+        final int id = mViewModel.recipeLiveData.getValue().first;
+        final Recipe modifiedCopy = new Recipe(mViewModel.recipeLiveData.getValue().second) {{
             clearIngredients();
 
-            addedIngredientAdapter.getIngredients().forEach(pair -> {
+            mAddedIngredientAdapter.getIngredients().forEach(pair -> {
                 if (pair.second.amount <= 0) return;
 
                 putIngredient(pair.first.first, pair.second);
             });
         }};
 
-        databaseExecutor.execute(() -> {
-            viewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
+        mDatabaseExecutor.execute(() -> {
+            mViewModel.sqliteHelper.updateRecipe(id, modifiedCopy);
 
-            mainThreadHandler.post(() -> {
-                viewModel.postRecipe(modifiedCopy);
+            mMainThreadHandler.post(() -> {
+                mViewModel.postRecipe(modifiedCopy);
 
                 Toast.makeText(
                         this,
@@ -177,8 +177,8 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
     private AddedRecipeIngredientAdapter.OnButtonClickListener
     getOnAddedIngredientButtonsClickListener() {
         return (ingredientId, ingredient, properties) -> {
-            addedIngredientAdapter.removeIngredient(ingredientId, ingredient, properties);
-            nonAddedRecipeIngredientAdapter.addIngredient(ingredientId, ingredient);
+            mAddedIngredientAdapter.removeIngredient(ingredientId, ingredient, properties);
+            mNonAddedRecipeIngredientAdapter.addIngredient(ingredientId, ingredient);
         };
     }
 
@@ -189,8 +189,8 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
     private NonAddedRecipeIngredientAdapter.OnButtonClickListener
     getOnNonAddedIngredientButtonsClickListener() {
         return (ingredientId, ingredient) -> {
-            nonAddedRecipeIngredientAdapter.removeIngredient(ingredientId, ingredient);
-            addedIngredientAdapter.addIngredient(ingredientId, ingredient);
+            mNonAddedRecipeIngredientAdapter.removeIngredient(ingredientId, ingredient);
+            mAddedIngredientAdapter.addIngredient(ingredientId, ingredient);
         };
     }
 }
