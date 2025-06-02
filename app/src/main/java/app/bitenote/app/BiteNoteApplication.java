@@ -36,19 +36,11 @@ public class BiteNoteApplication extends Application {
         mAppViewModel = new ViewModelProvider.AndroidViewModelFactory(this)
                 .create(BiteNoteViewModel.class);
 
-        final Executor databaseExecutor = Executors.newSingleThreadExecutor();
-        final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
-
         final SharedPreferences sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         final boolean isFirstRun = sharedPrefs.getBoolean(PREF_IS_FIRST_RUN, true);
         if (isFirstRun) {
-            databaseExecutor.execute(() -> {
-                mAppViewModel.sqliteHelper.insertExampleRecipes();
-
-                mainThreadHandler.post(() ->
-                        sharedPrefs.edit().putBoolean(PREF_IS_FIRST_RUN, false).apply()
-                );
-            });
+            mAppViewModel.sqliteHelper.insertExampleRecipes();
+            sharedPrefs.edit().putBoolean(PREF_IS_FIRST_RUN, false).apply();
         }
     }
 
