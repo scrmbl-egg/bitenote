@@ -81,25 +81,22 @@ public final class NonAddedRecipeIngredientAdapter
         notifyDataSetChanged();
     }
 
-    public void removeIngredient(int ingredientId, @NonNull Ingredient ingredient) {
-        final Pair<Integer, Ingredient> pairToRemove = Pair.create(ingredientId, ingredient);
-        removeIngredient(pairToRemove);
-    }
-
-    public void removeIngredient(@NonNull Pair<Integer, Ingredient> pair) {
-        if (!mIngredients.contains(pair)) return;
-
-        final int position = mIngredients.indexOf(pair);
-        mIngredients.remove(pair);
-
-        notifyItemRemoved(position);
-    }
-
+    /**
+     * Adds an ingredient to the adapter.
+     * @param ingredientId ID of the ingredient in the database.
+     * @param ingredient {@link Ingredient} instance.
+     */
     public void addIngredient(int ingredientId, @NonNull Ingredient ingredient) {
         final Pair<Integer, Ingredient> pairToAdd = Pair.create(ingredientId, ingredient);
         addIngredient(pairToAdd);
     }
 
+    /**
+     * Adds an ingredient to the adapter.
+     * @param pair {@link Pair} instance, where the first element of the pair represents the
+     * integer ID of the ingredient in the database, and the second element represents the data of
+     * that ingredient, wrapped in an {@link Ingredient} instance.
+     */
     @SuppressLint("NotifyDataSetChanged")
     public void addIngredient(@NonNull Pair<Integer, Ingredient> pair) {
         mIngredients.add(pair);
@@ -107,6 +104,31 @@ public final class NonAddedRecipeIngredientAdapter
         mIngredients.sort(Comparator.comparing(pairA -> pairA.first)); // sort elements again
 
         notifyDataSetChanged();
+    }
+
+    /**
+     * Removes an ingredient from the adapter.
+     * @param ingredientId ID of the ingredient in the database.
+     * @param ingredient {@link Ingredient} instance.
+     */
+    public void removeIngredient(int ingredientId, @NonNull Ingredient ingredient) {
+        final Pair<Integer, Ingredient> pairToRemove = Pair.create(ingredientId, ingredient);
+        removeIngredient(pairToRemove);
+    }
+
+    /**
+     * Removes an ingredient from the adapter.
+     * @param pair {@link Pair} instance, where the first element of the pair represents the
+     * integer ID of the ingredient in the database, and the second element represents the data of
+     * that ingredient, wrapped in an {@link Ingredient} instance.
+     */
+    public void removeIngredient(@NonNull Pair<Integer, Ingredient> pair) {
+        if (!mIngredients.contains(pair)) return;
+
+        final int position = mIngredients.indexOf(pair);
+        mIngredients.remove(pair);
+
+        notifyItemRemoved(position);
     }
 
     /**

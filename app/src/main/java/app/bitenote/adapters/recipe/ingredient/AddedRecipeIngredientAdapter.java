@@ -22,6 +22,7 @@ import app.bitenote.instances.Ingredient;
 import app.bitenote.instances.Ingredient.InRecipeProperties;
 import app.bitenote.instances.MeasurementType;
 import app.bitenote.instances.Recipe;
+import app.bitenote.instances.Utensil;
 
 /**
  * Adapter for displaying {@link Ingredient}s that have been added to a recipe in a
@@ -106,11 +107,11 @@ public final class AddedRecipeIngredientAdapter
 
     /**
      * Sets the ingredients of the adapter.
-     * @param ingredients List of {@link Pair}s, where the first element of the pair represents the
-     * integer ID of the ingredient in the database, and the second element is another pair whose
-     * first element is an instance of {@link Ingredient} that contains the data of the ingredient,
-     * and the second element is an {@link InRecipeProperties} instance that contains the data
-     * of the recipe ingredient.
+     * @param ingredients List of {@link Pair}s, where the first element of the pair is
+     * an inner pair in which the first element represents integer ID of the ingredient in the
+     * database, and the second element is an instance of {@link Ingredient} that contains the data
+     * of the ingredient. The second element of the pair is an {@link InRecipeProperties} instance
+     * that contains the data of the recipe ingredient.
      * @see BiteNoteSQLiteHelper#getRecipeIngredientsWithProperties(Recipe)
      */
     @SuppressLint("NotifyDataSetChanged")
@@ -122,6 +123,43 @@ public final class AddedRecipeIngredientAdapter
         notifyDataSetChanged();
     }
 
+    /**
+     * Adds an ingredient to the adapter.
+     * @param ingredientId ID of the ingredient in the database.
+     * @param ingredient {@link Ingredient} instance.
+     */
+    public void addIngredient(int ingredientId, @NonNull Ingredient ingredient) {
+        /// when adding an ingredient, recipe properties start with default values
+
+        final InRecipeProperties properties = new InRecipeProperties();
+        addIngredient(Pair.create(Pair.create(ingredientId, ingredient), properties));
+    }
+
+    /**
+     * Adds an ingredient to the adapter.
+     * @param pair {@link Pair} instance, where the first element of the pair is
+     * an inner pair in which the first element represents integer ID of the ingredient in the
+     * database, and the second element is an instance of {@link Ingredient} that contains the data
+     * of the ingredient. The second element of the pair is an {@link InRecipeProperties} instance
+     * that contains the data of the recipe ingredient.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    public void addIngredient(@NonNull Pair<Pair<Integer, Ingredient>, InRecipeProperties> pair) {
+        mIngredients.add(pair);
+
+        /// sort elements again
+        mIngredients.sort(Comparator.comparing(p -> p.first.first));
+
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Removes an ingredient from the adapter.
+     * @param ingredientId ID of the ingredient in the database.
+     * @param ingredient {@link Ingredient} instance.
+     * @param properties {@link InRecipeProperties} instance that contains teh data of the recipe
+     * ingredient.
+     */
     public void removeIngredient(
             int ingredientId,
             @NonNull Ingredient ingredient,
@@ -132,6 +170,14 @@ public final class AddedRecipeIngredientAdapter
         removeIngredient(pairToRemove);
     }
 
+    /**
+     * Removes an ingredient from the adapter.
+     * @param pair {@link Pair} instance, where the first element of the pair is
+     * an inner pair in which the first element represents integer ID of the ingredient in the
+     * database, and the second element is an instance of {@link Ingredient} that contains the data
+     * of the ingredient. The second element of the pair is an {@link InRecipeProperties} instance
+     * that contains the data of the recipe ingredient.
+     */
     public void removeIngredient(
             @NonNull Pair<Pair<Integer, Ingredient>, InRecipeProperties> pair
     ) {
@@ -143,23 +189,11 @@ public final class AddedRecipeIngredientAdapter
         notifyItemRemoved(position);
     }
 
-    public void addIngredient(int ingredientId, @NonNull Ingredient ingredient) {
-        /// when adding an ingredient, recipe properties start with default values
-
-        final InRecipeProperties properties = new InRecipeProperties();
-        addIngredient(Pair.create(Pair.create(ingredientId, ingredient), properties));
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    public void addIngredient(@NonNull Pair<Pair<Integer, Ingredient>, InRecipeProperties> pair) {
-        mIngredients.add(pair);
-
-        /// sort elements again
-        mIngredients.sort(Comparator.comparing(p -> p.first.first));
-
-        notifyDataSetChanged();
-    }
-
+    /**
+     * Sets the amount of an ingredient in the adapter's ingredient list.
+     * @param i Index of the ingredient list.
+     * @param amount Desired amount.
+     */
     private void setAmountAtIndex(int i, int amount) {
         mIngredients.set(
                 i,
@@ -174,6 +208,13 @@ public final class AddedRecipeIngredientAdapter
         );
     }
 
+    /**
+     * Sets if an ingredient of the adapter's ingredient list is measured in units.
+     * @implNote Due to some ingredients not being able to be measured in units, using this
+     * method does not guarantee a change.
+     * @param i Index of the ingredient list.
+     * @param isMeasuredInUnits Determines whether the ingredient is measured in units or not.
+     */
     private void setIsMeasuredInUnitsAtIndex(int i, boolean isMeasuredInUnits) {
         mIngredients.set(
                 i,

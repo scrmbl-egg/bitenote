@@ -98,11 +98,22 @@ public final class NonAddedRecipeUtensilAdapter extends
         notifyDataSetChanged();
     }
 
+    /**
+     * Removes an utensil from the adapter.
+     * @param utensilId ID of the utensil in the database.
+     * @param utensil {@link Utensil} instance.
+     */
     public void removeUtensil(int utensilId, @NonNull Utensil utensil) {
         final Pair<Integer, Utensil> pairToRemove = Pair.create(utensilId, utensil);
         removeUtensil(pairToRemove);
     }
 
+    /**
+     * Removes an utensil from the adapter.
+     * @param pair {@link Pair} instance, where the first element of the pair represents the
+     * integer ID of the utensil in the database, and the second element represents the data of that
+     * utensil, wrapped in an {@link Utensil} instance.
+     */
     public void removeUtensil(@NonNull Pair<Integer, Utensil> pair) {
         if (!mUtensils.contains(pair)) return;
 
@@ -112,11 +123,22 @@ public final class NonAddedRecipeUtensilAdapter extends
         notifyItemRemoved(position);
     }
 
+    /**
+     * Adds an utensil to the adapter.
+     * @param utensilId ID of the utensil in the database.
+     * @param utensil {@link Utensil} instance.
+     */
     public void addUtensil(int utensilId, @NonNull Utensil utensil) {
         final Pair<Integer, Utensil> pairToAdd = Pair.create(utensilId, utensil);
         addUtensil(pairToAdd);
     }
 
+    /**
+     * Adds an utensil to the adapter.
+     * @param pair {@link Pair} instance, where the first element of the pair represents the
+     * integer ID of the utensil in the database, and the second element represents the data of that
+     * utensil, wrapped in an {@link Utensil} instance.
+     */
     @SuppressLint("NotifyDataSetChanged")
     public void addUtensil(@NonNull Pair<Integer, Utensil> pair) {
         mUtensils.add(pair);
