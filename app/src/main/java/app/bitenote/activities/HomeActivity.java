@@ -106,12 +106,18 @@ public final class HomeActivity extends AppCompatActivity {
 
         setSupportActionBar(mMaterialToolbar); // no navigation icon
 
-        mRecipeAdapter = new RecipeAdapter(
-                mViewModel.sqliteHelper.getAllRecipes(),
-                getOnRecipeCardClickListener()
-        );
-        mRecyclerView.setAdapter(mRecipeAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mDatabaseExecutor.execute(() -> {
+            final List<Pair<Integer, Recipe>> allRecipes = mViewModel.sqliteHelper.getAllRecipes();
+
+            mMainThreadHandler.post(() -> {
+                mRecipeAdapter = new RecipeAdapter(
+                        allRecipes,
+                        getOnRecipeCardClickListener()
+                );
+                mRecyclerView.setAdapter(mRecipeAdapter);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            });
+        });
 
         mNewRecipeButton.setOnClickListener(this::onNewRecipeButtonClick);
         mMakeQueryButton.setOnClickListener(this::onMakeQueryButtonClick);
