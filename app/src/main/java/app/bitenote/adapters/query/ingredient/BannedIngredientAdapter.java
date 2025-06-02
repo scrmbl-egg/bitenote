@@ -80,13 +80,19 @@ public final class BannedIngredientAdapter extends
         return mIngredients.size();
     }
 
+    /**
+     * Gets all the ingredients in the adapter.
+     * @return Unmodifiable list of ingredients in the adapter. The first element of a pair
+     * represents the integer ID of the ingredient in the database, and the second element
+     * represents the data of that ingredient, wrapped in an {@link Ingredient} instance.
+     */
     public List<Pair<Integer, Ingredient>> getIngredients() {
         return Collections.unmodifiableList(mIngredients);
     }
 
     /**
      * Sets the ingredients of the adapter.
-     * @param ingredients Array of {@link Pair}s, where the first element of a pair is the integer
+     * @param ingredients List of {@link Pair}s, where the first element of a pair is the integer
      * ID of the ingredient in the database, and the second element is an instance of
      * {@link Ingredient} where the ingredient's data is wrapped.
      */

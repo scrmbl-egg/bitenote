@@ -81,6 +81,12 @@ public final class AddedRecipeUtensilAdapter
         return mUtensils.size();
     }
 
+    /**
+     * Gets all the utensils in the adapter.
+     * @return Unmodifiable list of utensils in the adapter. The first element of a pair
+     * represents the integer ID of the utensil in the database, and the second element
+     * represents the data of that utensil, wrapped in an {@link Utensil} instance.
+     */
     public List<Pair<Integer, Utensil>> getUtensils() {
         return Collections.unmodifiableList(mUtensils);
     }

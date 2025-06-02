@@ -50,7 +50,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     private final Context mContext;
 
     /**
-     * Array of {@link Pair}s, in which the first element represents the ID of the ingredient,
+     * List of {@link Pair}s, in which the first element represents the ID of the ingredient,
      * and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
@@ -63,7 +63,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     private Integer mIngredientCount = null;
 
     /**
-     * Array of {@link Pair}s, in which the first element represents the ID of the utensil,
+     * List of {@link Pair}s, in which the first element represents the ID of the utensil,
      * and the second element represents the data that the ID references contained in a
      * {@link Utensil} instance.
      */
@@ -76,7 +76,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     private Integer mUtensilCount = null;
 
     /**
-     * Array of {@link Pair}s, in which the first element represents the ID of the measurement type,
+     * List of {@link Pair}s, in which the first element represents the ID of the measurement type,
      * and the second element represents the data that the ID references contained in a
      * {@link MeasurementType} instance.
      */
@@ -391,7 +391,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Gets all recipes in the database ordered from newest to oldest.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * recipe, and the second element represents the data that the ID references contained in a
      * {@link Recipe} instance. The elements are ordered from newest to oldest, see:
      * {@link Recipe#creationDate}.
@@ -427,7 +427,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Gets all the recipes ordered from newest to oldest that meet the conditions of a
      * {@link RecipeQuery}.
      * @param rQuery {@link RecipeQuery} instance. Contains the data that will be filtered.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * recipe, and the second element represents the data that the ID references contained in a
      * {@link Recipe} instance.
      */
@@ -440,7 +440,6 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         ) {
             if (!cursor.moveToFirst()) return new ArrayList<>();
 
-            /// allocate new array of ids
             final List<Pair<Integer, Recipe>> recipeList = new ArrayList<>(cursor.getCount());
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -490,7 +489,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Gets all the ingredients in the database in ascending order.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * ingredient, and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
@@ -523,7 +522,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets all ingredients in the database, except the ones specified by the caller.
      * @param except {@link Recipe} that contains the ingredients that are going to be ignored.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * ingredient, and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
@@ -535,7 +534,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Gets all ingredients in the database, except the ones specified by the caller.
      * @param except {@link Map} where the key is an integer ID that represents an ingredients
      * that will be excluded from the selection (values are ignored).
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * ingredient, and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
@@ -545,6 +544,13 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         return getAllIngredientsExcept(except.keySet());
     }
 
+    /**
+     * Gets all ingredients in the database, except the ones specified by the caller.
+     * @param except {@link RecipeQuery} that contains the ingredients that are going to be ignored.
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
     public List<Pair<Integer, Ingredient>> getAllIngredientsExcept(@NonNull RecipeQuery except) {
         final Set<Integer> exceptSet = new HashSet<>();
         for (int id: except.getQueriedIngredients()) {
@@ -558,7 +564,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Gets all ingredients in the database, except the ones specified by the caller.
      * @param except {@link Set} of integer IDs that represent the ingredients that will be
      * excluded from the selection.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * ingredient, and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
@@ -579,7 +585,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
      * Gets all ingredient data from a recipe as a pair list.
      * @param recipe The {@link Recipe} instance where the ingredients are going to be obtained
      * from.
-     * @return An array of {@link Pair}s, where the first element is the ID of the ingredient,
+     * @return A list of {@link Pair}s, where the first element is the ID of the ingredient,
      * and the second element is another {@link Pair}, whose first element is the ingredient data
      * wrapped in an {@link Ingredient} instance, and the second element is the amount of that
      * ingredient in the recipe.
@@ -606,6 +612,14 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         return recipeIngredientsList;
     }
 
+    /**
+     * Gets all included ingredient data from a recipe query as a pair list.
+     * @param query {@link RecipeQuery} instance where the included ingredients are going to be
+     * obtained from.
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
     public List<Pair<Integer, Ingredient>> getQueryIncludedIngredientsWithProperties(
             @NonNull RecipeQuery query
     ) {
@@ -619,6 +633,14 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    /**
+     * Gets all banned ingredient data from a recipe query as a pair list.
+     * @param query {@link RecipeQuery} instance where the banned ingredients are going to be
+     * obtained from.
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
+     * ingredient, and the second element represents the data that the ID references contained in a
+     * {@link Ingredient} instance.
+     */
     public List<Pair<Integer, Ingredient>> getQueryBannedIngredientsWithProperties(
             @NonNull RecipeQuery query
     ) {
@@ -689,7 +711,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Gets all the measurement types in the database in ascending order.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * measurement types, and the second element represents the data that the ID references
      * contained in a {@link MeasurementType} instance.
      */
@@ -779,7 +801,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Gets all the ingredients in the database in ascending order.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * utensil, and the second element represents the data that the ID references contained in a
      * {@link Utensil} instance.
      */
@@ -812,7 +834,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Gets all utensils in the database, except the ones specified by the caller.
      * @param except {@link Recipe} that contains the ingredients that are going to be ignored.
-     * @return An array of {@link Pair}s, in which the first element represents the ID of the
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
      * ingredient, and the second element represents the data that the ID references contained in a
      * {@link Ingredient} instance.
      */
@@ -851,12 +873,12 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets all utensil data from a recipe as a pair array.
+     * Gets all utensil data from a recipe as a pair list.
      * @param recipe The {@link Recipe} instance where the utensils are going to be obtained from.
-     * @return An array of {@link Pair}s, where the first element is the ID of the ingredient,
-     * and the second element is another {@link Pair}, whose first element is the ingredient data
+     * @return A list of {@link Pair}s, where the first element is the ID of the utensil,
+     * and the second element is another {@link Pair}, whose first element is the utensil data
      * wrapped in an {@link Ingredient} instance, and the second element is the amount of that
-     * ingredient in the recipe.
+     * utensil in the recipe.
      */
     public List<Pair<Integer, Utensil>> getRecipeUtensilsWithProperties(
             @NonNull Recipe recipe
@@ -872,6 +894,14 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    /**
+     * Gets all included utensil data from a recipe query as a pair list.
+     * @param query {@link RecipeQuery} instance where the included utensils are going to be
+     * obtained from.
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
+     * utensil, and the second element represents the data that the ID references contained in a
+     * {@link Utensil} instance.
+     */
     public List<Pair<Integer, Utensil>> getQueryIncludedUtensilsWithProperties(
             @NonNull RecipeQuery query
     ) {
@@ -885,6 +915,14 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    /**
+     * Gets all banned utensil data from a recipe query as a pair list.
+     * @param query {@link RecipeQuery} instance where the banned utensils are going to be
+     * obtained from.
+     * @return A list of {@link Pair}s, in which the first element represents the ID of the
+     * utensil, and the second element represents the data that the ID references contained in a
+     * {@link Utensil} instance.
+     */
     public List<Pair<Integer, Utensil>> getQueryBannedUtensilsWithProperties(
             @NonNull RecipeQuery query
     ) {

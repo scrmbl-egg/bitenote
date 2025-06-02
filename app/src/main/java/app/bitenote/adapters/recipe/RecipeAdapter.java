@@ -76,7 +76,7 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
 
     /**
      * Sets the recipes of the adapter.
-     * @param recipes Array of {@link Pair}s, where the first element of a pair is the integer ID
+     * @param recipes List of {@link Pair}s, where the first element of a pair is the integer ID
      * of the recipe in the database, and the second element is an instance of {@link Recipe} where
      * the recipe's data is wrapped.
      */

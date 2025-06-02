@@ -81,7 +81,7 @@ public final class NonQueriedIngredientAdapter extends
 
     /**
      * Sets the ingredients of the adapter.
-     * @param ingredients Array of {@link Pair}s, where the first element of a pair is the integer
+     * @param ingredients List of {@link Pair}s, where the first element of a pair is the integer
      * ID of the ingredient in the database, and the second element is an instance of
      * {@link Ingredient} where the ingredient's data is wrapped.
      */

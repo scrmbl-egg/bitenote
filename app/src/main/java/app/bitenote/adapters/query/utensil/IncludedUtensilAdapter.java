@@ -80,10 +80,22 @@ public final class IncludedUtensilAdapter extends
         return mUtensils.size();
     }
 
+    /**
+     * Gets all the utensils in the adapter.
+     * @return Unmodifiable list of utensils in the adapter. The first element of a pair
+     * represents the integer ID of the utensil in the database, and the second element
+     * represents the data of that utensil, wrapped in an {@link Utensil} instance.
+     */
     public List<Pair<Integer, Utensil>> getUtensils() {
         return Collections.unmodifiableList(mUtensils);
     }
 
+    /**
+     * Sets the utensils of the adapter.
+     * @param utensils List of {@link Pair}s, where the first element of a pair is the integer
+     * ID of the utensil in the database, and the second element is an instance of
+     * {@link Utensil} where the utensil's data is wrapped.
+     */
     @SuppressLint("NotifyDataSetChanged")
     public void setUtensils(@NonNull List<Pair<Integer, Utensil>> utensils) {
         mUtensils = utensils;
