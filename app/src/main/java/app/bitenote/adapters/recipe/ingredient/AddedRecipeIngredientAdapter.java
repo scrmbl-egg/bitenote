@@ -22,7 +22,6 @@ import app.bitenote.instances.Ingredient;
 import app.bitenote.instances.Ingredient.InRecipeProperties;
 import app.bitenote.instances.MeasurementType;
 import app.bitenote.instances.Recipe;
-import app.bitenote.instances.Utensil;
 
 /**
  * Adapter for displaying {@link Ingredient}s that have been added to a recipe in a
