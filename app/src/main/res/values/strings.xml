@@ -131,7 +131,7 @@
     <string name="ingredient_spice_turmeric">Turmeric</string>
     <string name="ingredient_spice_cinnamon">Cinnamon</string>
     <string name="ingredient_spice_mincedGarlic">Minced garlic</string>
-    <string name="ingredient_pantryStable_baking_egg">Egg</string>
+    <string name="ingredient_pantryStaple_baking_egg">Egg</string>
     <string name="ingredient_pantryStaple_baking_flour">Flour</string>
     <string name="ingredient_pantryStaple_baking_bakingPowder">Baking powder</string>
     <string name="ingredient_pantryStaple_baking_bakingSoda">Baking soda</string>
