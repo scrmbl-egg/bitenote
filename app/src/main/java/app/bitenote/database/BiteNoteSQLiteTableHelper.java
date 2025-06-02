@@ -29,7 +29,7 @@ final class BiteNoteSQLiteTableHelper {
      * @param database {@link SQLiteDatabase} instance.
      */
     static void createTables(@NonNull SQLiteDatabase database) {
-        Log.d(null, "Creating database tables...");
+        Log.d("db ddl", "Creating database tables...");
 
         final String createUtensilsTable = "CREATE TABLE utensils(" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -87,7 +87,10 @@ final class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -116,7 +119,10 @@ final class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -131,7 +137,7 @@ final class BiteNoteSQLiteTableHelper {
             @NonNull SQLiteDatabase database,
             @NonNull Context context
     ) {
-        Log.d(null, "Populating immutable tables...");
+        Log.d("db ddl", "Populating immutable tables...");
 
         populateUtensilsTable(database, context);
         populateMeasurementTypesTable(database, context);
@@ -174,7 +180,10 @@ final class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -219,7 +228,10 @@ final class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -288,7 +300,10 @@ final class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -348,7 +363,10 @@ final class BiteNoteSQLiteTableHelper {
 
             return OptionalInt.of(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
             return OptionalInt.empty();
         }
     }
