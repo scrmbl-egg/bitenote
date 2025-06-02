@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Stack;
 
 import app.bitenote.R;
@@ -22,13 +23,13 @@ import app.bitenote.instances.Utensil;
  * Helper package class to handle immutable table initialisation and XML parsing.
  * @author Daniel N.
  */
-class BiteNoteSQLiteTableHelper {
+final class BiteNoteSQLiteTableHelper {
     /**
      * Creates all tables in the database.
-     * @param database SQLiteDatabase instance.
+     * @param database {@link SQLiteDatabase} instance.
      */
     static void createTables(@NonNull SQLiteDatabase database) {
-        Log.d(null, "Creating database tables...");
+        Log.d("db ddl", "Creating database tables...");
 
         final String createUtensilsTable = "CREATE TABLE utensils(" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -36,12 +37,12 @@ class BiteNoteSQLiteTableHelper {
                 ");";
 
         final String createMeasurementTypesTable = "CREATE TABLE measurement_types(" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL" +
                 ");";
 
         final String createRecipesTable = "CREATE TABLE recipes (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "body MEDIUMTEXT NOT NULL DEFAULT ''," +
                 "budget INTEGER NOT NULL," +
@@ -50,7 +51,7 @@ class BiteNoteSQLiteTableHelper {
                 ");";
 
         final String createIngredientsTable = "CREATE TABLE ingredients(" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name VARCHAR(64) NOT NULL," +
                 "measurement_id INTEGER NOT NULL," +
                 "can_be_measured_in_units BOOLEAN NOT NULL," +
@@ -60,7 +61,8 @@ class BiteNoteSQLiteTableHelper {
         final String createRecipeIngredientsTable = "CREATE TABLE recipe_ingredients(" +
                 "recipe_id INTEGER NOT NULL," +
                 "ingredient_id INTEGER NOT NULL," +
-                "amount FLOAT," +
+                "amount FLOAT NOT NULL," +
+                "is_measured_in_units BOOLEAN NOT NULL," +
                 "PRIMARY KEY (recipe_id, ingredient_id)," +
                 "FOREIGN KEY (recipe_id) REFERENCES recipes(id)," +
                 "FOREIGN KEY (ingredient_id) REFERENCES ingredients(id)" +
@@ -85,7 +87,10 @@ class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -93,7 +98,7 @@ class BiteNoteSQLiteTableHelper {
 
     /**
      * Drops all tables in the database.
-     * @param database SQLiteDatabase instance.
+     * @param database {@link SQLiteDatabase} instance.
      */
     static void dropTables(@NonNull SQLiteDatabase database) {
         final String dropUtensilsTable = "DROP TABLE IF EXISTS utensils;";
@@ -114,7 +119,10 @@ class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -122,14 +130,14 @@ class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the immutable tables of the database with XML resource data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     static void populateImmutableTables(
             @NonNull SQLiteDatabase database,
             @NonNull Context context
     ) {
-        Log.d(null, "Populating immutable tables...");
+        Log.d("db ddl", "Populating immutable tables...");
 
         populateUtensilsTable(database, context);
         populateMeasurementTypesTable(database, context);
@@ -138,8 +146,8 @@ class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the 'utensils' SQLite table with the XML data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     private static void populateUtensilsTable(
             @NonNull SQLiteDatabase database,
@@ -162,7 +170,9 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 // alloc array for sql args
-                Object[] args = {parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)};
+                final Object[] args = {
+                        parser.getAttributeValue(null, Utensil.XML_NAME_ATTRIBUTE)
+                };
 
                 database.execSQL(sql, args);
                 parser.next();
@@ -170,7 +180,10 @@ class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -178,8 +191,8 @@ class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the 'measurement_types' SQLite table with the XML data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     private static void populateMeasurementTypesTable(
             @NonNull SQLiteDatabase database,
@@ -188,7 +201,10 @@ class BiteNoteSQLiteTableHelper {
         final String sql = "INSERT INTO measurement_types(name) VALUES (?);";
 
         database.beginTransaction();
-        try (final XmlResourceParser parser = context.getResources().getXml(R.xml.utensils)) {
+        try (
+                final XmlResourceParser parser =
+                        context.getResources().getXml(R.xml.measurement_types)
+        ) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     parser.next();
@@ -212,7 +228,10 @@ class BiteNoteSQLiteTableHelper {
 
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -220,8 +239,8 @@ class BiteNoteSQLiteTableHelper {
 
     /**
      * Populates the 'ingredients' SQLiteTable with the XML data.
-     * @param database SQLite database instance.
-     * @param context Context.
+     * @param database {@link SQLiteDatabase} instance.
+     * @param context {@link Context} instance.
      */
     private static void populateIngredientsTable(
             @NonNull SQLiteDatabase database,
@@ -243,6 +262,10 @@ class BiteNoteSQLiteTableHelper {
         try (final XmlResourceParser parser = context.getResources().getXml(R.xml.ingredients)) {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    if (parser.getEventType() == XmlPullParser.END_TAG && !strStack.isEmpty()) {
+                        strStack.pop();
+                    }
+
                     parser.next();
                     continue;
                 }
@@ -255,7 +278,7 @@ class BiteNoteSQLiteTableHelper {
                 }
 
                 // when its an ingredient, get all its attributes
-                Object[] args = {
+                final Object[] args = {
                         String.join(Ingredient.NAME_DELIMITER, strStack),
                         getMeasurementTypeIdFromName(
                                 database,
@@ -271,14 +294,16 @@ class BiteNoteSQLiteTableHelper {
                         )
                 };
 
-                strStack.pop(); // pop last stack string for next ingredient
                 database.execSQL(sql, args);
                 parser.next();
             }
 
             database.setTransactionSuccessful();
         } catch (XmlPullParserException | IOException | SQLException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
         } finally {
             database.endTransaction();
         }
@@ -296,23 +321,18 @@ class BiteNoteSQLiteTableHelper {
     ) {
         switch (parser.getName()) {
             case Ingredient.XML_TYPE_TAG:
-                /// in case of type tag, clear stack and push type name
-                strStack.clear();
                 strStack.push(parser.getAttributeValue(
                         null,
                         Ingredient.XML_TYPE_NAME_ATTRIBUTE
                 ));
                 return false;
             case Ingredient.XML_SUBTYPE_TAG:
-                /// in case of subtype tag, pop stack and push subtype name
-                strStack.pop();
                 strStack.push(parser.getAttributeValue(
                         null,
                         Ingredient.XML_SUBTYPE_NAME_ATTRIBUTE
                 ));
                 return false;
             case Ingredient.XML_TAG:
-                /// in case of ingredient tag, push name
                 strStack.push(parser.getAttributeValue(
                         null,
                         Ingredient.XML_NAME_ATTRIBUTE
@@ -329,24 +349,25 @@ class BiteNoteSQLiteTableHelper {
      * @param measurementTypeName Name of the measurement type. This should be obtained from an XML.
      * @return Optional that may contain the ID of the measurement type.
      */
-    private static Optional<Integer> getMeasurementTypeIdFromName(
+    private static OptionalInt getMeasurementTypeIdFromName(
             @NonNull SQLiteDatabase database,
             String measurementTypeName
     ) {
         final String sql = "SELECT id FROM measurement_types WHERE name = ?;";
         final String[] args = {measurementTypeName};
-        Integer result = null;
 
         try (final Cursor cursor = database.rawQuery(sql, args)) {
             if (!cursor.moveToFirst()) {
-                return Optional.empty();
+                return OptionalInt.empty();
             }
 
-            result = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            return OptionalInt.of(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
         } catch (IllegalArgumentException e) {
-            Log.e(null, Optional.ofNullable(e.getMessage()).orElse("Missing message."));
+            Log.e(
+                    "db ddl",
+                    Optional.ofNullable(e.getMessage()).orElse("Missing message.")
+            );
+            return OptionalInt.empty();
         }
-
-        return Optional.ofNullable(result);
     }
 }

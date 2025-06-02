@@ -1,6 +1,7 @@
 package app.bitenote.instances;
 
 import androidx.annotation.NonNull;
+import java.util.Objects;
 
 /**
  * A container for data of one utensil in the database. The data in {@link MeasurementType}
@@ -8,7 +9,7 @@ import androidx.annotation.NonNull;
  * @see app.bitenote.database.BiteNoteSQLiteHelper#getMeasurementTypeFromId(int)
  * @author Daniel N.
  */
-public class MeasurementType {
+public final class MeasurementType {
     /**
      * XML measurement type tag in the {@code res/xml/measurement_types.xml} document.
      */
@@ -31,6 +32,16 @@ public class MeasurementType {
     public static final String WEIGHT_TYPE_STRING = "weight";
 
     /**
+     * ID of the weight measurement type in the database.
+     */
+    public static final int WEIGHT_ID = 1;
+
+    /**
+     * ID of the volume measurement type in the database.
+     */
+    public static final int VOLUME_ID = 2;
+
+    /**
      * Name of the measurement type.
      */
     public final String name;
@@ -43,5 +54,23 @@ public class MeasurementType {
      */
     public MeasurementType(@NonNull String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        /*
+         * Since MeasurementTypes are immutable, two references with the same data should be
+         * considered equal.
+         */
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MeasurementType that = (MeasurementType) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }

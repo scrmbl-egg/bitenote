@@ -1,6 +1,7 @@
 package app.bitenote.instances;
 
 import androidx.annotation.NonNull;
+import java.util.Objects;
 
 /**
  * A container for data of one utensil in the database. The data in {@link Utensil} instances
@@ -8,7 +9,7 @@ import androidx.annotation.NonNull;
  * @see app.bitenote.database.BiteNoteSQLiteHelper#getUtensilFromId(int)
  * @author Daniel N.
  */
-public class Utensil {
+public final class Utensil {
     /**
      * XML utensil tag in the {@code res/xml/utensils.xml} document.
      */
@@ -32,5 +33,23 @@ public class Utensil {
      */
     public Utensil(@NonNull String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        /*
+         * Since Utensils are immutable, two references with the same data should be considered
+         * equal.
+         */
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Utensil utensil = (Utensil) o;
+        return Objects.equals(name, utensil.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }

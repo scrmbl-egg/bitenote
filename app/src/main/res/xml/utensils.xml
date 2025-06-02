@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <utensils>
-    <utensil name="airFryer"/>
-    <utensil name="blender"/>
-    <utensil name="deepFryer"/>
-    <utensil name="grill"/>
-    <utensil name="microwave"/>
-    <utensil name="oven"/>
-    <utensil name="pan"/>
-    <utensil name="pot"/>
-    <utensil name="toaster"/>
-    <utensil name="barbecue"/>
+    <utensil name="airFryer"/> <!--1-->
+    <utensil name="blender"/> <!--2-->
+    <utensil name="deepFryer"/> <!--3-->
+    <utensil name="grill"/> <!--4-->
+    <utensil name="microwave"/> <!--5-->
+    <utensil name="oven"/> <!--6-->
+    <utensil name="pan"/> <!--7-->
+    <utensil name="pot"/> <!--8-->
+    <utensil name="toaster"/> <!--9-->
+    <utensil name="barbecue"/> <!--10-->
 </utensils>

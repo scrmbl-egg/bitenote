@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipes>
+    <recipe>
+        <name>(EXAMPLE) TEST RECIPE</name>
+        <body>
+            This is a test recipe body.
+        </body>
+        <diners>2</diners>
+        <budget>10</budget>
+        <creation_date>1970-1-1</creation_date>
+        <ingredient id="1">1</ingredient>
+        <ingredient id="2">2</ingredient>
+        <ingredient id="3">3</ingredient>
+        <utensil id="1"/>
+        <utensil id="2"/>
+    </recipe>
+    <recipe>
+        <name>(EXAMPLE) Garlic butter air fryer salmon</name>
+        <body>
+            Cut the fresh salmon into tiny fillets.
+
+
+            In a bowl, mix the butter, minced garlic, salt, pepper, and finally, some lemon juice
+            that can be squeezed with a juicer or by hand.
+
+
+            Brush the mix over the salmon fillets, and put them in an air fryer for 8 to 10
+            minutes at 180 degrees celsius.
+        </body>
+        <diners>2</diners>
+        <budget>7</budget>
+        <creation_date>2025-1-1</creation_date>
+        <ingredient id="36" is_measured_in_units="true">1</ingredient> <!--lemon-->
+        <ingredient id="54">200</ingredient> <!--salmon-->
+        <ingredient id="71">1</ingredient> <!--salt-->
+        <ingredient id="72">1</ingredient> <!--pepper-->
+        <ingredient id="81">1</ingredient> <!--mincedGarlic-->
+        <ingredient id="94">15</ingredient> <!--butter-->
+        <utensil id="1"/> <!--airFryer-->
+    </recipe>
+    <recipe>
+        <name>(EXAMPLE) Microwave scrambled eggs</name>
+        <body>
+            Whisk 2 eggs, milk, salt and pepper in a bowl and put it in the microwave in high power
+            for 1 minute.
+
+
+            After it's set, stir again, and put the bowl back in the microwave for 30 seconds.
+
+
+            At the end, top with butter if desired.
+        </body>
+        <diners>1</diners>
+        <budget>2</budget>
+        <creation_date>2025-1-1</creation_date>
+        <ingredient id="18">30</ingredient> <!--milk-->
+        <ingredient id="71">1</ingredient> <!--salt-->
+        <ingredient id="72">1</ingredient> <!--pepper-->
+        <ingredient id="82" is_measured_in_units="true">2</ingredient> <!--egg-->
+        <ingredient id="94">15</ingredient> <!--butter-->
+        <utensil id="5"/> <!--microwave-->
+    </recipe>
+</recipes>
