@@ -140,29 +140,30 @@
 
     <type name="pantryStaple">
         <subtype name="baking">
-            <ingredient name="flour" measurement="weight" can_be_measured_in_units="false"/> <!--82-->
-            <ingredient name="bakingPowder" measurement="weight" can_be_measured_in_units="false"/> <!--83-->
-            <ingredient name="bakingSoda" measurement="weight" can_be_measured_in_units="false"/> <!--84-->
-            <ingredient name="yeast" measurement="weight" can_be_measured_in_units="false"/> <!--85-->
-            <ingredient name="cocoa" measurement="weight" can_be_measured_in_units="false"/> <!--86-->
+            <ingredient name="egg" measurement="weight" can_be_measured_in_units="false"/> <!--82-->
+            <ingredient name="flour" measurement="weight" can_be_measured_in_units="false"/> <!--83-->
+            <ingredient name="bakingPowder" measurement="weight" can_be_measured_in_units="false"/> <!--84-->
+            <ingredient name="bakingSoda" measurement="weight" can_be_measured_in_units="false"/> <!--85-->
+            <ingredient name="yeast" measurement="weight" can_be_measured_in_units="false"/> <!--86-->
+            <ingredient name="cocoa" measurement="weight" can_be_measured_in_units="false"/> <!--87-->
         </subtype>
         <subtype name="sweetener">
-            <ingredient name="sugar" measurement="weight" can_be_measured_in_units="false"/> <!--87-->
-            <ingredient name="honey" measurement="weight" can_be_measured_in_units="false"/> <!--88-->
-            <ingredient name="mapleSyrup" measurement="weight" can_be_measured_in_units="false"/> <!--89-->
-            <ingredient name="chocolate" measurement="weight" can_be_measured_in_units="false"/> <!--90-->
+            <ingredient name="sugar" measurement="weight" can_be_measured_in_units="false"/> <!--88-->
+            <ingredient name="honey" measurement="weight" can_be_measured_in_units="false"/> <!--89-->
+            <ingredient name="mapleSyrup" measurement="weight" can_be_measured_in_units="false"/> <!--90-->
+            <ingredient name="chocolate" measurement="weight" can_be_measured_in_units="false"/> <!--91-->
         </subtype>
         <subtype name="oilsAndFats">
-            <ingredient name="oliveOil" measurement="volume"/> <!--91-->
-            <ingredient name="sunflowerOil" measurement="volume"/> <!--92-->
-            <ingredient name="butter" measurement="volume"/> <!--93-->
-            <ingredient name="coconutOil" measurement="volume"/> <!--94-->
+            <ingredient name="oliveOil" measurement="volume"/> <!--92-->
+            <ingredient name="sunflowerOil" measurement="volume"/> <!--93-->S
+            <ingredient name="butter" measurement="volume"/> <!--94-->
+            <ingredient name="coconutOil" measurement="volume"/> <!--95-->
         </subtype>
         <subtype name="liquids">
-            <ingredient name="water" measurement="volume"/> <!--95-->
-            <ingredient name="vinegar" measurement="volume"/> <!--96-->
-            <ingredient name="soySauce" measurement="volume"/> <!--97-->
-            <ingredient name="broth" measurement="volume"/> <!--98-->
+            <ingredient name="water" measurement="volume"/> <!--96-->
+            <ingredient name="vinegar" measurement="volume"/> <!--97-->
+            <ingredient name="soySauce" measurement="volume"/> <!--98-->
+            <ingredient name="broth" measurement="volume"/> <!--99-->
         </subtype>
     </type>
 </ingredients>

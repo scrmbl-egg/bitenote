@@ -127,6 +127,7 @@
     <string name="ingredient_spice_turmeric">Cúrcuma</string>
     <string name="ingredient_spice_cinnamon">Canela</string>
     <string name="ingredient_spice_mincedGarlic">Ajo picado</string>
+    <string name="ingredient_pantryStable_baking_egg">Huevo</string>
     <string name="ingredient_pantryStaple_baking_flour">Harina</string>
     <string name="ingredient_pantryStaple_baking_bakingPowder">Levadura en polvo</string>
     <string name="ingredient_pantryStaple_baking_bakingSoda">Bicarbonato</string>
