@@ -136,14 +136,15 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
     /**
      * Inserts the example recipes from 'test_recipes.xml' into the database.
-     * @return The ID array of the inserted recipes, ordered by creation.
+     * @return The ID list of the inserted recipes, ordered by creation.
      * @see BiteNoteSQLiteHelper#getRecipeFromId(int)
      */
-    public int[] insertExampleRecipes() {
+    public List<Integer> insertExampleRecipes() {
         final ArrayList<Integer> exampleIdList = new ArrayList<>();
         final Recipe currentRecipeData = new Recipe();
         String lastFoundXmlTag = "";
         int currentIngredientId = 0;
+        boolean currentIngredientIsMeasuredInUnits = false;
         int currentUtensilId = 0;
 
         try (
@@ -168,6 +169,11 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                                     null,
                                     Recipe.XML_RECIPE_INGREDIENT_ID_ATTRIBUTE,
                                     0
+                            );
+                            currentIngredientIsMeasuredInUnits = parser.getAttributeBooleanValue(
+                                    null,
+                                    Recipe.XML_RECIPE_INGREDIENT_IS_MEASURED_IN_UNITS_ATTRIBUTE,
+                                    false
                             );
                             parser.next();
                             break;
@@ -216,7 +222,11 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                         case Recipe.XML_RECIPE_INGREDIENT_TAG:
                             currentRecipeData.putIngredient(
                                     currentIngredientId,
-                                    Integer.valueOf(parser.getText().trim())
+                                    new Ingredient.InRecipeProperties(
+                                            getIngredientFromId(currentIngredientId).get(),
+                                            Integer.valueOf(parser.getText().trim()),
+                                            currentIngredientIsMeasuredInUnits
+                                    )
                             );
                             break;
                             // utensil case doesn't need to be handled since there is no TEXT
@@ -262,7 +272,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             else return 1;
         });
 
-        return exampleIdList.stream().mapToInt(Integer::intValue).toArray();
+        return Collections.unmodifiableList(exampleIdList);
     }
 
     /**

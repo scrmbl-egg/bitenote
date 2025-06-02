@@ -62,6 +62,13 @@ public class Recipe {
     public static final String XML_RECIPE_INGREDIENT_ID_ATTRIBUTE = "id";
 
     /**
+     * XML recipe ingredient {@code is_measured_in_units} attribute in the
+     * {@code res/xml/example_recipes.xml} document.
+     */
+    public static final String XML_RECIPE_INGREDIENT_IS_MEASURED_IN_UNITS_ATTRIBUTE =
+            "is_measured_in_units";
+
+    /**
      * XML recipe utensil tag in the {@code res/xml/example_recipes.xml} document.
      */
     public static final String XML_RECIPE_UTENSIL_TAG = "utensil";
