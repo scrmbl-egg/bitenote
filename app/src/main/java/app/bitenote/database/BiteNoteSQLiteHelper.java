@@ -375,6 +375,17 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     /**
      * Deletes many rows from the 'recipes' table in the database, along with rows in other tables
      * that reference them.
+     * @param recipeIds Recipe ID list.
+     */
+    public void deleteRecipes(@NonNull List<Integer> recipeIds) {
+        for (int i = 0; i < recipeIds.size(); i++) {
+            deleteRecipe(recipeIds.get(i));
+        }
+    }
+
+    /**
+     * Deletes many rows from the 'recipes' table in the database, along with rows in other tables
+     * that reference them.
      * @param recipeIds Recipe ID array.
      */
     public void deleteRecipes(int[] recipeIds) {
