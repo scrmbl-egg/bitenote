@@ -140,7 +140,7 @@
 
     <type name="pantryStaple">
         <subtype name="baking">
-            <ingredient name="egg" measurement="weight" can_be_measured_in_units="false"/> <!--82-->
+            <ingredient name="egg" measurement="weight" can_be_measured_in_units="true"/> <!--82-->
             <ingredient name="flour" measurement="weight" can_be_measured_in_units="false"/> <!--83-->
             <ingredient name="bakingPowder" measurement="weight" can_be_measured_in_units="false"/> <!--84-->
             <ingredient name="bakingSoda" measurement="weight" can_be_measured_in_units="false"/> <!--85-->
