@@ -117,6 +117,7 @@
     <string name="ingredient_grain_refined_pasta">Pasta</string>
     <string name="ingredient_grain_refined_bread">Pan</string>
     <string name="ingredient_spice_salt">Sal</string>
+    <string name="ingredient_spice_pepper">Pimienta negra</string>
     <string name="ingredient_spice_basil">Albahaca</string>
     <string name="ingredient_spice_thyme">Tomillo</string>
     <string name="ingredient_spice_rosemary">Romero</string>
@@ -125,6 +126,7 @@
     <string name="ingredient_spice_paprika">Pimentón</string>
     <string name="ingredient_spice_turmeric">Cúrcuma</string>
     <string name="ingredient_spice_cinnamon">Canela</string>
+    <string name="ingredient_spice_mincedGarlic">Ajo picado</string>
     <string name="ingredient_pantryStaple_baking_flour">Harina</string>
     <string name="ingredient_pantryStaple_baking_bakingPowder">Levadura en polvo</string>
     <string name="ingredient_pantryStaple_baking_bakingSoda">Bicarbonato</string>

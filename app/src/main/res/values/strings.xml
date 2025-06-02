@@ -121,6 +121,7 @@
     <string name="ingredient_grain_refined_pasta">Pasta</string>
     <string name="ingredient_grain_refined_bread">Bread</string>
     <string name="ingredient_spice_salt">Salt</string>
+    <string name="ingredient_spice_pepper">Pepper</string>
     <string name="ingredient_spice_basil">Basil</string>
     <string name="ingredient_spice_thyme">Thyme</string>
     <string name="ingredient_spice_rosemary">Rosemary</string>
@@ -129,6 +130,7 @@
     <string name="ingredient_spice_paprika">Paprika</string>
     <string name="ingredient_spice_turmeric">Turmeric</string>
     <string name="ingredient_spice_cinnamon">Cinnamon</string>
+    <string name="ingredient_spice_mincedGarlic">Minced garlic</string>
     <string name="ingredient_pantryStaple_baking_flour">Flour</string>
     <string name="ingredient_pantryStaple_baking_bakingPowder">Baking powder</string>
     <string name="ingredient_pantryStaple_baking_bakingSoda">Baking soda</string>
