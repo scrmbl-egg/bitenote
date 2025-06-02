@@ -202,13 +202,21 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
                             currentRecipeData.name = parser.getText().trim();
                             break;
                         case Recipe.XML_RECIPE_BODY_TAG:
-                            /// replace file line endings and tabs, and collapse spaces
+                            /*
+                             * Normalize line breaks, then, if it's just one, turn it into a space.
+                             * If it's more than one, treat it as a paragraph break. Remove other
+                             * characters like tabs, or multiple spaces.
+                             */
                             currentRecipeData.body = parser.getText()
                                     .trim()
-                                    .replaceAll("(\\r\\n|\\n)", "\n")
-                                    .replaceAll("\\n+", " ")
-                                    .replaceAll("\\t+", " ")
-                                    .replaceAll(" +", " ");
+                                    .replaceAll("(\\r\\n|\\r)", "\n")
+                                    .replaceAll("\\n{2,}", "¶¶") // markers
+                                    .replaceAll("\\n", " ")
+                                    .replaceAll("¶¶", "\n\n")
+                                    .replaceAll("\\t+", "")
+                                    .replaceAll(" +", " ")
+                                    .trim()
+                                    .replaceAll("(\\n\\n) +", "$1");
                             break;
                         case Recipe.XML_RECIPE_DINERS_TAG:
                             currentRecipeData.diners = Integer.valueOf(parser.getText().trim());
@@ -258,18 +266,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             final long aCreationDateTime = getRecipeFromId(a).get().creationDate.getTime();
             final long bCreationDateTime = getRecipeFromId(b).get().creationDate.getTime();
 
-            /*
-             * comparators are weird and expect the following values depending on the comparison
-             * 1 -> greater than
-             * 0 -> equal
-             * -1 -> less than
-             * but these must be inverted for it to be sorted in decending order
-             *
-             * why
-             */
-            if (aCreationDateTime > bCreationDateTime) return -1;
-            else if (aCreationDateTime == bCreationDateTime) return 0;
-            else return 1;
+            return Long.compare(bCreationDateTime, aCreationDateTime);
         });
 
         return Collections.unmodifiableList(exampleIdList);
