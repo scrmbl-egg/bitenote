@@ -42,12 +42,16 @@ public class InstanceUnitTests {
 
     @Test
     public void areMeasurementTypesEqual() {
-        final String name = MeasurementType.VOLUME_TYPE_STRING;
+        final String name1 = MeasurementType.VOLUME_TYPE_STRING;
+        final String name2 = MeasurementType.WEIGHT_TYPE_STRING;
 
-        final MeasurementType t1 = new MeasurementType(name);
-        final MeasurementType t2 = new MeasurementType(name);
+        final MeasurementType t1 = new MeasurementType(name1);
+        final MeasurementType t2 = new MeasurementType(name1);
+        final MeasurementType t3 = new MeasurementType(name2);
+        final MeasurementType t4 = new MeasurementType(name2);
 
         assertEquals(t1, t2);
+        assertEquals(t3, t4);
     }
 
     @Test
@@ -98,12 +102,11 @@ public class InstanceUnitTests {
 
     @Test
     public void areRecipeQueriesEqual() {
-        final String nameSearchQuery = "test";
         final int maxBudget = 25;
         final int minDiners = 2;
 
         final RecipeQuery rq1 = new RecipeQuery(
-                nameSearchQuery, new HashMap<>(), new HashMap<>(), maxBudget, minDiners
+                new HashMap<>(), new HashMap<>(), maxBudget, minDiners
         );
         rq1.includeIngredient(2, false);
         rq1.includeUtensil(3, false);
@@ -111,7 +114,7 @@ public class InstanceUnitTests {
         rq1.banUtensil(4, false);
 
         final RecipeQuery rq2 = new RecipeQuery(
-                nameSearchQuery, new HashMap<>(), new HashMap<>(), maxBudget, minDiners
+                new HashMap<>(), new HashMap<>(), maxBudget, minDiners
         );
         rq2.includeIngredient(2, false);
         rq2.includeUtensil(3, false);
