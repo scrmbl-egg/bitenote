@@ -65,8 +65,8 @@ public class BiteNoteInstrumentedTest {
             );
             r.addUtensil(2);
             r.addUtensil(3);
-            r.putIngredient(1, 2f);
-            r.putIngredient(3, 2f);
+            r.putIngredient(1, 2);
+            r.putIngredient(3, 2);
 
             final int rId = sqliteHelper.insertRecipe(r);
             final Optional<Recipe> rOption = sqliteHelper.getRecipeFromId(rId);
@@ -133,8 +133,8 @@ public class BiteNoteInstrumentedTest {
             );
             r2.addUtensil(1);
             r2.addUtensil(2);
-            r2.putIngredient(1, 1f);
-            r2.putIngredient(2, 2f);
+            r2.putIngredient(1, 1);
+            r2.putIngredient(2, 2);
 
             sqliteHelper.updateRecipe(r1Id, r2);
             final Optional<Recipe> r2Option = sqliteHelper.getRecipeFromId(r1Id);
