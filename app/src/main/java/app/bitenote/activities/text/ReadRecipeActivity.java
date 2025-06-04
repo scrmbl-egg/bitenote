@@ -109,12 +109,13 @@ public final class ReadRecipeActivity extends AppCompatActivity {
         mDatabaseExecutor.execute(() -> {
             final Optional<Recipe> recipeOption = mViewModel.sqliteHelper.getRecipeFromId(id);
 
-            recipeOption.ifPresent(recipe ->
-                    mMainThreadHandler.post(() -> {
-                        bind(recipe);
-                        mViewModel.postRecipeWithId(id, recipe);
-                    })
-            );
+            mMainThreadHandler.post(() -> {
+                if (recipeOption.isEmpty()) {
+                    finish();
+                } else {
+                    bind(recipeOption.get());
+                }
+            });
         });
     }
 

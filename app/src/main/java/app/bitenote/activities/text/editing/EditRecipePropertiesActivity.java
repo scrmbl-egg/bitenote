@@ -86,9 +86,6 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
         mViewModel = ((BiteNoteApplication) getApplication()).getAppViewModel();
 
         setupViews();
-
-        /// bind to live data
-        mViewModel.recipeLiveData.observe(this, idRecipePair -> bind(idRecipePair.second));
     }
 
     /**
@@ -106,6 +103,12 @@ public final class EditRecipePropertiesActivity extends AppCompatActivity {
 
         setSupportActionBar(mMaterialToolbar);
         mMaterialToolbar.setNavigationOnClickListener(view -> finish());
+
+        assert mViewModel.recipeLiveData.getValue() != null : "Recipe live data can't be null";
+
+        final Recipe recipe = mViewModel.recipeLiveData.getValue().second;
+
+        bind(recipe); // bind recipe content to views just once
 
         mEditIngredientsButton.setOnClickListener(this::onEditIngredientsButtonClick);
         mEditUtensilsButton.setOnClickListener(this::onEditUtensilsButtonClick);

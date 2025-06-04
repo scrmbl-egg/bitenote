@@ -365,7 +365,6 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             );
         } finally {
             database.endTransaction();
-            database.close();
         }
     }
 
@@ -438,9 +437,9 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
 
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
-                final Recipe recipeInstance = getRecipeFromId(id).get();
+                final Optional<Recipe> recipeOption = getRecipeFromId(id);
 
-                recipeList.add(Pair.create(id, recipeInstance));
+                recipeOption.ifPresent(recipe -> recipeList.add(Pair.create(id, recipe)));
             } while (cursor.moveToNext());
 
             return Collections.unmodifiableList(recipeList);
