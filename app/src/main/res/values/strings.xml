@@ -149,14 +149,14 @@
     <string name="ingredient_pantryStaple_liquids_vinegar">Vinegar</string>
     <string name="ingredient_pantryStaple_liquids_soySauce">Soy sauce</string>
     <string name="ingredient_pantryStaple_liquids_broth">Broth</string>
-    <string name="utensil_airFryer">Air fryer</string>>
-    <string name="utensil_blender">Blender</string>>
-    <string name="utensil_deepFryer">Deep Fryer</string>>
-    <string name="utensil_grill">Grill</string>>
-    <string name="utensil_microwave">Microwave</string>>
-    <string name="utensil_oven">Oven</string>>
-    <string name="utensil_pan">Pan</string>>
-    <string name="utensil_pot">Pot</string>>
-    <string name="utensil_toaster">Toaster</string>>
-    <string name="utensil_barbecue">Barbecue</string>>
+    <string name="utensil_airFryer">Air fryer</string>
+    <string name="utensil_blender">Blender</string>
+    <string name="utensil_deepFryer">Deep Fryer</string>
+    <string name="utensil_grill">Grill</string>
+    <string name="utensil_microwave">Microwave</string>
+    <string name="utensil_oven">Oven</string>
+    <string name="utensil_pan">Pan</string>
+    <string name="utensil_pot">Pot</string>
+    <string name="utensil_toaster">Toaster</string>
+    <string name="utensil_barbecue">Barbecue</string>
 </resources>
