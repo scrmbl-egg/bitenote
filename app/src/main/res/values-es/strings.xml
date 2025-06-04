@@ -155,4 +155,10 @@
     <string name="utensil_pot">Olla</string>
     <string name="utensil_toaster">Tostadora</string>
     <string name="utensil_barbecue">Barbacoa</string>
+    <string name="unnamed_recipe">(RECETA SIN NOMBRE)</string>
+    <string name="write_recipe_save_without_text_dialog_title">Alerta</string>
+    <string name="write_recipe_save_without_text_dialog_body">La receta que estás editando no tiene nombre o cuerpo legibles. ¿Quieres guardar la receta de todos modos?</string>
+    <string name="write_recipe_save_without_text_positive_button_text">Sí, guardar</string>
+    <string name="write_recipe_save_without_text_neutral_button_text">Seguir editando</string>
+    <string name="write_recipe_save_without_text_negative_button_text">No, borrar</string>
 </resources>

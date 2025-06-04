@@ -159,4 +159,10 @@
     <string name="utensil_pot">Pot</string>
     <string name="utensil_toaster">Toaster</string>
     <string name="utensil_barbecue">Barbecue</string>
+    <string name="unnamed_recipe">(UNNAMED RECIPE)</string>
+    <string name="write_recipe_save_without_text_dialog_title">Alert</string>
+    <string name="write_recipe_save_without_text_dialog_body">The recipe you\'re editing has no legible name or body. Would you like to save it regardless?</string>
+    <string name="write_recipe_save_without_text_positive_button_text">Yes, save</string>
+    <string name="write_recipe_save_without_text_neutral_button_text">Keep editing</string>
+    <string name="write_recipe_save_without_text_negative_button_text">No, delete it</string>
 </resources>
