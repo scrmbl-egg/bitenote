@@ -359,14 +359,8 @@ public class RecipeQuery {
         final List<Integer> includedUtensils = getIncludedUtensils();
         final List<Integer> bannedUtensils = getBannedUtensils();
 
-        /*
-         * Users will leave the max budget as 0 most of the time, so to make the experience less
-         * uncomfortable, its best to consider a 0 budget query as an "infinite money" query.
-         */
-        final int newMaxBudget = maxBudget == 0 ? Integer.MAX_VALUE : maxBudget;
-
         final StringBuilder queryStrBuilder = new StringBuilder("SELECT id FROM recipes WHERE ")
-                .append("budget <= ").append(newMaxBudget)
+                .append("budget <= ").append(maxBudget)
                 .append(" AND diners >= ").append(minDiners);
 
         /// handle included ingredients
