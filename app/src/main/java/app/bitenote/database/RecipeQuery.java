@@ -88,7 +88,7 @@ public class RecipeQuery {
 
     /**
      * Gets the present ingredients in the query.
-     * @return An array of integers, each representing a present ingredient ID.
+     * @return A list of integers, each representing a present ingredient ID.
      */
     public List<Integer> getIncludedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
@@ -104,7 +104,7 @@ public class RecipeQuery {
 
     /**
      * Gets the banned ingredients in the query.
-     * @return An array of integers, each representing a banned ingredient ID.
+     * @return A list of integers, each representing a banned ingredient ID.
      */
     public List<Integer> getBannedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
@@ -118,6 +118,10 @@ public class RecipeQuery {
         return Collections.unmodifiableList(idList);
     }
 
+    /**
+     * Gets all ingredients that are in the query, whether they are included or not.
+     * @return A list of integers, each representing an utensil ID.
+     */
     public List<Integer> getQueriedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
@@ -128,7 +132,7 @@ public class RecipeQuery {
 
     /**
      * Gets the present utensils in the query.
-     * @return An array of integers, each representing a present utensil ID.
+     * @return A list of integers, each representing a present utensil ID.
      */
     public List<Integer> getIncludedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
@@ -144,7 +148,7 @@ public class RecipeQuery {
 
     /**
      * Gets the banned utensils in the query.
-     * @return An array of integers, each representing a banned utensil ID.
+     * @return A list of integers, each representing a banned utensil ID.
      */
     public List<Integer> getBannedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
@@ -158,6 +162,10 @@ public class RecipeQuery {
         return Collections.unmodifiableList(idList);
     }
 
+    /**
+     * Gets all utensils that are in the query, whether they are included or not.
+     * @return A list of integers, each representing an utensil ID.
+     */
     public List<Integer> getQueriedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
