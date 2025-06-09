@@ -72,7 +72,7 @@ public final class Ingredient {
     /**
      * Measurement type ID.
      */
-    public final int measurementTypeId;
+    public final MeasurementType measurementType;
 
     /**
      * Determines whether the ingredient can be measured in units. For example: "1 turkey" is a
@@ -90,11 +90,11 @@ public final class Ingredient {
      */
     public Ingredient(
             @NonNull String fullName,
-            int measurementTypeId,
+            @NonNull MeasurementType measurementType,
             boolean canBeMeasuredInUnits
     ) {
         this.fullName = fullName;
-        this.measurementTypeId = measurementTypeId;
+        this.measurementType = measurementType;
         this.canBeMeasuredInUnits = canBeMeasuredInUnits;
 
         /*
@@ -117,15 +117,15 @@ public final class Ingredient {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ingredient that = (Ingredient) o;
-        return measurementTypeId == that.measurementTypeId
-                && canBeMeasuredInUnits == that.canBeMeasuredInUnits
+        return canBeMeasuredInUnits == that.canBeMeasuredInUnits
                 && Objects.equals(fullName, that.fullName)
-                && Objects.equals(name, that.name);
+                && Objects.equals(name, that.name)
+                && Objects.equals(measurementType, that.measurementType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullName, name, measurementTypeId, canBeMeasuredInUnits);
+        return Objects.hash(fullName, name, measurementType, canBeMeasuredInUnits);
     }
 
     /**
@@ -135,7 +135,7 @@ public final class Ingredient {
     public static class InRecipeProperties {
         /**
          * Amount of the ingredient in the recipe.
-         * @see Ingredient#measurementTypeId
+         * @see Ingredient#measurementType
          * @see MeasurementType
          */
         public int amount;

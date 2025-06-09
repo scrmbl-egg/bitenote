@@ -502,7 +502,11 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             final boolean canBeMeasuredInUnits =
                     cursor.getInt(cursor.getColumnIndexOrThrow("can_be_measured_in_units")) != 0;
 
-            ingredient = new Ingredient(fullName, measurementId, canBeMeasuredInUnits);
+            final MeasurementType measurementType = getMeasurementTypeFromId(measurementId).orElse(
+                    new MeasurementType(MeasurementType.WEIGHT_TYPE_STRING)
+            );
+
+            ingredient = new Ingredient(fullName, measurementType, canBeMeasuredInUnits);
         } catch (IllegalArgumentException e) {
             Log.e(
                     "db dql",

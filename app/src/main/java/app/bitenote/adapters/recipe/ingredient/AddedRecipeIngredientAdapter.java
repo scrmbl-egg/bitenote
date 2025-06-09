@@ -305,11 +305,11 @@ public final class AddedRecipeIngredientAdapter
             });
 
             final String measurementText;
-            switch (ingredient.measurementTypeId) {
-                case MeasurementType.WEIGHT_ID:
+            switch (ingredient.measurementType.name) {
+                case MeasurementType.WEIGHT_TYPE_STRING:
                     measurementText = itemView.getContext().getString(R.string.weight_measurement);
                     break;
-                case MeasurementType.VOLUME_ID:
+                case MeasurementType.VOLUME_TYPE_STRING:
                     measurementText = itemView.getContext().getString(R.string.volume_measurement);
                     break;
                 default: // should be unreachable
