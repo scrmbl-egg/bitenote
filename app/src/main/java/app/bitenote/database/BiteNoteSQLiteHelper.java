@@ -1203,7 +1203,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Inserts elements from the 'recipe_ingredients' table into the {@link Recipe#ingredients}
+     * Inserts elements from the 'recipe_ingredients' table into the {@link Recipe#mIngredients}
      * field of a {@link Recipe} instance.
      * @param database {@link SQLiteDatabase} instance.
      * @param recipeInstance {@link Recipe} instance.
@@ -1274,7 +1274,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Inserts elements from the 'recipe_utensils' table into the {@link Recipe#utensils} field of
+     * Inserts elements from the 'recipe_utensils' table into the {@link Recipe#mUtensils} field of
      * a {@link Recipe} instance.
      * @param database {@link SQLiteDatabase} instance.
      * @param recipeInstance {@link Recipe} instance.
