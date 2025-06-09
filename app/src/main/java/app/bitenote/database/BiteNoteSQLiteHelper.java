@@ -535,7 +535,8 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
         ) {
             if (!cursor.moveToFirst()) return new ArrayList<>();
 
-            final List<Pair<Integer, Ingredient>> ingredientList = new ArrayList<>();
+            final List<Pair<Integer, Ingredient>> ingredientList =
+                    new ArrayList<>(cursor.getCount());
 
             do {
                 final int id = cursor.getInt(cursor.getColumnIndex("id"));
