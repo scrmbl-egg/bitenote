@@ -148,14 +148,6 @@ public final class Ingredient {
         public boolean isMeasuredInUnits;
 
         /**
-         * Default properties constructor. Amount will be set to {@code 0} and it will not be
-         * measured in units.
-         */
-        public InRecipeProperties() {
-            this(0, false);
-        }
-
-        /**
          * Properties constructor. Does additional checks to ensure {@code isMeasuredUnits} is
          * set correctly.
          * @param ingredient {@link Ingredient} instance which the properties reference.

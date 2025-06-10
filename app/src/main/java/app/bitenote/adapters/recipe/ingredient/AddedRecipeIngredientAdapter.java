@@ -130,7 +130,13 @@ public final class AddedRecipeIngredientAdapter
     public void addIngredient(int ingredientId, @NonNull Ingredient ingredient) {
         /// when adding an ingredient, recipe properties start with default values
 
-        final InRecipeProperties properties = new InRecipeProperties();
+        /*
+         * Default amount when adding an ingredient is 1, because any ingredient whose amount is
+         * 0 should be filtered out when saving.
+         */
+
+        final InRecipeProperties properties =
+                new InRecipeProperties(1, false);
         addIngredient(Pair.create(Pair.create(ingredientId, ingredient), properties));
     }
 
@@ -296,12 +302,36 @@ public final class AddedRecipeIngredientAdapter
             ));
 
             mAmountEditText.setText(String.valueOf(properties.amount));
+            mAmountEditText.setOnFocusChangeListener((view, hasFocus) -> {
+                /*
+                 * When the amount is left unspecified and the user focuses on another view in the
+                 * activity, set the value and text to 0.
+                 */
+
+                if (!hasFocus && mAmountEditText.getText().toString().isBlank()) {
+                    mAmountEditText.setText("0");
+                }
+            });
             mAmountEditText.setOnKeyListener((view, i, keyEvent) -> {
-                adapter.setAmountAtIndex(
-                        getAdapterPosition(),
-                        Integer.parseInt(mAmountEditText.getText().toString())
-                );
-                return false;
+                try {
+                    if (mAmountEditText.getText().toString().isBlank()) {
+                        adapter.setAmountAtIndex(getAdapterPosition(), 0);
+                        /// make it 0 in the background
+
+                        return false;
+                    }
+
+                    final long specifiedAmount =
+                            Long.parseUnsignedLong(mAmountEditText.getText().toString());
+                    final int parsedLongAsInt = specifiedAmount > Integer.MAX_VALUE
+                                    ? Integer.MAX_VALUE
+                                    : (int) specifiedAmount;
+
+                    adapter.setAmountAtIndex(getAdapterPosition(), parsedLongAsInt);
+                    return false;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
             });
 
             final String measurementText;

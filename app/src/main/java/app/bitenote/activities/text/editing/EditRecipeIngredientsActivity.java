@@ -147,7 +147,7 @@ public final class EditRecipeIngredientsActivity extends AppCompatActivity {
             clearIngredients();
 
             mAddedIngredientAdapter.getIngredients().forEach(pair -> {
-                if (pair.second.amount <= 0) return;
+                if (pair.second.amount <= 0) return; // filter ingredients whose amount is 0
 
                 putIngredient(pair.first.first, pair.second);
             });
