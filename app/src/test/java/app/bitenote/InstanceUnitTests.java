@@ -89,14 +89,14 @@ public class InstanceUnitTests {
 
         /// test bans and inclusion checks
         assertTrue(rq.isIngredientBanned(1));
-        assertFalse(rq.isIngredientPresent(1));
-        assertTrue(rq.isUtensilPresent(1));
+        assertFalse(rq.isIngredientIncluded(1));
+        assertTrue(rq.isUtensilIncluded(1));
         assertFalse(rq.isUtensilBanned(1));
 
         /// test that random ingredients or utensils are neither present or banned
-        assertFalse(rq.isIngredientPresent(10));
+        assertFalse(rq.isIngredientIncluded(10));
         assertFalse(rq.isIngredientBanned(10));
-        assertFalse(rq.isUtensilPresent(10));
+        assertFalse(rq.isUtensilIncluded(10));
         assertFalse(rq.isUtensilBanned(10));
     }
 

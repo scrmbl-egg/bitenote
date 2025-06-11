@@ -93,8 +93,8 @@ public class RecipeQuery {
     public List<Integer> getIncludedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        mIngredientQuery.forEach((ingredientId, isPresent) -> {
-            if (!isPresent) return;
+        mIngredientQuery.forEach((ingredientId, isIncluded) -> {
+            if (!isIncluded) return;
 
             idList.add(ingredientId);
         });
@@ -109,8 +109,8 @@ public class RecipeQuery {
     public List<Integer> getBannedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        mIngredientQuery.forEach((ingredientId, isPresent) -> {
-            if (isPresent) return;
+        mIngredientQuery.forEach((ingredientId, isIncluded) -> {
+            if (isIncluded) return;
 
             idList.add(ingredientId);
         });
@@ -125,7 +125,7 @@ public class RecipeQuery {
     public List<Integer> getQueriedIngredients() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        mIngredientQuery.forEach((ingredientId, isPresent) -> idList.add(ingredientId));
+        mIngredientQuery.forEach((ingredientId, isIncluded) -> idList.add(ingredientId));
 
         return Collections.unmodifiableList(idList);
     }
@@ -137,8 +137,8 @@ public class RecipeQuery {
     public List<Integer> getIncludedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        mUtensilQuery.forEach((utensilId, isPresent) -> {
-            if (!isPresent) return;
+        mUtensilQuery.forEach((utensilId, isIncluded) -> {
+            if (!isIncluded) return;
 
             idList.add(utensilId);
         });
@@ -153,8 +153,8 @@ public class RecipeQuery {
     public List<Integer> getBannedUtensils() {
         final ArrayList<Integer> idList = new ArrayList<>();
 
-        mUtensilQuery.forEach((utensilId, isPresent) -> {
-            if (isPresent) return;
+        mUtensilQuery.forEach((utensilId, isIncluded) -> {
+            if (isIncluded) return;
 
             idList.add(utensilId);
         });
@@ -263,7 +263,7 @@ public class RecipeQuery {
      * @param ingredientId ID of the ingredient.
      * @return {@code true} if the ingredient ID is marked as present in the query.
      */
-    public boolean isIngredientPresent(int ingredientId) {
+    public boolean isIngredientIncluded(int ingredientId) {
         return mIngredientQuery.containsKey(ingredientId)
                 && Boolean.TRUE.equals(mIngredientQuery.get(ingredientId));
     }
@@ -283,7 +283,7 @@ public class RecipeQuery {
      * @param utensilId ID of the utensil.
      * @return {@code true} if the utensil ID is marked as present in the query.
      */
-    public boolean isUtensilPresent(int utensilId) {
+    public boolean isUtensilIncluded(int utensilId) {
         return mUtensilQuery.containsKey(utensilId)
                 && Boolean.TRUE.equals(mUtensilQuery.get(utensilId));
     }
@@ -302,7 +302,7 @@ public class RecipeQuery {
      * Clears all included ingredients from the query.
      */
     public void clearIncludedIngredients() {
-        mIngredientQuery.forEach((ingredientId, isPresent) ->
+        mIngredientQuery.forEach((ingredientId, isIncluded) ->
                 mIngredientQuery.remove(ingredientId, true)
         );
     }
@@ -311,7 +311,7 @@ public class RecipeQuery {
      * Clears all banned ingredients from the query.
      */
     public void clearBannedIngredients() {
-        mIngredientQuery.forEach((ingredientId, isPresent) ->
+        mIngredientQuery.forEach((ingredientId, isIncluded) ->
                 mIngredientQuery.remove(ingredientId, false)
         );
     }
@@ -326,7 +326,7 @@ public class RecipeQuery {
     /**
      * Clears all present utensils from the query.
      */
-    public void clearPresentUtensils() {
+    public void clearIncludedUtensils() {
         mUtensilQuery.forEach(mUtensilQuery::remove);
     }
 
@@ -334,8 +334,8 @@ public class RecipeQuery {
      * Clears all banned utensils from the query.
      */
     public void clearBannedUtensils() {
-        mUtensilQuery.forEach((utensilId, isPresent) ->
-                mUtensilQuery.remove(utensilId, !isPresent)
+        mUtensilQuery.forEach((utensilId, isIncluded) ->
+                mUtensilQuery.remove(utensilId, !isIncluded)
         );
     }
 
