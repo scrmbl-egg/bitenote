@@ -74,10 +74,6 @@ public class BiteNoteInstrumentedTest {
             /// first, check if the recipe is present at all
             assertTrue(rOption.isPresent());
 
-            /*
-             * References with the same data will not be considered equal, so we manually assert
-             * the equality of all recipe fields.
-             */
             assertEquals(r.name, rOption.get().name);
             assertEquals(r.body, rOption.get().body);
             assertEquals(r.budget, rOption.get().budget);
@@ -141,6 +137,10 @@ public class BiteNoteInstrumentedTest {
 
             assertTrue(r2Option.isPresent());
 
+            /*
+             * When updating a recipe, it's creation date is not updated, so asserting each
+             * field's equality is needed.
+             */
             assertEquals(r2.name, r2Option.get().name);
             assertEquals(r2.body, r2Option.get().body);
             assertEquals(r2.budget, r2Option.get().budget);
