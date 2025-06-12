@@ -28,7 +28,7 @@ public final class NonQueriedUtensilAdapter extends
         RecyclerView.Adapter<NonQueriedUtensilAdapter.ViewHolder>
 {
     /**
-     * Array of utensils in the adapter. The first element of the pair represents the
+     * List of utensils in the adapter. The first element of the pair represents the
      * integer ID of the utensil in the database, and the second element represents the data of
      * that utensil, wrapped in an {@link Utensil} instance.
      */

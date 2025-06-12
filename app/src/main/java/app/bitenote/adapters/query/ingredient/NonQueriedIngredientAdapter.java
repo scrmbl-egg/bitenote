@@ -27,7 +27,7 @@ public final class NonQueriedIngredientAdapter extends
         RecyclerView.Adapter<NonQueriedIngredientAdapter.ViewHolder>
 {
     /**
-     * Array of ingredients in the adapter. The first element of the pair represents the
+     * List of ingredients in the adapter. The first element of the pair represents the
      * integer ID of the ingredient in the database, and the second element represents the data of
      * that ingredient, wrapped in an {@link Ingredient} instance.
      */
