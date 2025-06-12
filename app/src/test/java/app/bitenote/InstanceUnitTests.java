@@ -19,13 +19,26 @@ import app.bitenote.instances.Utensil;
  */
 public class InstanceUnitTests {
     @Test
+    public void isIngredientNameCorrect() {
+        final Ingredient banana = new Ingredient(
+                "fruit_banana",
+                new MeasurementType(MeasurementType.WEIGHT_TYPE_STRING),
+                true
+        );
+
+        assertEquals("fruit_banana", banana.fullName);
+        assertEquals("banana", banana.name);
+    }
+
+    @Test
     public void areIngredientsEqual() {
-        final String name = "fruit.banana";
-        final int measurementTypeId = 1;
+        final String name = "fruit_banana";
+        final MeasurementType measurementType =
+                new MeasurementType(MeasurementType.WEIGHT_TYPE_STRING);
         final boolean canBeMeasuredInUnits = true;
 
-        final Ingredient i1 = new Ingredient(name, measurementTypeId, canBeMeasuredInUnits);
-        final Ingredient i2 = new Ingredient(name, measurementTypeId, canBeMeasuredInUnits);
+        final Ingredient i1 = new Ingredient(name, measurementType, canBeMeasuredInUnits);
+        final Ingredient i2 = new Ingredient(name, measurementType, canBeMeasuredInUnits);
 
         assertEquals(i1, i2);
     }
@@ -55,7 +68,7 @@ public class InstanceUnitTests {
     }
 
     @Test
-    public void areRecipesNotEqual() {
+    public void areRecipesEqual() {
         final String name = "test_recipe";
         final String body = "This is a recipe body.";
         final Date creationDate = Date.valueOf("2000-01-01");
@@ -69,8 +82,7 @@ public class InstanceUnitTests {
                 name, body, new HashMap<>(), new HashSet<>(), creationDate, budget, diners
         );
 
-        /// Recipes, despite having the same data, should not be considered equal.
-        assertNotEquals(r1, r2);
+        assertEquals(r1, r2);
     }
 
     @Test
@@ -121,7 +133,6 @@ public class InstanceUnitTests {
         rq2.banIngredient(10, false);
         rq2.banUtensil(4, false);
 
-        /// Recipes, despite having the same data, should not be considered equal.
         assertEquals(rq1, rq2);
     }
 }
