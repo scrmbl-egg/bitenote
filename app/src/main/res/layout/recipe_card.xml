@@ -35,25 +35,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:id="@+id/RecipeCardBodyTextView"
-                android:layout_width="match_parent"
-                android:layout_height="30sp"
-                android:ellipsize="end"
-                android:fadingEdge="vertical"
-                android:fadingEdgeLength="32dp"
-                android:fontFamily="serif"
-                android:maxLines="2"
-                android:requiresFadingEdge="vertical"
-                android:text="@string/lorem_ipsum"
-                android:textAlignment="viewStart"
-                android:textSize="14sp"
-                android:typeface="sans"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="VisualLintLongText" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginTop="8dp"/>
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -100,12 +100,6 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
         private final TextView mNameTextView;
 
         /**
-         * {@link TextView} instance that displays the body of the recipe in the card.
-         * @see Recipe#body
-         */
-        private final TextView mBodyTextView;
-
-        /**
          * {@link TextView} instance that displays the creation date of the recipe in the card.
          * @see Recipe#creationDate
          */
@@ -132,7 +126,6 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
 
             /// init views
             mNameTextView = itemView.findViewById(R.id.RecipeCardNameTextView);
-            mBodyTextView = itemView.findViewById(R.id.RecipeCardBodyTextView);
             mCreationDateTextView = itemView.findViewById(R.id.RecipeCardCreationDateTextView);
             mDinersTextView = itemView.findViewById(R.id.RecipeCardDinersTextView);
             mBudgetTextView = itemView.findViewById(R.id.RecipeCardBudgetTextView);
@@ -151,7 +144,6 @@ public final class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.View
                 @NonNull OnClickListener listener
         ) {
             mNameTextView.setText(recipe.name);
-            mBodyTextView.setText(recipe.body);
             mCreationDateTextView.setText(recipe.creationDate.toString());
             mDinersTextView.setText(String.valueOf(recipe.diners));
             mBudgetTextView.setText(
