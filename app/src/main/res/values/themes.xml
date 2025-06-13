@@ -11,7 +11,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <!-- Prevent status bar background from hiding foreground. -->
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>
