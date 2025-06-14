@@ -61,10 +61,11 @@
 
                     <EditText
                         android:id="@+id/EditRecipePropertiesBudgetEditText"
-                        android:layout_width="350dp"
+                        android:layout_width="0dp"
                         android:layout_height="64dp"
-                        android:ems="10"
+                        android:layout_weight="10"
 
+                        android:ems="10"
                         android:hint="@string/budget_edit_text_hint"
                         android:inputType="number"
                         android:textAlignment="viewEnd"
@@ -101,15 +102,17 @@
                     <SeekBar
                         android:id="@+id/EditRecipePropertiesDinersSeekBar"
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
-                        android:layout_width="326dp"
+                        android:layout_width="0dp"
                         android:layout_height="64dp"
+                        android:layout_weight="9"
                         android:max="9"
                         android:progress="0" />
 
                     <TextView
                         android:id="@+id/EditRecipePropertiesDinersSeekBarProgressTextView"
-                        android:layout_width="25dp"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:text="1"
                         android:textAlignment="center"
