@@ -165,4 +165,6 @@
     <string name="write_recipe_save_without_text_positive_button_text">Yes, save</string>
     <string name="write_recipe_save_without_text_neutral_button_text">Keep editing</string>
     <string name="write_recipe_save_without_text_negative_button_text">No, delete it</string>
+    <string name="recipe_query_max_budget_label">Max budget:</string>
+    <string name="recipe_query_min_diners_label">Minimum diners:</string>
 </resources>

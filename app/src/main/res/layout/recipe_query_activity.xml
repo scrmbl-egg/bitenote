@@ -48,7 +48,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginBottom="0dp"
-                    android:text="@string/edit_recipe_properties_budget_label"
+                    android:text="@string/recipe_query_max_budget_label"
                     android:textSize="20sp" />
 
                 <LinearLayout
@@ -61,10 +61,11 @@
 
                     <EditText
                         android:id="@+id/RecipeQueryMaxBudgetEditText"
-                        android:layout_width="350dp"
+                        android:layout_width="0dp"
                         android:layout_height="64dp"
-                        android:ems="10"
+                        android:layout_weight="10"
 
+                        android:ems="10"
                         android:hint="@string/budget_edit_text_hint"
                         android:inputType="number"
                         android:textAlignment="viewEnd"
@@ -87,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/edit_recipe_properties_diners_label"
+                    android:text="@string/recipe_query_min_diners_label"
                     android:textSize="20sp" />
 
                 <LinearLayout
@@ -101,15 +102,17 @@
                     <SeekBar
                         android:id="@+id/RecipeQueryMinDinersSeekBar"
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
-                        android:layout_width="326dp"
+                        android:layout_width="0dp"
                         android:layout_height="64dp"
+                        android:layout_weight="9"
                         android:max="9"
                         android:progress="0" />
 
                     <TextView
                         android:id="@+id/RecipeQueryMinDinersSeekBarProgressTextView"
-                        android:layout_width="25dp"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:text="1"
                         android:textAlignment="center"
