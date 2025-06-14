@@ -30,12 +30,13 @@
         <ImageButton
             android:id="@+id/AddedIngredientCardRemoveButton"
             style="@style/Widget.AppCompat.ImageButton"
-            android:layout_width="78dp"
-            android:layout_height="50dp"
+            android:layout_width="70dp"
+            android:layout_height="0dp"
             android:background="#00FFFFFF"
             android:contentDescription="TODO"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/baseline_remove_24"
             app:tint="?attr/colorOnBackground" />
 
@@ -43,7 +44,7 @@
             android:id="@+id/AddedIngredientMeasurementToggleButton"
             android:layout_width="107dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:checked="false"
             android:textAlignment="viewStart"
             android:textAllCaps="false"
@@ -58,7 +59,7 @@
         <EditText
             android:id="@+id/AddedIngredientAmountEditText"
             style="@style/Widget.AppCompat.AutoCompleteTextView"
-            android:layout_width="159dp"
+            android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
@@ -68,6 +69,7 @@
             android:textAlignment="viewEnd"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/AddedIngredientMeasurementToggleButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/AddedIngredientCardNameTextView" />
 
