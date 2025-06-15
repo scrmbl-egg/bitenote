@@ -360,7 +360,7 @@ public final class BiteNoteSQLiteHelper extends SQLiteOpenHelper {
             database.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(
-                    "db ddl",
+                    "db dml",
                     Optional.ofNullable(e.getMessage()).orElse("Missing message.")
             );
         } finally {
